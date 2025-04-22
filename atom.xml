@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2025-04-22T04:48:42.250Z</updated>
+  <updated>2025-04-22T06:22:57.034Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -17,11 +17,32 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>pytorch</title>
+    <link href="http://example.com/2025/04/22/pytorch/"/>
+    <id>http://example.com/2025/04/22/pytorch/</id>
+    <published>2025-04-22T06:18:52.000Z</published>
+    <updated>2025-04-22T06:22:57.034Z</updated>
+    
+    <content type="html"><![CDATA[<p>本次学习参考<a href="https://pytorch.ac.cn/tutorials/">pytorch官方教程</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;本次学习参考&lt;a href=&quot;https://pytorch.ac.cn/tutorials/&quot;&gt;pytorch官方教程&lt;/a&gt;&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>Medicalrobot</title>
     <link href="http://example.com/2025/04/22/Medicalrobot/"/>
     <id>http://example.com/2025/04/22/Medicalrobot/</id>
     <published>2025-04-22T04:43:44.000Z</published>
-    <updated>2025-04-22T04:48:42.250Z</updated>
+    <updated>2025-04-22T06:06:55.010Z</updated>
     
     
     
@@ -34,7 +55,7 @@
     <link href="http://example.com/2025/04/22/blogtmp/"/>
     <id>http://example.com/2025/04/22/blogtmp/</id>
     <published>2025-04-22T02:09:55.197Z</published>
-    <updated>2025-04-22T05:59:29.689Z</updated>
+    <updated>2025-04-22T06:01:35.043Z</updated>
     
     <content type="html"><![CDATA[<h3 id="上传blog方法"><a href="#上传blog方法" class="headerlink" title="上传blog方法"></a>上传blog方法</h3><p>在md文件中写好了文档之后保存并放置在C:\Users\song\Desktop\blog\diary\source_posts文件夹中然后依次输入下列指令上传</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>即可将文档上传到github</p><h3 id="本地查看方法"><a href="#本地查看方法" class="headerlink" title="本地查看方法"></a>本地查看方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo serve</span><br></pre></td></tr></table></figure>]]></content>
     
