@@ -20,18 +20,27 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+  <meta name="description" content="前言本章主要探讨的是深度学习的实践，我们需要知道深度学习的能力和限制，以至于让我们我至于低估或是对深度学习的能力和限制有过高的期盼。 从模型到生成在本章中，我们将使用一个计算机视觉示例来查看创建深度学习应用的端到端过程。更具体地说，我们将构建一个熊分类器！在这个过程中，我们将讨论深度学习的能力和限制，探讨如何创建数据集，在实践中使用深度学习时可能遇到的问题等等。许多关键点同样适用于其他深度学习问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fastai Chapter 2">
 <meta property="og:url" content="http://example.com/2025/04/24/fastaichapter2/index.html">
 <meta property="og:site_name" content="Wsblog">
-<meta property="og:description" content="a graduate student working at Huzhou institute of Zhejiang University">
+<meta property="og:description" content="前言本章主要探讨的是深度学习的实践，我们需要知道深度学习的能力和限制，以至于让我们我至于低估或是对深度学习的能力和限制有过高的期盼。 从模型到生成在本章中，我们将使用一个计算机视觉示例来查看创建深度学习应用的端到端过程。更具体地说，我们将构建一个熊分类器！在这个过程中，我们将讨论深度学习的能力和限制，探讨如何创建数据集，在实践中使用深度学习时可能遇到的问题等等。许多关键点同样适用于其他深度学习问题">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/dlcf_0202.png">
+<meta property="og:image" content="http://example.com/image/dlcf_02in01.png">
+<meta property="og:image" content="http://example.com/image/dlcf_0203.png">
+<meta property="og:image" content="http://example.com/2025/04/24/fastaichapter2/image/dlcf_02in02.png">
+<meta property="og:image" content="http://example.com/2025/04/24/fastaichapter2/image/dlcf_02in03.png">
+<meta property="og:image" content="http://example.com/2025/04/24/fastaichapter2/image/dlcf_02in04.png">
+<meta property="og:image" content="http://example.com/image/dlcf_02in05.png">
+<meta property="og:image" content="http://example.com/2025/04/24/fastaichapter2/image/dlcf_02in06.png">
 <meta property="article:published_time" content="2025-04-24T00:58:03.000Z">
-<meta property="article:modified_time" content="2025-04-24T01:00:01.819Z">
+<meta property="article:modified_time" content="2025-04-25T03:36:06.884Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="Machine Learning  Deep Learning">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/dlcf_0202.png">
 
 <link rel="canonical" href="http://example.com/2025/04/24/fastaichapter2/">
 
@@ -205,10 +214,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-24 08:58:03 / 修改时间：09:00:01" itemprop="dateCreated datePublished" datetime="2025-04-24T08:58:03+08:00">2025-04-24</time>
+              <time title="创建时间：2025-04-24 08:58:03" itemprop="dateCreated datePublished" datetime="2025-04-24T08:58:03+08:00">2025-04-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-25 11:36:06" itemprop="dateModified" datetime="2025-04-25T11:36:06+08:00">2025-04-25</time>
+              </span>
 
           
 
@@ -221,7 +236,127 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本章主要探讨的是深度学习的实践，我们需要知道深度学习的能力和限制，以至于让我们我至于低估或是对深度学习的能力和限制有过高的期盼。</p>
+<h1 id="从模型到生成"><a href="#从模型到生成" class="headerlink" title="从模型到生成"></a>从模型到生成</h1><p>在本章中，我们将使用一个计算机视觉示例来查看创建深度学习应用的端到端过程。更具体地说，我们将构建一个熊分类器！在这个过程中，我们将讨论深度学习的能力和限制，探讨如何创建数据集，在实践中使用深度学习时可能遇到的问题等等。许多关键点同样适用于其他深度学习问题，例如第一章中的问题。如果您解决的问题在关键方面类似于我们的示例问题，我们期望您可以快速获得极好的结果，而只需很少的代码。</p>
+<h1 id="开始深度学习的项目"><a href="#开始深度学习的项目" class="headerlink" title="开始深度学习的项目"></a>开始深度学习的项目</h1><p>首先开始深度学习像是在制作一份独属于你自己的三明治！（尽管他可能没有那么好吃！但是你必须会自己做它！）只有通过处理自己的项目，您才能获得构建和使用模型的真实经验。</p>
+<p>就像做三明治一样，你不可能找到一块完美的火腿或者是生菜进行制作。（一个切的薄厚不均的火腿片或是不太完整的生菜可能并不会影响三明治的味道所以告别完美主义不要让你的工作停滞不前）</p>
+<p>无论您是为了自己的学习还是为了在组织中的实际应用而进行项目，您都希望能够快速开始。我们看到许多学生、研究人员和行业从业者在试图找到他们完美的数据集时浪费了几个月甚至几年的时间。目标不是找到“完美”的数据集或项目，而只是开始并从那里迭代。如果您采取这种方法，您将在完美主义者仍处于规划阶段时进行第三次迭代学习和改进！</p>
+<p>我们还建议您在项目中端到端迭代；不要花几个月来微调您的模型，或打磨完美的 GUI，或标记完美的数据集……相反，尽可能在合理的时间内完成每一步，一直到最后。例如，如果您的最终目标是一个在手机上运行的应用程序，那么每次迭代后您都应该拥有这个。但也许在早期迭代中您会采取捷径；例如，在远程服务器上进行所有处理，并使用简单的响应式 Web 应用程序。通过完成项目的端到端，您将看到最棘手的部分在哪里，以及哪些部分对最终结果产生最大影响。</p>
+<h1 id="Sylvain’s-tips"><a href="#Sylvain’s-tips" class="headerlink" title="Sylvain’s tips"></a>Sylvain’s tips</h1><p>刚开始的时候应该选择一个熟悉的你能接触到大量数据的领域，如果没有也应该选择一个已经被应用于深度学习的领域。不然你就会和无头苍蝇一样不知道自己错在哪里。</p>
+<h1 id="深度学习应用的领域分析（书的日期为2020年但现在是2025年我会结合自己的一些项目经历进行分析）"><a href="#深度学习应用的领域分析（书的日期为2020年但现在是2025年我会结合自己的一些项目经历进行分析）" class="headerlink" title="深度学习应用的领域分析（书的日期为2020年但现在是2025年我会结合自己的一些项目经历进行分析）"></a>深度学习应用的领域分析（书的日期为2020年但现在是2025年我会结合自己的一些项目经历进行分析）</h1><h2 id="计算机视觉"><a href="#计算机视觉" class="headerlink" title="计算机视觉"></a>计算机视觉</h2><p>书中说到：深度学习尚未用于分析图像的许多领域，但在已经尝试过的领域中，几乎普遍表明计算机可以至少与人类一样好地识别图像中的物品，甚至是经过专门训练的人，如放射科医生。这被称为<em>物体识别</em>。深度学习还擅长识别图像中物体的位置，并可以突出它们的位置并命名每个找到的物体。这被称为<em>物体检测</em>（在我们在第一章中看到的变体中，每个像素根据其所属的对象类型进行分类—这被称为<em>分割</em>）。</p>
+<p>深度学习算法通常不擅长识别结构或风格与用于训练模型的图像明显不同的图像。例如，如果训练数据中没有黑白图像，模型可能在黑白图像上表现不佳。同样，如果训练数据不包含手绘图像，模型可能在手绘图像上表现不佳。没有一般方法可以检查训练集中缺少哪些类型的图像，但我们将在本章中展示一些方法，以尝试识别当模型在生产中使用时数据中出现意外图像类型的情况（这被称为检查<em>域外</em>数据）。</p>
+<p>物体检测系统面临的一个主要挑战是图像标记可能会很慢且昂贵。目前有很多工作正在进行中，旨在开发工具以尝试使这种标记更快速、更容易，并且需要更少的手工标签来训练准确的物体检测模型。一个特别有帮助的方法是合成生成输入图像的变化，例如通过旋转它们或改变它们的亮度和对比度；这被称为<em>数据增强</em>，并且对文本和其他类型的模型也很有效。我们将在本章中详细讨论这一点。</p>
+<p>另一个要考虑的问题是，尽管您的问题可能看起来不像是一个计算机视觉问题，但通过一点想象力可能可以将其转变为一个。例如，如果您要分类的是声音，您可以尝试将声音转换为其声学波形的图像，然后在这些图像上训练模型。</p>
+<p><strong><em>但是实际上现在深度学习在计算机视觉的领域目前在繁荣发展就我而言所使用过的yolo视觉模型简直的惊为天人的存在</em></strong></p>
+<h2 id="自然语言处理"><a href="#自然语言处理" class="headerlink" title="自然语言处理"></a>自然语言处理</h2><p>计算机擅长基于类别对短文档和长文档进行分类，例如垃圾邮件或非垃圾邮件、情感（例如，评论是积极的还是消极的）、作者、来源网站等。我们不知道在这个领域是否有任何严格的工作来比较计算机和人类，但从经验上看，我们认为深度学习的性能在这些任务上与人类的性能相似。</p>
+<p>深度学习还擅长生成与上下文相关的文本，例如回复社交媒体帖子，并模仿特定作者的风格。它还擅长使这些内容对人类具有吸引力—事实上，甚至比人类生成的文本更具吸引力。然而，深度学习不擅长生成<em>正确</em>的回应！例如，我们没有可靠的方法来将医学信息知识库与深度学习模型结合起来，以生成医学上正确的自然语言回应。这是危险的，因为很容易创建对外行人看来具有吸引力但实际上完全不正确的内容。</p>
+<p>另一个问题是，社交媒体上的上下文适当、高度引人入胜的回应可能被大规模使用——比以前见过的任何喷子农场规模大几千倍——来传播虚假信息，制造动荡，鼓励冲突。一般来说，文本生成模型总是在技术上略领先于识别自动生成文本的模型。例如，可以使用一个能够识别人工生成内容的模型来实际改进创建该内容的生成器，直到分类模型无法完成其任务为止。</p>
+<p>尽管存在这些问题，深度学习在自然语言处理中有许多应用：可以用来将文本从一种语言翻译成另一种语言，将长篇文档总结为更快消化的内容，找到感兴趣概念的所有提及等。不幸的是，翻译或总结可能包含完全错误的信息！然而，性能已经足够好，许多人正在使用这些系统——例如，谷歌的在线翻译系统（以及我们所知道的每个其他在线服务）都是基于深度学习的。</p>
+<p><strong><em><font color=Bred>原来早在深度学习提出之除就发现其在大语言模型上的潜力更加强大，要是早读这本书我就早买大语言模型企业的股票飞黄腾达了，果然还是要多看书QAQ</font></em></strong></p>
+<h2 id="结合文本和图像"><a href="#结合文本和图像" class="headerlink" title="结合文本和图像"></a>结合文本和图像</h2><p>深度学习将文本和图像结合成一个单一模型的能力通常比大多数人直觉期望的要好得多。例如，一个深度学习模型可以在输入图像上进行训练，输出用英语编写的标题，并且可以学会为新图像自动生成令人惊讶地适当的标题！但是，我们再次提出与前一节讨论的相同警告：不能保证这些标题是正确的。</p>
+<p>由于这个严重问题，我们通常建议深度学习不要作为完全自动化的过程，而是作为模型和人类用户密切互动的过程的一部分。这可能使人类的生产力比完全手动方法高出几个数量级，并且比仅使用人类更准确。</p>
+<p>例如，自动系统可以直接从 CT 扫描中识别潜在的中风患者，并发送高优先级警报，以便快速查看这些扫描。治疗中风只有三个小时的时间窗口，因此这种快速的反馈循环可以挽救生命。同时，所有扫描仍然可以按照通常的方式发送给放射科医生，因此不会减少人类的参与。其他深度学习模型可以自动测量扫描中看到的物品，并将这些测量结果插入报告中，警告放射科医生可能错过的发现，并告诉他们可能相关的其他病例。</p>
+<p><strong><em><font color=Bred>这是我作为研究生阶段最关心的点，讲真的把这个用在机器人身上非常的酷</font></em></strong></p>
+<h2 id="表格数据"><a href="#表格数据" class="headerlink" title="表格数据"></a>表格数据</h2><p>对于分析时间序列和表格数据，深度学习最近取得了巨大进展。然而，深度学习通常作为多种模型集成的一部分使用。如果您已经有一个正在使用随机森林或梯度提升机（流行的表格建模工具，您很快将了解）的系统，那么切换到或添加深度学习可能不会带来任何显著的改进。</p>
+<p>深度学习确实大大增加了您可以包含的列的种类——例如，包含自然语言（书名、评论等）和高基数分类列（即包含大量离散选择的内容，如邮政编码或产品 ID）。不过，与随机森林或梯度提升机相比，深度学习模型通常需要更长的训练时间，尽管由于提供 GPU 加速的库（如<a target="_blank" rel="noopener" href="https://rapids.ai">RAPIDS</a>），情况正在改变。我们在第九章中详细介绍了所有这些方法的优缺点。</p>
+<p><strong><em><font color=Bred>或许等我走头无路开路边摊的时候可以设计一个来控制我的成本</font></em></strong></p>
+<h2 id="推荐系统"><a href="#推荐系统" class="headerlink" title="推荐系统"></a>推荐系统</h2><p>推荐系统实际上只是一种特殊类型的表格数据。特别是，它们通常具有代表用户的高基数分类变量，以及代表产品（或类似物品）的另一个变量。像亚马逊这样的公司将客户所做的每一次购买都表示为一个巨大的稀疏矩阵，其中客户是行，产品是列。一旦他们以这种格式拥有数据，数据科学家们会应用某种形式的协同过滤来填充矩阵。例如，如果客户 A 购买产品 1 和 10，客户 B 购买产品 1、2、4 和 10，引擎将推荐 A 购买 2 和 4。</p>
+<p>由于深度学习模型擅长处理高基数分类变量，它们非常擅长处理推荐系统。尤其是当将这些变量与其他类型的数据（如自然语言或图像）结合时，它们就像处理表格数据一样发挥作用。它们还可以很好地将所有这些类型的信息与其他元数据（如用户信息、先前交易等）表示为表格进行组合。</p>
+<p>然而，几乎所有的机器学习方法都有一个缺点，那就是它们只告诉你一个特定用户可能喜欢哪些产品，而不是对用户有用的推荐。用户可能喜欢的产品的许多种推荐可能根本不会有任何帮助——例如，如果用户已经熟悉这些产品，或者如果它们只是用户已经购买过的产品的不同包装（例如，当他们已经拥有该套装中的每一件物品时，推荐一个小说的套装）。Jeremy 喜欢读特里·普拉切特的书，有一段时间亚马逊一直在向他推荐特里·普拉切特的书，这实际上并不是有用的，因为他已经知道这些书了！</p>
+<p><strong><em><font color=Bred>愚蠢的b站视频推荐算法就是这样的。我都已经考上了研究生他还一直给我推考研的视频</font></em></strong></p>
+<h3 id="其他数据类型"><a href="#其他数据类型" class="headerlink" title="其他数据类型"></a>其他数据类型</h3><p>通常，您会发现特定领域的数据类型非常适合现有的类别。例如，蛋白质链看起来很像自然语言文档，因为它们是由复杂关系和意义贯穿整个序列的离散令牌组成的长序列。事实上，使用 NLP 深度学习方法是许多类型蛋白质分析的最先进方法。另一个例子，声音可以表示为频谱图，可以被视为图像；标准的图像深度学习方法在频谱图上表现得非常好。</p>
+<p><strong><em><font color=Bred>讲真的这个非常的神奇感觉生物和控制结合在一起大有所为！！！快去买生物科技公司的股票！！！！</font></em></strong></p>
+<h2 id="驱动系统方法"><a href="#驱动系统方法" class="headerlink" title="驱动系统方法"></a>驱动系统方法</h2><p>许多准确的模型对任何人都没有用，而许多不准确的模型却非常有用。为了确保您的建模工作在实践中有用，您需要考虑您的工作将如何使用。2012 年，Jeremy 与 Margit Zwemer 和 Mike Loukides 一起提出了一种称为<em>驱动系统方法</em>的思考这个问题的方法。</p>
+<p>驱动系统方法，如图 2-2 所示，详细介绍在<a target="_blank" rel="noopener" href="https://oreil.ly/KJIIa">“设计出色的数据产品”</a>中。基本思想是从考虑您的目标开始，然后考虑您可以采取哪些行动来实现该目标以及您拥有的（或可以获取的）可以帮助的数据，然后构建一个模型，您可以使用该模型确定为实现目标而采取的最佳行动。</p>
+<p><img src="/image/dlcf_0202.png" alt=""></p>
+<h6 id="图-2-2-驱动系统方法"><a href="#图-2-2-驱动系统方法" class="headerlink" title="图 2-2. 驱动系统方法"></a>图 2-2. 驱动系统方法</h6><p>考虑自动驾驶汽车中的模型：您希望帮助汽车安全地从 A 点驾驶到 B 点，而无需人为干预。出色的预测建模是解决方案的重要组成部分，但它并不是独立存在的；随着产品变得更加复杂，它会消失在管道中。使用自动驾驶汽车的人完全不知道使其运行的数百（甚至数千）个模型和海量数据。但随着数据科学家构建越来越复杂的产品，他们需要一种系统化的设计方法。</p>
+<p>我们使用数据不仅仅是为了生成更多数据（以预测的形式），而是为了产生可操作的结果。这是 Drivetrain 方法的目标。首先要明确定义一个明确的目标。例如，当谷歌创建其第一个搜索引擎时，考虑了“用户在输入搜索查询时的主要目标是什么？”这导致了谷歌的目标，即“显示最相关的搜索结果”。下一步是考虑您可以拉动的杠杆（即您可以采取的行动）以更好地实现该目标。在谷歌的情况下，这是搜索结果的排名。第三步是考虑他们需要什么新数据来生成这样的排名；他们意识到关于哪些页面链接到哪些其他页面的隐含信息可以用于此目的。</p>
+<p>只有在完成了这前三个步骤之后，我们才开始考虑构建预测模型。我们的目标和可用的杠杆，我们已经拥有的数据以及我们需要收集的额外数据，决定了我们可以构建的模型。这些模型将以杠杆和任何不可控变量作为输入；模型的输出可以结合起来预测我们的目标的最终状态。</p>
+<p>让我们考虑另一个例子：推荐系统。推荐引擎的目标是通过推荐客户不会在没有推荐的情况下购买的物品来推动额外的销售。杠杆是推荐的排名。必须收集新数据以生成将导致新销售的推荐。这将需要进行许多随机实验，以收集关于各种客户的各种推荐的数据。这是很少有组织采取的一步；但是没有它，您就没有所需的信息来根据您的真正目标（更多销售！）优化推荐。</p>
+<p>最后，您可以为购买概率构建两个模型，条件是看到或没有看到推荐。这两个概率之间的差异是给定推荐给客户的效用函数。在算法推荐客户已经拒绝的熟悉书籍（两个组成部分都很小）或者他们本来就会购买的书籍（两个组成部分都很大并互相抵消）的情况下，效用函数会很低。</p>
+<p>正如您所看到的，在实践中，您的模型的实际实施通常需要比仅仅训练一个模型更多！您通常需要运行实验来收集更多数据，并考虑如何将您的模型整合到您正在开发的整个系统中。说到数据，现在让我们专注于如何为您的项目找到数据。</p>
+<h1 id="保持自己能够获取互联网图像"><a href="#保持自己能够获取互联网图像" class="headerlink" title="保持自己能够获取互联网图像"></a>保持自己能够获取互联网图像</h1><p>这里需要高校验证来获取免费的Azure的bing图像搜索api的服务（今天才发现我没有高校邮箱现在申请不知道几天可以申请下来）。所以下面需要用到api的代码我就不运行了。<font color=red>欠着等申请下了在运行</font><br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key = <span class="string">&#x27;XXX&#x27;</span></span><br></pre></td></tr></table></figure></p>
+<p>或者，如果您在命令行上感到自在，您可以在终端中设置它</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export AZURE_SEARCH_KEY=*your_key_here*</span><br></pre></td></tr></table></figure>
+<p>然后重新启动 Jupyter 服务器，在一个单元格中键入以下内容，并执行：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key = os.environ[<span class="string">&#x27;AZURE_SEARCH_KEY&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>设置了<code>key</code>之后，您可以使用<code>search_images_bing</code>。这个函数是在线笔记本中包含的小<code>utils</code>类提供的（如果您不确定一个函数是在哪里定义的，您可以在笔记本中输入它来找出，如下所示）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search_images_bing</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;function utils.search_images_bing(key, term, min_sz=<span class="number">128</span>)&gt;</span><br></pre></td></tr></table></figure>
+<p>让我们尝试一下这个函数：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">results = search_images_bing(key, <span class="string">&#x27;grizzly bear&#x27;</span>)</span><br><span class="line">ims = results.attrgot(<span class="string">&#x27;content_url&#x27;</span>)</span><br><span class="line"><span class="built_in">len</span>(ims)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">150</span></span><br></pre></td></tr></table></figure>
+<p>我们已成功下载了 150 只灰熊的 URL（或者至少是 Bing 图像搜索为该搜索词找到的图像）。让我们看一个：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dest = <span class="string">&#x27;images/grizzly.jpg&#x27;</span></span><br><span class="line">download_url(ims[<span class="number">0</span>], dest)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">im = Image.<span class="built_in">open</span>(dest)</span><br><span class="line">im.to_thumb(<span class="number">128</span>,<span class="number">128</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in01.png" alt=""></p>
+<p>这似乎运行得很好，所以让我们使用 fastai 的<code>download_images</code>来下载每个搜索词的所有 URL。我们将每个放在一个单独的文件夹中：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bear_types = <span class="string">&#x27;grizzly&#x27;</span>,<span class="string">&#x27;black&#x27;</span>,<span class="string">&#x27;teddy&#x27;</span></span><br><span class="line">path = Path(<span class="string">&#x27;bears&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> path.exists():</span><br><span class="line">    path.mkdir()</span><br><span class="line">    <span class="keyword">for</span> o <span class="keyword">in</span> bear_types:</span><br><span class="line">        dest = (path/o)</span><br><span class="line">        dest.mkdir(exist_ok=<span class="literal">True</span>)</span><br><span class="line">        results = search_images_bing(key, <span class="string">f&#x27;<span class="subst">&#123;o&#125;</span> bear&#x27;</span>)</span><br><span class="line">        download_images(dest, urls=results.attrgot(<span class="string">&#x27;content_url&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>我们的文件夹中有图像文件，正如我们所期望的那样：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fns = get_image_files(path)</span><br><span class="line">fns</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="comment">#421) [Path(&#x27;bears/black/00000095.jpg&#x27;),Path(&#x27;bears/black/00000133.jpg&#x27;),Path(&#x27;</span></span><br><span class="line"> &gt; bears/black/<span class="number">00000062.j</span>pg<span class="string">&#x27;),Path(&#x27;</span>bears/black/<span class="number">00000023.j</span>pg<span class="string">&#x27;),Path(&#x27;</span>bears/black</span><br><span class="line"> &gt; /<span class="number">00000029.j</span>pg<span class="string">&#x27;),Path(&#x27;</span>bears/black/<span class="number">00000094.j</span>pg<span class="string">&#x27;),Path(&#x27;</span>bears/black/<span class="number">00000124.j</span></span><br><span class="line"> &gt; pg<span class="string">&#x27;),Path(&#x27;</span>bears/black/<span class="number">00000056.j</span>peg<span class="string">&#x27;),Path(&#x27;</span>bears/black/<span class="number">00000046.j</span>pg<span class="string">&#x27;),Path(</span></span><br><span class="line"><span class="string"> &gt; &#x27;</span>bears/black/<span class="number">00000045.j</span>pg<span class="string">&#x27;)...]</span></span><br></pre></td></tr></table></figure>
+<h1 id="Jeremy-说"><a href="#Jeremy-说" class="headerlink" title="Jeremy 说"></a>Jeremy 说</h1><p>我就是喜欢在 Jupyter 笔记本中工作的这一点！逐步构建我想要的东西并在每一步检查我的工作是如此容易。我犯了<em>很多</em>错误，所以这对我真的很有帮助。</p>
+<p>通常当我们从互联网下载文件时，会有一些文件损坏。让我们检查一下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">failed = verify_images(fns)</span><br><span class="line">failed</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="comment">#0) []</span></span><br></pre></td></tr></table></figure>
+<p>要删除所有失败的图像，您可以使用<code>unlink</code>。像大多数返回集合的 fastai 函数一样，<code>verify_images</code>返回一个类型为<code>L</code>的对象，其中包括<code>map</code>方法。这会在集合的每个元素上调用传递的函数：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">failed.<span class="built_in">map</span>(Path.unlink);</span><br></pre></td></tr></table></figure>
+<p>在这个过程中要注意的一件事是：正如我们在第一章中讨论的，模型只能反映用于训练它们的数据。而世界充满了有偏见的数据，这最终会反映在，例如，Bing 图像搜索（我们用来创建数据集的）。例如，假设您有兴趣创建一个应用程序，可以帮助用户确定他们是否拥有健康的皮肤，因此您训练了一个模型，该模型基于搜索结果（比如）“健康皮肤”。图 2-3 展示了您将获得的结果类型。</p>
+<p><img src="/image/dlcf_0203.png" alt=""></p>
+<h6 id="图-2-3-用于健康皮肤检测器的数据？"><a href="#图-2-3-用于健康皮肤检测器的数据？" class="headerlink" title="图 2-3. 用于健康皮肤检测器的数据？"></a>图 2-3. 用于健康皮肤检测器的数据？</h6><p>使用此作为训练数据，您最终不会得到一个健康皮肤检测器，而是一个<em>年轻白人女性触摸她的脸</em>检测器！一定要仔细考虑您可能在应用程序中实际看到的数据类型，并仔细检查以确保所有这些类型都反映在您模型的源数据中。（感谢 Deb Raji 提出了健康皮肤的例子。请查看她的论文<a target="_blank" rel="noopener" href="https://oreil.ly/POS_C">“可操作的审计：调查公开命名商业 AI 产品偏见性能结果的影响”</a>以获取更多有关模型偏见的迷人见解。）</p>
+<p>现在我们已经下载了一些数据，我们需要将其组装成适合模型训练的格式。在 fastai 中，这意味着创建一个名为<code>DataLoaders</code>的对象。</p>
+<h1 id="术语：DataLoaders"><a href="#术语：DataLoaders" class="headerlink" title="术语：DataLoaders"></a>术语：DataLoaders</h1><p>一个 fastai 类，存储您传递给它的多个<code>DataLoader</code>对象——通常是一个<code>train</code>和一个<code>valid</code>，尽管可以有任意数量。前两个作为属性提供。</p>
+<p>在本书的后面，您还将了解<code>Dataset</code>和<code>Datasets</code>类，它们具有相同的关系。要将我们下载的数据转换为<code>DataLoaders</code>对象，我们至少需要告诉 fastai 四件事：</p>
+<ul>
+<li><p>我们正在处理什么类型的数据</p>
+</li>
+<li><p>如何获取项目列表</p>
+</li>
+<li><p>如何为这些项目打标签</p>
+</li>
+<li><p>如何创建验证集</p>
+</li>
+</ul>
+<p>到目前为止，我们已经看到了一些特定组合的<em>工厂方法</em>，当您有一个应用程序和数据结构恰好适合这些预定义方法时，这些方法非常方便。当您不适用时，fastai 有一个名为<em>数据块 API</em>的极其灵活的系统。使用此 API，您可以完全自定义创建<code>DataLoaders</code>的每个阶段。这是我们需要为刚刚下载的数据集创建<code>DataLoaders</code>的步骤：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bears = DataBlock(</span><br><span class="line">    blocks=(ImageBlock, CategoryBlock),</span><br><span class="line">    get_items=get_image_files,</span><br><span class="line">    splitter=RandomSplitter(valid_pct=<span class="number">0.2</span>, seed=<span class="number">42</span>),</span><br><span class="line">    get_y=parent_label,</span><br><span class="line">    item_tfms=Resize(<span class="number">128</span>))</span><br></pre></td></tr></table></figure>
+<p>让我们依次查看每个参数。首先，我们提供一个元组，指定我们希望独立变量和因变量的类型：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blocks=(ImageBlock, CategoryBlock)</span><br></pre></td></tr></table></figure>
+<p><em>独立变量</em>是我们用来进行预测的东西，<em>因变量</em>是我们的目标。在这种情况下，我们的独立变量是一组图像，我们的因变量是每个图像的类别（熊的类型）。在本书的其余部分中，我们将看到许多其他类型的块。</p>
+<p>对于这个<code>DataLoaders</code>，我们的基础项目将是文件路径。我们必须告诉 fastai 如何获取这些文件的列表。<code>get_image_files</code>函数接受一个路径，并返回该路径中所有图像的列表（默认情况下递归）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_items=get_image_files</span><br></pre></td></tr></table></figure>
+<p>通常，您下载的数据集已经定义了验证集。有时，这是通过将用于训练和验证集的图像放入不同的文件夹中来完成的。有时，这是通过提供一个 CSV 文件，在该文件中，每个文件名都与应该在其中的数据集一起列出。有许多可以完成此操作的方法，fastai 提供了一种通用方法，允许您使用其预定义类之一或编写自己的类。</p>
+<p>在这种情况下，我们希望随机拆分我们的训练和验证集。但是，我们希望每次运行此笔记本时都具有相同的训练/验证拆分，因此我们固定随机种子（计算机实际上不知道如何创建随机数，而只是创建看起来随机的数字列表；如果您每次都为该列表提供相同的起始点——称为<em>种子</em>，那么您将每次都获得完全相同的列表）。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splitter=RandomSplitter(valid_pct=<span class="number">0.2</span>, seed=<span class="number">42</span>)</span><br></pre></td></tr></table></figure>
+<p>自变量通常被称为<code>x</code>，因变量通常被称为<code>y</code>。在这里，我们告诉 fastai 要调用哪个函数来创建数据集中的标签：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_y=parent_label</span><br></pre></td></tr></table></figure>
+<p><code>parent_label</code>是 fastai 提供的一个函数，它简单地获取文件所在文件夹的名称。因为我们将每个熊图像放入基于熊类型的文件夹中，这将为我们提供所需的标签。</p>
+<p>我们的图像大小各不相同，这对深度学习是一个问题：我们不是一次向模型提供一个图像，而是多个图像（我们称之为<em>mini-batch</em>）。为了将它们分组到一个大数组（通常称为<em>张量</em>）中，以便通过我们的模型，它们都需要是相同的大小。因此，我们需要添加一个转换，将这些图像调整为相同的大小。<em>Item transforms</em>是在每个单独项目上运行的代码片段，无论是图像、类别还是其他。fastai 包含许多预定义的转换；我们在这里使用<code>Resize</code>转换，并指定大小为 128 像素：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">item_tfms=Resize(<span class="number">128</span>)</span><br></pre></td></tr></table></figure>
+<p>这个命令给了我们一个<code>DataBlock</code>对象。这就像创建<code>DataLoaders</code>的<em>模板</em>。我们仍然需要告诉 fastai 我们数据的实际来源——在这种情况下，图像所在的路径：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dls = bears.dataloaders(path)</span><br></pre></td></tr></table></figure>
+<p><code>DataLoaders</code>包括验证和训练<code>DataLoader</code>。<code>DataLoader</code>是一个类，它一次向 GPU 提供几个项目的批次。我们将在下一章中更多地了解这个类。当您循环遍历<code>DataLoader</code>时，fastai 会一次给您 64 个（默认值）项目，全部堆叠到一个单一张量中。我们可以通过在<code>DataLoader</code>上调用<code>show_batch</code>方法来查看其中一些项目：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dls.valid.show_batch(max_n=<span class="number">4</span>, nrows=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="image/dlcf_02in02.png" alt=""></p>
+<p>默认情况下，<code>Resize</code>会将图像<em>裁剪</em>成适合请求大小的正方形形状，使用完整的宽度或高度。这可能会导致丢失一些重要细节。或者，您可以要求 fastai 用零（黑色）填充图像，或者压缩/拉伸它们：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bears = bears.new(item_tfms=Resize(<span class="number">128</span>, ResizeMethod.Squish))</span><br><span class="line">dls = bears.dataloaders(path)</span><br><span class="line">dls.valid.show_batch(max_n=<span class="number">4</span>, nrows=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="image/dlcf_02in03.png" alt=""></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bears = bears.new(item_tfms=Resize(<span class="number">128</span>, ResizeMethod.Pad, pad_mode=<span class="string">&#x27;zeros&#x27;</span>))</span><br><span class="line">dls = bears.dataloaders(path)</span><br><span class="line">dls.valid.show_batch(max_n=<span class="number">4</span>, nrows=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="image/dlcf_02in04.png" alt=""></p>
+<p>所有这些方法似乎都有些浪费或问题。如果我们压缩或拉伸图像，它们最终会变成不现实的形状，导致模型学习到事物看起来与实际情况不同，这会导致更低的准确性。如果我们裁剪图像，我们会移除一些允许我们进行识别的特征。例如，如果我们试图识别狗或猫的品种，我们可能会裁剪掉区分相似品种所需的身体或面部的关键部分。如果我们填充图像，就会有很多空白空间，这对我们的模型来说只是浪费计算，并导致我们实际使用的图像部分具有较低的有效分辨率。</p>
+<p>相反，我们在实践中通常做的是随机选择图像的一部分，然后裁剪到该部分。在每个纪元（即数据集中所有图像的完整遍历），我们随机选择每个图像的不同部分。这意味着我们的模型可以学习关注和识别图像中的不同特征。这也反映了图像在现实世界中的工作方式：同一物体的不同照片可能以略有不同的方式构图。</p>
+<p>事实上，一个完全未经训练的神经网络对图像的行为一无所知。它甚至不认识当一个物体旋转一度时，它仍然是同一物体的图片！因此，通过训练神经网络使用物体在略有不同位置并且大小略有不同的图像的示例，有助于它理解物体的基本概念，以及如何在图像中表示它。</p>
+<p>这里是另一个示例，我们将<code>Resize</code>替换为<code>RandomResizedCrop</code>，这是提供刚才描述行为的转换。传递的最重要参数是<code>min_scale</code>，它确定每次选择图像的最小部分：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bears = bears.new(item_tfms=RandomResizedCrop(<span class="number">128</span>, min_scale=<span class="number">0.3</span>))</span><br><span class="line">dls = bears.dataloaders(path)</span><br><span class="line">dls.train.show_batch(max_n=<span class="number">4</span>, nrows=<span class="number">1</span>, unique=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in05.png" alt=""></p>
+<p>在这里，我们使用了<code>unique=True</code>，以便将相同图像重复使用不同版本的<code>RandomResizedCrop</code>变换。</p>
+<p><code>RandomResizedCrop</code>是更一般的数据增强技术的一个具体示例。</p>
+<h2 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h2><p><em>数据增强</em>指的是创建输入数据的随机变化，使它们看起来不同但不改变数据的含义。对于图像的常见数据增强技术包括旋转、翻转、透视变形、亮度变化和对比度变化。对于我们在这里使用的自然照片图像，我们发现一组标准的增强技术与<code>aug_transforms</code>函数一起提供，效果非常好。</p>
+<p>因为我们的图像现在都是相同大小，我们可以使用 GPU 将这些增强应用于整个批次的图像，这将节省大量时间。要告诉 fastai 我们要在批次上使用这些变换，我们使用<code>batch_tfms</code>参数（请注意，在此示例中我们没有使用<code>RandomResizedCrop</code>，这样您可以更清楚地看到差异；出于同样的原因，我们使用了默认值的两倍的增强量）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bears = bears.new(item_tfms=Resize(<span class="number">128</span>), batch_tfms=aug_transforms(mult=<span class="number">2</span>))</span><br><span class="line">dls = bears.dataloaders(path)</span><br><span class="line">dls.train.show_batch(max_n=<span class="number">8</span>, nrows=<span class="number">2</span>, unique=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="image/dlcf_02in06.png" alt=""></p>
+<p>现在我们已经将数据组装成适合模型训练的格式，让我们使用它来训练一个图像分类器。</p>
+
     </div>
 
     
@@ -304,6 +439,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E6%A8%A1%E5%9E%8B%E5%88%B0%E7%94%9F%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">从模型到生成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.</span> <span class="nav-text">开始深度学习的项目</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sylvain%E2%80%99s-tips"><span class="nav-number">4.</span> <span class="nav-text">Sylvain’s tips</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%BA%94%E7%94%A8%E7%9A%84%E9%A2%86%E5%9F%9F%E5%88%86%E6%9E%90%EF%BC%88%E4%B9%A6%E7%9A%84%E6%97%A5%E6%9C%9F%E4%B8%BA2020%E5%B9%B4%E4%BD%86%E7%8E%B0%E5%9C%A8%E6%98%AF2025%E5%B9%B4%E6%88%91%E4%BC%9A%E7%BB%93%E5%90%88%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%80%E4%BA%9B%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86%E8%BF%9B%E8%A1%8C%E5%88%86%E6%9E%90%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">深度学习应用的领域分析（书的日期为2020年但现在是2025年我会结合自己的一些项目经历进行分析）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89"><span class="nav-number">5.1.</span> <span class="nav-text">计算机视觉</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">自然语言处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E6%96%87%E6%9C%AC%E5%92%8C%E5%9B%BE%E5%83%8F"><span class="nav-number">5.3.</span> <span class="nav-text">结合文本和图像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE"><span class="nav-number">5.4.</span> <span class="nav-text">表格数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">5.5.</span> <span class="nav-text">推荐系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.5.1.</span> <span class="nav-text">其他数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E7%B3%BB%E7%BB%9F%E6%96%B9%E6%B3%95"><span class="nav-number">5.6.</span> <span class="nav-text">驱动系统方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-2-2-%E9%A9%B1%E5%8A%A8%E7%B3%BB%E7%BB%9F%E6%96%B9%E6%B3%95"><span class="nav-number">5.6.0.0.0.1.</span> <span class="nav-text">图 2-2. 驱动系统方法</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E8%87%AA%E5%B7%B1%E8%83%BD%E5%A4%9F%E8%8E%B7%E5%8F%96%E4%BA%92%E8%81%94%E7%BD%91%E5%9B%BE%E5%83%8F"><span class="nav-number">6.</span> <span class="nav-text">保持自己能够获取互联网图像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Jeremy-%E8%AF%B4"><span class="nav-number">7.</span> <span class="nav-text">Jeremy 说</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-2-3-%E7%94%A8%E4%BA%8E%E5%81%A5%E5%BA%B7%E7%9A%AE%E8%82%A4%E6%A3%80%E6%B5%8B%E5%99%A8%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="nav-number">7.0.0.0.0.1.</span> <span class="nav-text">图 2-3. 用于健康皮肤检测器的数据？</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%EF%BC%9ADataLoaders"><span class="nav-number">8.</span> <span class="nav-text">术语：DataLoaders</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">8.1.</span> <span class="nav-text">数据增强</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
