@@ -989,10 +989,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-22 10:09:55 / 修改时间：14:01:35" itemprop="dateCreated datePublished" datetime="2025-04-22T10:09:55+08:00">2025-04-22</time>
+              <time title="创建时间：2025-04-22 10:09:55" itemprop="dateCreated datePublished" datetime="2025-04-22T10:09:55+08:00">2025-04-22</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-25 12:06:38" itemprop="dateModified" datetime="2025-04-25T12:06:38+08:00">2025-04-25</time>
+              </span>
 
           
 
@@ -1011,6 +1017,9 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>即可将文档上传到github</p>
 <h3 id="本地查看方法"><a href="#本地查看方法" class="headerlink" title="本地查看方法"></a>本地查看方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo serve</span><br></pre></td></tr></table></figure>
+<p>神奇的我让ai帮我写了一个bat现在可以一键部署了<br>您别说别的还挺好用，倍地道，嘀嘀嘀地道到…………..</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">call hexo clean</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> error：%errorlevel%</span><br><span class="line">    goto error</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> generate...</span><br><span class="line">call hexo generate</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> error：%errorlevel%</span><br><span class="line">    goto error</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> deploy...</span><br><span class="line">call hexo deploy</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> error：%errorlevel%</span><br><span class="line">    goto error</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> [Success] all Success!!</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span> /b 0</span><br><span class="line"></span><br><span class="line">:error</span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> ******************************</span><br><span class="line"><span class="built_in">echo</span> * fatal error! pls check <span class="built_in">log</span> *</span><br><span class="line"><span class="built_in">echo</span> ******************************</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span> /b 1</span><br></pre></td></tr></table></figure>
+<p>有一说一其实应该再搞一个.sh的给linux用，但是无所谓了等要用的时候再让ai写吧。</p>
 
       
     </div>
