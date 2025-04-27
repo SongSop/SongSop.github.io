@@ -180,6 +180,141 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/27/aliyun/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Song">
+      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wsblog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/04/27/aliyun/" class="post-title-link" itemprop="url">Aliyun</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-27 11:24:26 / 修改时间：11:40:34" itemprop="dateCreated datePublished" datetime="2025-04-27T11:24:26+08:00">2025-04-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>因为在本次课程中本来要使用的的微软的azure服务因为在国外而且服务部署很不稳定无法使用所以打算将文中使用的bing rearch v7换成阿里云的图像搜素服务进行fastai chapter 2的代码演示。所以本次博客记录的是对阿里云图像搜索SDK(阿里云的图像搜索服务在python上并不支持api的使用方式给出的是sdk的使用办法虽然说对于个人用户而言更加的安全高效但是需要对课程中的代码进行大修改)的学习及使用核对课程代码的修改运行。</p>
+<h1 id="阿里云python-sdk"><a href="#阿里云python-sdk" class="headerlink" title="阿里云python sdk"></a>阿里云python sdk</h1><h2 id="接口列表"><a href="#接口列表" class="headerlink" title="接口列表"></a>接口列表</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>接口名称</th>
+<th>接口说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add</td>
+<td>增加图片。</td>
+</tr>
+<tr>
+<td>SearchImageByPro</td>
+<td>使用图片进行搜索。</td>
+</tr>
+<tr>
+<td>SearchImageByName</td>
+<td>指定名称，使用已入库的图片进行搜索。</td>
+</tr>
+<tr>
+<td>SearchImageByTotal</td>
+<td>使用文本进行搜索。（仅在服务类型为商品名和收藏类时可以使用。）</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>删除图片。</td>
+</tr>
+<tr>
+<td>UpdateImage</td>
+<td>修改图片。</td>
+</tr>
+<tr>
+<td>Dictal</td>
+<td>查询你的消息。</td>
+</tr>
+<tr>
+<td>DumpMeta</td>
+<td>无信息导出任务。</td>
+</tr>
+<tr>
+<td>DumpMetaList</td>
+<td>无信息导出任务列表。</td>
+</tr>
+<tr>
+<td>BatchTask</td>
+<td>批量任务。</td>
+</tr>
+<tr>
+<td>BatchTaskList</td>
+<td>批量任务列表。</td>
+</tr>
+<tr>
+<td>CompareSimilarByImage</td>
+<td>比较所有图片的相似度。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><ul>
+<li><p>在安装和使用阿里云SDK前，确保您已经注册阿里云账号并生成访问密钥（AccessKey）。详情请参见创建<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/53045.html?spm=a2c4g.11186623.0.0.1ec03c95apiRN3#task968">AccessKey</a>。</p>
+</li>
+<li><p>使用如下方式安装依赖包。</p>
+</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install alibabacloud_imagesearch20201214</span><br></pre></td></tr></table></figure>
+<h1 id="Add-接口"><a href="#Add-接口" class="headerlink" title="Add 接口"></a>Add 接口</h1><ul>
+<li>example：<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> alibabacloud_imagesearch20201214.client <span class="keyword">import</span> Client</span><br><span class="line"><span class="keyword">from</span> alibabacloud_imagesearch20201214.models <span class="keyword">import</span> AddImageAdvanceRequest</span><br><span class="line"><span class="keyword">from</span> alibabacloud_tea_openapi.models <span class="keyword">import</span> Config</span><br><span class="line"><span class="keyword">from</span> alibabacloud_tea_util.models <span class="keyword">import</span> RuntimeOptions</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">addImage</span>():</span><br><span class="line">    request = AddImageAdvanceRequest()</span><br><span class="line">    <span class="comment"># 必填，图像搜索实例名称。注意是实例名称不是实例ID。购买后通过上云层管控台实例信息一栏查看：https://imagesearch.console.aliyun.com/overview</span></span><br><span class="line">    request.instance_name = <span class="string">&#x27;&lt;instanceName&gt;&#x27;</span></span><br><span class="line">    <span class="comment"># 必填，商品id，最多支持 256个字符。</span></span><br><span class="line">    <span class="comment"># 一个商品可有多张图片。</span></span><br><span class="line">    request.product_id = <span class="string">&#x27;&lt;productId&gt;&#x27;</span></span><br><span class="line">    <span class="comment"># 必填，图片名称，最多支持 256个字符。</span></span><br><span class="line">    <span class="comment"># 1. ProductId + PicName唯一确定一张图片。</span></span><br><span class="line">    <span class="comment"># 2. 如果多次添加图片具有相同的ProductId + PicName，以最后一次添加为准，前面添加的图片将被覆盖。</span></span><br><span class="line">    request.pic_name = <span class="string">&#x27;&lt;picName&gt;&#x27;</span></span><br><span class="line">    <span class="comment"># 图片内容，最多支持 4MB大小图片以及5s的传输等待时间。当前仅支持PNG、JPG、JPEG、BMP、GIF、WEBP、TIFF、PPM格式图片；</span></span><br><span class="line">    <span class="comment"># 对于商品、商标、通用图片搜索，图片长和宽的像素必须都大于等于100且小于等于4096；</span></span><br><span class="line">    <span class="comment"># 对于布料搜索，图片长和宽的像素必须都大于等于448且小于等于4096；</span></span><br><span class="line">    <span class="comment"># 图像中不能带有旋转信息；</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 使用URL方式释放下方注释即可。   </span></span><br><span class="line">    <span class="comment"># url = &#x27;&lt;fileUrl&gt;&#x27;    </span></span><br><span class="line">    <span class="comment"># f = BytesIO(requests.get(url).content)  </span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 使用图片file新增</span></span><br><span class="line">    f = <span class="built_in">open</span>(<span class="string">&#x27;&lt;filePath&gt;&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    request.pic_content_object = f</span><br><span class="line">    <span class="comment"># 选填，商品类目。</span></span><br><span class="line">    <span class="comment"># 1. 对于商品搜索：若设置类目，则以设置的为准；若不设置类目，将由系统进行类目预测，预测的类目结果可在Response中获取 。</span></span><br><span class="line">    <span class="comment"># 2. 对于布料、商标、通用搜索：不论是否设置类目，系统会将类目设置为88888888。</span></span><br><span class="line">    request.category_id = <span class="number">3</span></span><br><span class="line">    <span class="comment"># 选填，用户自定义的内容，最多支持4096个字符。</span></span><br><span class="line">    <span class="comment"># 查询时会返回该字段。例如可添加图片的描述等文本。</span></span><br><span class="line">    request.custom_content = <span class="string">&quot;this is a simple test&quot;</span></span><br><span class="line">    <span class="comment"># 选填，整数类型属性，可用于查询时过滤，查询时会返回该字段。</span></span><br><span class="line">    <span class="comment">#  例如不同的站点的图片/不同用户的图片，可以设置不同的IntAttr，查询时通过过滤来达到隔离的目的</span></span><br><span class="line">    request.int_attr = <span class="number">56</span></span><br><span class="line">    <span class="comment"># 选填，字符串类型属性，最多支持 128个字符。可用于查询时过滤，查询时会返回该字段。</span></span><br><span class="line">    request.str_attr = <span class="string">&quot;test&quot;</span></span><br><span class="line">    <span class="comment"># 选填，是否需要进行主体识别，默认为true。</span></span><br><span class="line">    <span class="comment"># 1.为true时，由系统进行主体识别，以识别的主体进行搜索，主体识别结果可在Response中获取。</span></span><br><span class="line">    <span class="comment"># 2.为false时，则不进行主体识别，以整张图进行搜索。</span></span><br><span class="line">    <span class="comment"># 3.对于布料图片搜索，此参数会被忽略，系统会以整张图进行搜索。</span></span><br><span class="line">    request.crop = <span class="literal">True</span></span><br><span class="line">    <span class="comment"># 选填，图片的主体区域，格式为 x1,x2,y1,y2, 其中 x1,y1 是左上角的点，x2，y2是右下角的点。设置的region 区域不要超过图片的边界。</span></span><br><span class="line">    <span class="comment"># 若用户设置了Region，则不论Crop参数为何值，都将以用户输入Region进行搜索。</span></span><br><span class="line">    <span class="comment"># 对于布料图片搜索，此参数会被忽略，系统会以整张图进行搜索。</span></span><br><span class="line">    request.region = <span class="string">&quot;167,467,221,407&quot;</span></span><br><span class="line">    config = Config()</span><br><span class="line">    <span class="comment"># 创建AK/SK参考：https://help.aliyun.com/document_detail/116401.htm</span></span><br><span class="line">    <span class="comment"># 阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。</span></span><br><span class="line">    <span class="comment"># 强烈建议不要把AccessKey ID和AccessKey Secret保存到工程代码里，否则可能导致AccessKey泄露，威胁您账号下所有资源的安全。</span></span><br><span class="line">    <span class="comment"># 本示例以将AccessKey ID和AccessKey Secret保存在环境变量为例说明。您也可以根据业务需要，保存到配置文件里。</span></span><br><span class="line">    config.access_key_id = os.environ[<span class="string">&#x27;CC_AK_ENV&#x27;</span>]</span><br><span class="line">    config.access_key_secret = os.environ[<span class="string">&#x27;CC_SK_ENV&#x27;</span>]</span><br><span class="line">    <span class="comment"># 请更换成您购买实例的区域，例如购买的是杭州区域，则endpoint=&#x27;imagesearch.cn-hangzhou.aliyuncs.com&#x27;</span></span><br><span class="line">    config.endpoint = <span class="string">&#x27;imagesearch.[regionId].aliyuncs.com&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 以下为内网（VPC）访问方式</span></span><br><span class="line">    <span class="comment"># 说明：内网（VPC）访问：仅限同区域ECS或资源的访问，例如您购买的图像搜索实例是华东2（上海），那么您的ECS或资源也必须在华东2（上海）才能通过内网VPC地址访问图搜服务，否则会调用不通，如果遇到调用不通，请先检查您的ECS或资源与图像搜索是否在同一个区域。</span></span><br><span class="line">    <span class="comment"># config.endpointType = &#x27;internal&#x27;  // 如果是内网访问图像搜索服务，则endpointType为必填项，值统一为&#x27;internal&#x27;</span></span><br><span class="line">    <span class="comment"># config.endpoint = &#x27;imagesearch-vpc.[regionId].aliyuncs.com&#x27; // 为内网访问（VPC）地址，请您更换为您购买实例的区域，例如您购买实例的区域为杭州，则endpoint=&#x27;imagesearch-vpc.cn-hangzhou.aliyuncs.com&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 请您更换成您购买实例的区域，例如您购买的实例区域为杭州，则更换为regionId=&#x27;cn-hangzhou&#x27;   </span></span><br><span class="line">    config.region_id = <span class="string">&#x27;&lt;regionId&gt;&#x27;</span></span><br><span class="line">    config.<span class="built_in">type</span> = <span class="string">&#x27;access_key&#x27;</span></span><br><span class="line">    client = Client(config)</span><br><span class="line">    runtime_option = RuntimeOptions()</span><br><span class="line">    response = client.add_image_advance(request, runtime_option)</span><br><span class="line">    <span class="built_in">print</span>(response.to_map())</span><br><span class="line">    f.close()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    addImage()</span><br></pre></td></tr></table></figure></li>
+<li><p>result:</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&#x27;RequestId&#x27;</span>: <span class="string">&#x27;7F769FFC-4F45-476E-BE6C-E4EF82E012A7&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;Success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">  <span class="string">&#x27;Message&#x27;</span>: <span class="string">&#x27;success&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;Code&#x27;</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="string">&#x27;PicInfo&#x27;</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;CategoryId&#x27;</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="string">&#x27;Region&#x27;</span>: <span class="string">&#x27;474,747,497,784&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="SearchImagebyName-接口"><a href="#SearchImagebyName-接口" class="headerlink" title="SearchImagebyName 接口"></a>SearchImagebyName 接口</h1></li>
+<li><p>example：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> alibabacloud_imagesearch20201214.client <span class="keyword">import</span> Client</span><br><span class="line"><span class="keyword">from</span> alibabacloud_imagesearch20201214.models <span class="keyword">import</span> SearchImageByNameRequest</span><br><span class="line"><span class="keyword">from</span> alibabacloud_tea_openapi.models <span class="keyword">import</span> Config</span><br><span class="line"><span class="keyword">from</span> alibabacloud_tea_util.models <span class="keyword">import</span> RuntimeOptions</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">searchImageByName</span>() :</span><br><span class="line">    request = SearchImageByNameRequest()</span><br><span class="line">    <span class="comment"># 必填，图像搜索实例名称。注意是实例名称不是实例ID。购买后通过上云层管控台实例信息一栏查看：https://imagesearch.console.aliyun.com/overview</span></span><br><span class="line">    request.instance_name = <span class="string">&#x27;&lt;instanceName&gt;&#x27;</span></span><br><span class="line">    <span class="comment"># 必填，商品id，最多支持 256个字符。</span></span><br><span class="line">    <span class="comment"># 一个商品可有多张图片。</span></span><br><span class="line">    request.product_id = <span class="string">&#x27;&lt;productId&gt;&#x27;</span></span><br><span class="line">    <span class="comment"># 必填，图片名称，最多支持 256个字符。</span></span><br><span class="line">    <span class="comment"># 1. ProductId + PicName唯一确定一张图片。</span></span><br><span class="line">    <span class="comment"># 2. 如果多次添加图片具有相同的ProductId + PicName，以最后一次添加为准，前面添加的图片将被覆盖。</span></span><br><span class="line">    request.pic_name = <span class="string">&#x27;&lt;picName&gt;&#x27;</span></span><br><span class="line">    <span class="comment"># 选填，商品类目。</span></span><br><span class="line">    <span class="comment"># 1. 对于商品搜索：若设置类目，则以设置的为准；若不设置类目，将由系统进行类目预测，预测的类目结果可在Response中获取 。</span></span><br><span class="line">    <span class="comment"># 2. 对于布料、商标、通用搜索：不论是否设置类目，系统会将类目设置为88888888。</span></span><br><span class="line">    request.category_id = <span class="number">3</span></span><br><span class="line">    <span class="comment"># 选填，返回结果的数目。取值范围：1-100。默认值：10。</span></span><br><span class="line">    request.num = <span class="number">10</span></span><br><span class="line">    <span class="comment"># 选填，返回结果的起始位置。取值范围：0-499。默认值：0。</span></span><br><span class="line">    request.start = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 选填，是否需要进行主体识别，默认为true。</span></span><br><span class="line">    <span class="comment"># 1.为true时，由系统进行主体识别，以识别的主体进行搜索，主体识别结果可在Response中获取。</span></span><br><span class="line">    <span class="comment"># 2.为false时，则不进行主体识别，以整张图进行搜索。</span></span><br><span class="line">    <span class="comment"># 3.对于布料图片搜索，此参数会被忽略，系统会以整张图进行搜索。</span></span><br><span class="line">    request.crop = <span class="literal">True</span></span><br><span class="line">    <span class="comment"># 选填，图片的主体区域，格式为 x1,x2,y1,y2, 其中 x1,y1 是左上角的点，x2，y2是右下角的点。设置的region 区域不要超过图片的边界。</span></span><br><span class="line">    <span class="comment"># 若用户设置了Region，则不论Crop参数为何值，都将以用户输入Region进行搜索。</span></span><br><span class="line">    <span class="comment"># 3.对于布料图片搜索，此参数会被忽略，系统会以整张图进行搜索。</span></span><br><span class="line">    request.region=<span class="string">&quot;167,467,221,407&quot;</span></span><br><span class="line">    <span class="comment"># 选填，过滤条件</span></span><br><span class="line">    <span class="comment"># int_attr支持的操作符有&gt;、&gt;=、&lt;、&lt;=、=，str_attr支持的操作符有=和!=，多个条件之支持AND和OR进行连接。</span></span><br><span class="line">    <span class="comment"># 示例：</span></span><br><span class="line">    <span class="comment">#  1. 根据IntAttr过滤结果，int_attr&gt;=100</span></span><br><span class="line">    <span class="comment">#  2. 根据StrAttr过滤结果，str_attr!=&quot;value1&quot;</span></span><br><span class="line">    <span class="comment">#  3. 根据IntAttr和StrAttr联合过滤结果，int_attr=1000 AND str_attr=&quot;value1&quot;</span></span><br><span class="line">    request.<span class="built_in">filter</span>=<span class="string">&quot;int_attr=56 AND str_attr=\&quot;test\&quot;&quot;</span></span><br><span class="line">    config = Config()</span><br><span class="line">    <span class="comment"># 创建AK/SK参考：https://help.aliyun.com/document_detail/116401.htm</span></span><br><span class="line">    <span class="comment"># 阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。</span></span><br><span class="line">    <span class="comment"># 强烈建议不要把AccessKey ID和AccessKey Secret保存到工程代码里，否则可能导致AccessKey泄露，威胁您账号下所有资源的安全。</span></span><br><span class="line">    <span class="comment"># 本示例以将AccessKey ID和AccessKey Secret保存在环境变量为例说明。您也可以根据业务需要，保存到配置文件里。</span></span><br><span class="line">    config.access_key_id = os.environ[<span class="string">&#x27;CC_AK_ENV&#x27;</span>]</span><br><span class="line">    config.access_key_secret = os.environ[<span class="string">&#x27;CC_SK_ENV&#x27;</span>]</span><br><span class="line">    <span class="comment"># 请更换成您购买实例的区域，例如购买的是杭州区域，则endpoint=&#x27;imagesearch.cn-hangzhou.aliyuncs.com&#x27;</span></span><br><span class="line">    config.endpoint = <span class="string">&#x27;imagesearch.&lt;regionId&gt;.aliyuncs.com&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 以下为内网（VPC）访问方式</span></span><br><span class="line">    <span class="comment"># 说明：内网（VPC）访问：仅限同区域ECS或资源的访问，例如您购买的图像搜索实例是华东2（上海），那么您的ECS或资源也必须在华东2（上海）才能通过内网VPC地址访问图搜服务，否则会调用不通，如果遇到调用不通，请先检查您的ECS或资源与图像搜索是否在同一个区域。</span></span><br><span class="line">    <span class="comment"># config.endpointType = &#x27;internal&#x27;  // 如果是内网访问图像搜索服务，则endpointType为必填项，值统一为&#x27;internal&#x27;</span></span><br><span class="line">    <span class="comment"># config.endpoint = &#x27;imagesearch-vpc.&lt;regionId&gt;.aliyuncs.com&#x27; // 为内网访问（VPC）地址，请您更换为您购买实例的区域，例如您购买实例的区域为杭州，则endpoint=&#x27;imagesearch-vpc.cn-hangzhou.aliyuncs.com&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 请您更换成您购买实例的区域，例如您购买的实例区域为杭州，则更换为regionId=&#x27;cn-hangzhou&#x27;</span></span><br><span class="line">    config.region_id = <span class="string">&#x27;&lt;regionId&gt;&#x27;</span></span><br><span class="line">    config.<span class="built_in">type</span> = <span class="string">&#x27;access_key&#x27;</span></span><br><span class="line">    client = Client(config)</span><br><span class="line">    response = client.search_image_by_name(request)</span><br><span class="line">    <span class="built_in">print</span>(response.to_map())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    searchImageByName()</span><br></pre></td></tr></table></figure></li>
+<li>result:</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&#x27;RequestId&#x27;</span>: <span class="string">&#x27;7BC00158-3B9B-49C4-9E25-FFEC28AF3CE8&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;Success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">  <span class="string">&#x27;Code&#x27;</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="string">&#x27;Msg&#x27;</span>: <span class="string">&#x27;success&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;Auctions&#x27;</span>: [&#123;</span><br><span class="line">    <span class="string">&#x27;CategoryId&#x27;</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="string">&#x27;ProductId&#x27;</span>: <span class="string">&#x27;test-version-001&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;PicName&#x27;</span>: <span class="string">&#x27;test-version-001.jpg&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;CustomContent&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;score&#x27;</span>:<span class="number">1.0</span>,</span><br><span class="line">    <span class="string">&#x27;SortExprValues&#x27;</span>: <span class="string">&#x27;5.37633353624177e+24;0&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;IntAttr&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;StrAttr&#x27;</span>: <span class="literal">None</span></span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    <span class="string">&#x27;CategoryId&#x27;</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="string">&#x27;ProductId&#x27;</span>: <span class="string">&#x27;test_0426_1&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;PicName&#x27;</span>: <span class="string">&#x27;test_0426_1.png&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;CustomContent&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;score&#x27;</span>:<span class="number">1.0</span>,</span><br><span class="line">    <span class="string">&#x27;SortExprValues&#x27;</span>: <span class="string">&#x27;2.71303606033325;263&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;IntAttr&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;StrAttr&#x27;</span>: <span class="literal">None</span></span><br><span class="line">  &#125;],</span><br><span class="line">  <span class="string">&#x27;Head&#x27;</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;DocsReturn&#x27;</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="string">&#x27;DocsFound&#x27;</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="string">&#x27;SearchTime&#x27;</span>: <span class="number">15</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&#x27;PicInfo&#x27;</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;CategoryId&#x27;</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="string">&#x27;Region&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;AllCategories&#x27;</span>: [&#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">0</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Tops&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">1</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Dress&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">2</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Bottoms&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">3</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Bag&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">4</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Shoes&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">5</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Accessories&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">6</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Snack&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">7</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Makeup&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">8</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Bottle&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">9</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Furniture&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">20</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Toy&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">21</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Underwear&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">22</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Digital device&#x27;</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">&#x27;Id&#x27;</span>: <span class="number">88888888</span>,</span><br><span class="line">      <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;Other&#x27;</span></span><br><span class="line">    &#125;],</span><br><span class="line">    <span class="string">&#x27;MultiRegion&#x27;</span>: [&#123;</span><br><span class="line">        <span class="string">&#x27;Region&#x27;</span>: <span class="string">&#x27;112,440,76,387&#x27;</span></span><br><span class="line">     &#125;]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/24/colab/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -287,7 +422,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-25 11:36:06" itemprop="dateModified" datetime="2025-04-25T11:36:06+08:00">2025-04-25</time>
+                <time title="修改时间：2025-04-27 16:27:41" itemprop="dateModified" datetime="2025-04-27T16:27:41+08:00">2025-04-27</time>
               </span>
 
           
@@ -421,6 +556,282 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bears = bears.new(item_tfms=Resize(<span class="number">128</span>), batch_tfms=aug_transforms(mult=<span class="number">2</span>))</span><br><span class="line">dls = bears.dataloaders(path)</span><br><span class="line">dls.train.show_batch(max_n=<span class="number">8</span>, nrows=<span class="number">2</span>, unique=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="image/dlcf_02in06.png" alt=""></p>
 <p>现在我们已经将数据组装成适合模型训练的格式，让我们使用它来训练一个图像分类器。</p>
+<h1 id="训练您的模型，并使用它来清理您的数据"><a href="#训练您的模型，并使用它来清理您的数据" class="headerlink" title="训练您的模型，并使用它来清理您的数据"></a>训练您的模型，并使用它来清理您的数据</h1><p>现在是时候使用与第一章中相同的代码行来训练我们的熊分类器了。对于我们的问题，我们没有太多的数据（每种熊最多 150 张图片），因此为了训练我们的模型，我们将使用<code>RandomResizedCrop</code>，图像大小为 224 像素，这对于图像分类来说是相当标准的，并且使用默认的<code>aug_transforms</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bears = bears.new(</span><br><span class="line">    item_tfms=RandomResizedCrop(<span class="number">224</span>, min_scale=<span class="number">0.5</span>),</span><br><span class="line">    batch_tfms=aug_transforms())</span><br><span class="line">dls = bears.dataloaders(path)</span><br></pre></td></tr></table></figure>
+<p>现在我们可以按照通常的方式创建我们的<code>Learner</code>并进行微调：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">learn = cnn_learner(dls, resnet18, metrics=error_rate)</span><br><span class="line">learn.fine_tune(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>epoch</th>
+<th>train_loss</th>
+<th>valid_loss</th>
+<th>error_rate</th>
+<th>time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1.235733</td>
+<td>0.212541</td>
+<td>0.087302</td>
+<td>00:05</td>
+</tr>
+<tr>
+<td>epoch</td>
+<td>train_loss</td>
+<td>valid_loss</td>
+<td>error_rate</td>
+<td>time</td>
+</tr>
+<tr>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0.213371</td>
+<td>0.112450</td>
+<td>0.023810</td>
+<td>00:05</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.173855</td>
+<td>0.072306</td>
+<td>0.023810</td>
+<td>00:06</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.147096</td>
+<td>0.039068</td>
+<td>0.015873</td>
+<td>00:06</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.123984</td>
+<td>0.026801</td>
+<td>0.015873</td>
+<td>00:06</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>现在让我们看看模型犯的错误主要是认为灰熊是泰迪熊（这对安全性来说是不好的！），还是认为灰熊是黑熊，或者其他情况。为了可视化这一点，我们可以创建一个<em>混淆矩阵</em>：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">interp = ClassificationInterpretation.from_learner(learn)</span><br><span class="line">interp.plot_confusion_matrix()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/image/dlcf_02in07.png" alt=""></p>
+<p>行代表数据集中所有黑色、灰熊和泰迪熊，列分别代表模型预测为黑色、灰熊和泰迪熊的图像。因此，矩阵的对角线显示了被正确分类的图像，而非对角线的单元格代表被错误分类的图像。这是 fastai 允许您查看模型结果的许多方式之一。当然，这是使用验证集计算的。通过颜色编码，目标是在对角线以外的地方都是白色，而在对角线上我们希望是深蓝色。我们的熊分类器几乎没有犯错！</p>
+<p>看到我们的错误发生在哪里是有帮助的，以便确定它们是由数据集问题（例如，根本不是熊的图像，或者标记错误）还是模型问题（也许它无法处理使用不同光照或从不同角度拍摄的图像等）。为了做到这一点，我们可以根据损失对图像进行排序。</p>
+<p><em>损失</em>是一个数字，如果模型不正确（尤其是如果它对其不正确的答案也很自信），或者如果它是正确的但对其正确答案不自信，那么损失就会更高。在第二部分的开头，我们将深入学习损失是如何计算和在训练过程中使用的。现在，<code>plot_top_losses</code>向我们展示了数据集中损失最高的图像。正如输出的标题所说，每个图像都标有四个内容：预测、实际（目标标签）、损失和概率。这里的<em>概率</em>是模型对其预测分配的置信水平，从零到一：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">interp.plot_top_losses(<span class="number">5</span>, nrows=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in08.png" alt=""></p>
+<p>这个输出显示，损失最高的图像是一个被预测为“灰熊”的图像，且置信度很高。然而，根据我们的必应图像搜索，它被标记为“黑熊”。我们不是熊专家，但在我们看来，这个标签显然是错误的！我们可能应该将其标签更改为“灰熊”。</p>
+<p>进行数据清洗的直观方法是在<em>训练</em>模型之前进行。但正如您在本例中所看到的，模型可以帮助您更快速、更轻松地找到数据问题。因此，我们通常更喜欢先训练一个快速简单的模型，然后使用它来帮助我们进行数据清洗。</p>
+<p>fastai 包括一个方便的用于数据清洗的 GUI，名为<code>ImageClassifierCleaner</code>，它允许您选择一个类别和训练与验证集，并查看损失最高的图像（按顺序），以及菜单允许选择要删除或重新标记的图像：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cleaner = ImageClassifierCleaner(learn)</span><br><span class="line">cleaner</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in09.png" alt="清洁工具小部件"></p>
+<p>我们可以看到在我们的“黑熊”中有一张包含两只熊的图片：一只灰熊，一只黑熊。因此，我们应该在此图片下的菜单中选择<code>&lt;Delete&gt;</code>。<code>ImageClassifierCleaner</code>不会为您删除或更改标签；它只会返回要更改的项目的索引。因此，例如，要删除（取消链接）所有选定要删除的图像，我们将运行以下命令：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx <span class="keyword">in</span> cleaner.delete(): cleaner.fns[idx].unlink()</span><br></pre></td></tr></table></figure>
+<p>要移动我们选择了不同类别的图像，我们将运行以下命令：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx,cat <span class="keyword">in</span> cleaner.change(): shutil.move(<span class="built_in">str</span>(cleaner.fns[idx]), path/cat)</span><br></pre></td></tr></table></figure>
+<h1 id="Sylvain’s-tips-1"><a href="#Sylvain’s-tips-1" class="headerlink" title="Sylvain’s tips"></a>Sylvain’s tips</h1><p>清理数据并为您的模型做好准备是数据科学家面临的两个最大挑战；他们说这需要他们 90%的时间。fastai 库旨在提供尽可能简单的工具。</p>
+<p>在本书中，我们将看到更多基于模型驱动的数据清洗示例。一旦我们清理了数据，我们就可以重新训练我们的模型。自己尝试一下，看看你的准确性是否有所提高！</p>
+<h1 id="不需要大数据"><a href="#不需要大数据" class="headerlink" title="不需要大数据"></a>不需要大数据</h1><p>通过这些步骤清理数据集后，我们通常在这个任务上看到 100%的准确性。即使我们下载的图像比我们在这里使用的每类 150 张要少得多，我们也能看到这个结果。正如您所看到的，<em>您需要大量数据才能进行深度学习</em>的常见抱怨可能与事实相去甚远！</p>
+<p>现在我们已经训练了我们的模型，让我们看看如何部署它以便在实践中使用。</p>
+<h1 id="将您的模型转化为在线应用程序"><a href="#将您的模型转化为在线应用程序" class="headerlink" title="将您的模型转化为在线应用程序"></a>将您的模型转化为在线应用程序</h1><p>现在我们将看看将这个模型转化为一个可工作的在线应用程序需要什么。我们将只创建一个基本的工作原型；在本书中，我们没有范围来教授您有关 Web 应用程序开发的所有细节。</p>
+<h2 id="使用模型进行推断"><a href="#使用模型进行推断" class="headerlink" title="使用模型进行推断"></a>使用模型进行推断</h2><p>一旦您拥有一个满意的模型，您需要保存它，以便随后将其复制到一个服务器上，在那里您将在生产中使用它。请记住，模型由两部分组成：<em>架构</em>和训练的<em>参数</em>。保存模型的最简单方法是保存这两部分，因为这样，当您加载模型时，您可以确保具有匹配的架构和参数。要保存这两部分，请使用<code>export</code>方法。</p>
+<p>这种方法甚至保存了如何创建您的<code>DataLoaders</code>的定义。这很重要，因为否则您将不得不重新定义如何转换您的数据以便在生产中使用您的模型。fastai 默认使用验证集<code>DataLoader</code>进行推理，因此不会应用数据增强，这通常是您想要的。</p>
+<p>当您调用<code>export</code>时，fastai 将保存一个名为<em>export.pkl</em>的文件：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">learn.export()</span><br></pre></td></tr></table></figure>
+<p>让我们通过使用 fastai 添加到 Python 的<code>Path</code>类的<code>ls</code>方法来检查文件是否存在：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">path = Path()</span><br><span class="line">path.ls(file_exts=<span class="string">&#x27;.pkl&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="comment">#1) [Path(&#x27;export.pkl&#x27;)]</span></span><br></pre></td></tr></table></figure>
+<p>您需要这个文件在您部署应用程序的任何地方。现在，让我们尝试在我们的笔记本中创建一个简单的应用程序。</p>
+<p>当我们使用模型进行预测而不是训练时，我们称之为<em>推理</em>。要从导出的文件创建我们的推理学习者，我们使用<code>load_learner</code>（在这种情况下，这并不是真正必要的，因为我们已经在笔记本中有一个工作的<code>Learner</code>；我们在这里这样做是为了让您看到整个过程的始终）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">learn_inf = load_learner(path/<span class="string">&#x27;export.pkl&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>在进行推理时，通常一次只为一个图像获取预测。要做到这一点，将文件名传递给<code>predict</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">learn_inf.predict(<span class="string">&#x27;images/grizzly.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;grizzly&#x27;</span>, tensor(<span class="number">1</span>), tensor([<span class="number">9.0767e-06</span>, <span class="number">9.9999e-01</span>, <span class="number">1.5748e-07</span>]))</span><br></pre></td></tr></table></figure>
+<p>这返回了三个东西：以与您最初提供的格式相同的预测类别（在本例中，这是一个字符串），预测类别的索引以及每个类别的概率。最后两个是基于<code>DataLoaders</code>的<em>vocab</em>中类别的顺序；也就是说，所有可能类别的存储列表。在推理时，您可以将<code>DataLoaders</code>作为<code>Learner</code>的属性访问：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">learn_inf.dls.vocab</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="comment">#3) [&#x27;black&#x27;,&#x27;grizzly&#x27;,&#x27;teddy&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到，如果我们使用<code>predict</code>返回的整数索引到 vocab 中，我们会得到“灰熊”，这是预期的。另外，请注意，如果我们在概率列表中进行索引，我们会看到几乎有 1.00 的概率这是一只灰熊。</p>
+<p>我们知道如何从保存的模型中进行预测，因此我们拥有开始构建我们的应用程序所需的一切。我们可以直接在 Jupyter 笔记本中完成。</p>
+<h2 id="从模型创建一个笔记本应用"><a href="#从模型创建一个笔记本应用" class="headerlink" title="从模型创建一个笔记本应用"></a>从模型创建一个笔记本应用</h2><p>要在应用程序中使用我们的模型，我们可以简单地将<code>predict</code>方法视为常规函数。因此，使用任何应用程序开发人员可用的各种框架和技术都可以创建一个从模型创建的应用程序。</p>
+<p>然而，大多数数据科学家并不熟悉 Web 应用程序开发领域。因此，让我们尝试使用您目前已经了解的东西：事实证明，我们可以仅使用 Jupyter 笔记本创建一个完整的工作 Web 应用程序！使这一切成为可能的两个因素如下：</p>
+<ul>
+<li><p>IPython 小部件(ipywidgets)</p>
+</li>
+<li><p>Voilà</p>
+</li>
+</ul>
+<p><em>IPython 小部件</em>是 GUI 组件，它在 Web 浏览器中将 JavaScript 和 Python 功能结合在一起，并可以在 Jupyter 笔记本中创建和使用。例如，我们在本章前面看到的图像清理器完全是用 IPython 小部件编写的。但是，我们不希望要求我们的应用程序用户自己运行 Jupyter。</p>
+<p>这就是<em>Voilà</em>存在的原因。它是一个使 IPython 小部件应用程序可供最终用户使用的系统，而无需他们使用 Jupyter。Voilà利用了一个事实，即笔记本<em>已经是</em>一种 Web 应用程序，只是另一个复杂的依赖于另一个 Web 应用程序：Jupyter 本身的 Web 应用程序。基本上，它帮助我们自动将我们已经隐式创建的复杂 Web 应用程序（笔记本）转换为一个更简单、更易部署的 Web 应用程序，它的功能类似于普通的 Web 应用程序，而不是笔记本。</p>
+<p>但是我们仍然可以在笔记本中开发的优势，因此使用 ipywidgets，我们可以逐步构建我们的 GUI。我们将使用这种方法创建一个简单的图像分类器。首先，我们需要一个文件上传小部件：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">btn_upload = widgets.FileUpload()</span><br><span class="line">btn_upload</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_01in02.png" alt="上传按钮"></p>
+<p>现在我们可以获取图像：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img = PILImage.create(btn_upload.data[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><img src="img/dlcf_02in11.png" alt="表示图像的输出小部件"></p>
+<p>我们可以使用<code>Output</code>小部件来显示它：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">out_pl = widgets.Output()</span><br><span class="line">out_pl.clear_output()</span><br><span class="line"><span class="keyword">with</span> out_pl: display(img.to_thumb(<span class="number">128</span>,<span class="number">128</span>))</span><br><span class="line">out_pl</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in11.png" alt="表示图像的输出小部件"></p>
+<p>然后我们可以得到我们的预测：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pred,pred_idx,probs = learn_inf.predict(img)</span><br></pre></td></tr></table></figure>
+<p>并使用<code>Label</code>来显示它们：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lbl_pred = widgets.Label()</span><br><span class="line">lbl_pred.value = <span class="string">f&#x27;Prediction: <span class="subst">&#123;pred&#125;</span>; Probability: <span class="subst">&#123;probs[pred_idx]:<span class="number">.04</span>f&#125;</span>&#x27;</span></span><br><span class="line">lbl_pred</span><br></pre></td></tr></table></figure>
+<p><code>预测：灰熊；概率：1.0000</code></p>
+<p>我们需要一个按钮来进行分类。它看起来与上传按钮完全相同：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">btn_run = widgets.Button(description=<span class="string">&#x27;Classify&#x27;</span>)</span><br><span class="line">btn_run</span><br></pre></td></tr></table></figure>
+<p>我们还需要一个<em>点击事件处理程序</em>；也就是说，当按下按钮时将调用的函数。我们可以简单地复制之前的代码行：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">on_click_classify</span>(<span class="params">change</span>):</span><br><span class="line">    img = PILImage.create(btn_upload.data[-<span class="number">1</span>])</span><br><span class="line">    out_pl.clear_output()</span><br><span class="line">    <span class="keyword">with</span> out_pl: display(img.to_thumb(<span class="number">128</span>,<span class="number">128</span>))</span><br><span class="line">    pred,pred_idx,probs = learn_inf.predict(img)</span><br><span class="line">    lbl_pred.value = <span class="string">f&#x27;Prediction: <span class="subst">&#123;pred&#125;</span>; Probability: <span class="subst">&#123;probs[pred_idx]:<span class="number">.04</span>f&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line">btn_run.on_click(on_click_classify)</span><br></pre></td></tr></table></figure>
+<p>您现在可以通过单击按钮来测试按钮，您应该会看到图像和预测会自动更新！</p>
+<p>现在，我们可以将它们全部放在一个垂直框（<code>VBox</code>）中，以完成我们的 GUI：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VBox([widgets.Label(<span class="string">&#x27;Select your bear!&#x27;</span>),</span><br><span class="line">      btn_upload, btn_run, out_pl, lbl_pred])</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in13.png" alt="整个小部件"></p>
+<p>我们已经编写了所有必要的应用程序代码。下一步是将其转换为我们可以部署的内容。</p>
+<h2 id="将您的笔记本变成一个真正的应用程序"><a href="#将您的笔记本变成一个真正的应用程序" class="headerlink" title="将您的笔记本变成一个真正的应用程序"></a>将您的笔记本变成一个真正的应用程序</h2><p>现在我们在这个 Jupyter 笔记本中已经让一切运转起来了，我们可以创建我们的应用程序。为此，请启动一个新的笔记本，并仅添加创建和显示所需小部件的代码，以及任何要显示的文本的 Markdown。查看书中存储库中的<em>bear_classifier</em>笔记本，看看我们创建的简单笔记本应用程序。</p>
+<p>接下来，如果您尚未安装 Voilà，请将这些行复制到笔记本单元格中并执行：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!pip install voila</span><br><span class="line">!jupyter serverextension enable voila --sys-prefix</span><br></pre></td></tr></table></figure>
+<p>以<code>!</code>开头的单元格不包含 Python 代码，而是包含传递给您的 shell（bash，Windows PowerShell 等）的代码。如果您习惯使用命令行，我们将在本书中更详细地讨论这一点，您当然可以直接在终端中键入这两行（不带<code>!</code>前缀）。在这种情况下，第一行安装<code>voila</code>库和应用程序，第二行将其连接到您现有的 Jupyter 笔记本。</p>
+<p>Voilà运行 Jupyter 笔记本，就像您现在使用的 Jupyter 笔记本服务器一样，但它还做了一件非常重要的事情：它删除了所有单元格输入，仅显示输出（包括 ipywidgets），以及您的 Markdown 单元格。因此，剩下的是一个 Web 应用程序！要将您的笔记本视为 Voilà Web 应用程序，请将浏览器 URL 中的“notebooks”一词替换为“voila/render”。您将看到与您的笔记本相同的内容，但没有任何代码单元格。</p>
+<p>当然，您不需要使用 Voilà或 ipywidgets。您的模型只是一个可以调用的函数（<code>pred，pred_idx，probs = learn.predict（img）</code>），因此您可以将其与任何框架一起使用，托管在任何平台上。您可以将在 ipywidgets 和 Voilà中原型设计的内容稍后转换为常规 Web 应用程序。我们在本书中展示这种方法，因为我们认为这是数据科学家和其他不是 Web 开发专家的人从其模型创建应用程序的绝佳方式。</p>
+<p>我们有了我们的应用程序；现在让我们部署它！</p>
+<h2 id="部署您的应用程序"><a href="#部署您的应用程序" class="headerlink" title="部署您的应用程序"></a>部署您的应用程序</h2><p>正如您现在所知，几乎任何有用的深度学习模型都需要 GPU 来训练。那么，在生产中使用该模型需要 GPU 吗？不需要！您几乎可以肯定<em>在生产中不需要 GPU 来提供您的模型</em>。这样做有几个原因：</p>
+<ul>
+<li><p>正如我们所见，GPU 仅在并行执行大量相同工作时才有用。如果您正在进行（比如）图像分类，通常一次只会对一个用户的图像进行分类，而且通常在一张图像中没有足够的工作量可以让 GPU 忙碌足够长的时间以使其非常有效。因此，CPU 通常更具成本效益。</p>
+</li>
+<li><p>另一种选择可能是等待一些用户提交他们的图像，然后将它们批量处理并一次性在 GPU 上处理。但是这样会让用户等待，而不是立即得到答案！而且您需要一个高流量的网站才能实现这一点。如果您确实需要这种功能，您可以使用诸如 Microsoft 的<a target="_blank" rel="noopener" href="https://oreil.ly/nj-6f">ONNX Runtime</a>或<a target="_blank" rel="noopener" href="https://oreil.ly/ajcaP">AWS SageMaker</a>之类的工具。</p>
+</li>
+<li><p>处理 GPU 推理的复杂性很大。特别是，GPU 的内存需要仔细手动管理，您需要一个仔细的排队系统，以确保一次只处理一个批次。</p>
+</li>
+<li><p>CPU 服务器的市场竞争要比 GPU 服务器更激烈，因此 CPU 服务器有更便宜的选项可供选择。</p>
+</li>
+</ul>
+<p>由于 GPU 服务的复杂性，许多系统已经出现尝试自动化此过程。然而，管理和运行这些系统也很复杂，通常需要将您的模型编译成专门针对该系统的不同形式。通常最好避免处理这种复杂性，直到/除非您的应用程序变得足够受欢迎，以至于您有明显的财务理由这样做。</p>
+<p>至少对于您的应用程序的初始原型以及您想展示的任何爱好项目，您可以轻松免费托管它们。最佳位置和最佳方式随时间而变化，因此请查看本书网站以获取最新的建议。由于我们在 2020 年初撰写本书，最简单（且免费！）的方法是使用<a target="_blank" rel="noopener" href="https://mybinder.org">Binder</a>。要在 Binder 上发布您的 Web 应用程序，请按照以下步骤操作：</p>
+<ol>
+<li><p>将您的笔记本添加到<a target="_blank" rel="noopener" href="http://github.com">GitHub 存储库</a>。</p>
+</li>
+<li><p>将该存储库的 URL 粘贴到 Binder 的 URL 字段中，如图 2-4 所示。</p>
+</li>
+<li><p>将文件下拉菜单更改为选择 URL。</p>
+</li>
+<li><p>在“要打开的 URL”字段中，输入<code>/voila/render/*name*.ipynb</code>（将<em><code>name</code></em>替换为您笔记本的名称）。</p>
+</li>
+<li><p>单击右下角的剪贴板按钮以复制 URL，并将其粘贴到安全位置。</p>
+</li>
+<li><p>单击“启动”。</p>
+</li>
+</ol>
+<p><img src="/image/dlcf_0204.png" alt="部署到 Binder"></p>
+<h6 id="图-2-4-部署到-Binder"><a href="#图-2-4-部署到-Binder" class="headerlink" title="图 2-4. 部署到 Binder"></a>图 2-4. 部署到 Binder</h6><p>第一次执行此操作时，Binder 将花费大约 5 分钟来构建您的站点。在幕后，它正在查找一个可以运行您的应用程序的虚拟机，分配存储空间，并收集所需的文件以用于 Jupyter、您的笔记本以及将您的笔记本呈现为 Web 应用程序。</p>
+<p>最后，一旦启动应用程序运行，它将导航您的浏览器到您的新 Web 应用程序。您可以分享您复制的 URL 以允许其他人访问您的应用程序。</p>
+<p>要了解部署 Web 应用程序的其他（免费和付费）选项，请务必查看<a target="_blank" rel="noopener" href="https://book.fast.ai">书籍网站</a>。</p>
+<p>您可能希望将应用程序部署到移动设备或边缘设备，如树莓派。有许多库和框架允许您将模型直接集成到移动应用程序中。但是，这些方法往往需要许多额外的步骤和样板文件，并且并不总是支持您的模型可能使用的所有 PyTorch 和 fastai 层。此外，您所做的工作将取决于您针对部署的移动设备的类型 - 您可能需要做一些工作以在 iOS 设备上运行，不同的工作以在较新的 Android 设备上运行，不同的工作以在较旧的 Android 设备上运行，等等。相反，我们建议在可能的情况下，将模型本身部署到服务器，并让您的移动或边缘应用程序连接到它作为 Web 服务。</p>
+<p>这种方法有很多优点。初始安装更容易，因为您只需部署一个小型 GUI 应用程序，该应用程序连接到服务器执行所有繁重的工作。更重要的是，核心逻辑的升级可以在您的服务器上进行，而不需要分发给所有用户。您的服务器将拥有比大多数边缘设备更多的内存和处理能力，并且如果您的模型变得更加苛刻，那么扩展这些资源将更容易。您在服务器上拥有的硬件也将更加标准化，并且更容易受到 fastai 和 PyTorch 的支持，因此您不必将模型编译成不同的形式。</p>
+<p>当然也有缺点。你的应用程序将需要网络连接，每次调用模型时都会有一些延迟。（神经网络模型本来就需要一段时间来运行，所以这种额外的网络延迟在实践中可能对用户没有太大影响。事实上，由于你可以在服务器上使用更好的硬件，总体延迟甚至可能比在本地运行时更少！）此外，如果你的应用程序使用敏感数据，你的用户可能会担心采用将数据发送到远程服务器的方法，因此有时隐私考虑将意味着你需要在边缘设备上运行模型（通过在公司防火墙内部设置<em>本地</em>服务器可能可以避免这种情况）。管理复杂性和扩展服务器也可能会带来额外的开销，而如果你的模型在边缘设备上运行，每个用户都会带来自己的计算资源，这将导致随着用户数量的增加更容易扩展（也称为<em>水平扩展</em>）。</p>
+<h1 id="Alexis-说"><a href="#Alexis-说" class="headerlink" title="Alexis 说"></a>Alexis 说</h1><p>我有机会近距离看到移动机器学习领域在我的工作中是如何变化的。我们提供一个依赖于计算机视觉的 iPhone 应用程序，多年来我们在云中运行我们自己的计算机视觉模型。那时这是唯一的方法，因为那些模型需要大量的内存和计算资源，并且需要几分钟来处理输入。这种方法不仅需要构建模型（有趣！），还需要构建基础设施来确保一定数量的“计算工作机器”始终在运行（可怕），如果流量增加，更多的机器会自动上线，有稳定的存储用于大型输入和输出，iOS 应用程序可以知道并告诉用户他们的工作进展如何等等。如今，苹果提供了 API，可以将模型转换为在设备上高效运行，大多数 iOS 设备都有专用的 ML 硬件，所以这是我们用于新模型的策略。这仍然不容易，但在我们的情况下，为了更快的用户体验和更少地担心服务器，这是值得的。对你来说有效的方法将取决于你试图创建的用户体验以及你个人认为容易做的事情。如果你真的知道如何运行服务器，那就去做。如果你真的知道如何构建本地移动应用程序，那就去做。有很多条路通往山顶。</p>
+<p>总的来说，我们建议在可能的情况下尽可能使用简单的基于 CPU 的服务器方法，只要你能够做到。如果你足够幸运拥有一个非常成功的应用程序，那么你将能够在那个时候为更复杂的部署方法进行投资。</p>
+<p>恭喜你——你已经成功构建了一个深度学习模型并部署了它！现在是一个很好的时机停下来思考可能出现的问题。</p>
+<h1 id="如何避免灾难"><a href="#如何避免灾难" class="headerlink" title="如何避免灾难"></a>如何避免灾难</h1><p>在实践中，一个深度学习模型只是一个更大系统中的一部分。正如我们在本章开头讨论的那样，构建数据产品需要考虑整个端到端的过程，从概念到在生产中使用。在这本书中，我们无法希望涵盖所有管理部署数据产品的复杂性，比如管理多个模型版本，A/B 测试，金丝雀发布，刷新数据（我们应该一直增加和增加我们的数据集，还是应该定期删除一些旧数据？），处理数据标记，监控所有这些，检测模型腐烂等等。</p>
+<p>在本节中，我们将概述一些需要考虑的最重要问题；关于部署问题的更详细讨论，我们建议您参考 Emmanuel Ameisin（O’Reilly）的优秀著作《构建机器学习驱动的应用程序》。</p>
+<p>需要考虑的最大问题之一是，理解和测试深度学习模型的行为比大多数其他代码更困难。在正常软件开发中，您可以分析软件所采取的确切步骤，并仔细研究这些步骤中哪些与您试图创建的期望行为相匹配。但是，对于神经网络，行为是从模型尝试匹配训练数据中产生的，而不是精确定义的。</p>
+<p>这可能导致灾难！例如，假设我们真的正在推出一个熊检测系统，将连接到国家公园露营地周围的视频摄像头，并警告露营者有熊靠近。如果我们使用下载的数据集训练的模型，实际上会出现各种问题，比如：</p>
+<ul>
+<li><p>处理视频数据而不是图像</p>
+</li>
+<li><p>处理可能不在数据集中出现的夜间图像</p>
+</li>
+<li><p>处理低分辨率摄像头图像</p>
+</li>
+<li><p>确保结果返回得足够快以在实践中有用</p>
+</li>
+<li><p>在照片中很少见到的位置识别熊（例如从背后，部分被灌木覆盖，或者离摄像机很远）</p>
+</li>
+</ul>
+<p>问题的一个重要部分是，人们最有可能上传到互联网的照片是那些能够清晰艺术地展示主题的照片，而这并不是该系统将获得的输入类型。因此，我们可能需要进行大量自己的数据收集和标记以创建一个有用的系统。</p>
+<p>这只是更一般的“域外”数据问题的一个例子。也就是说，在生产中，我们的模型可能看到与训练时非常不同的数据。这个问题没有完全的技术解决方案；相反，我们必须谨慎地推出技术。</p>
+<p>我们还需要小心的其他原因。一个非常常见的问题是<em>域漂移</em>，即我们的模型看到的数据类型随着时间的推移而发生变化。例如，一个保险公司可能将深度学习模型用作其定价和风险算法的一部分，但随着时间的推移，公司吸引的客户类型和代表的风险类型可能发生如此大的变化，以至于原始训练数据不再相关。</p>
+<p>域外数据和域漂移是更大问题的例子：您永远无法完全理解神经网络的所有可能行为，因为它们有太多参数。这是它们最好特性的自然缺点——它们的灵活性，使它们能够解决我们甚至可能无法完全指定首选解决方案的复杂问题。然而，好消息是，有办法通过一个经过深思熟虑的过程来减轻这些风险。这些细节将根据您正在解决的问题的细节而变化，但我们将尝试提出一个高层次的方法，总结在图 2-5 中，我们希望这将提供有用的指导。</p>
+<p><img src="/image/dlcf_0205.png" alt="部署过程"></p>
+<h1 id="杰里米说"><a href="#杰里米说" class="headerlink" title="杰里米说"></a>杰里米说</h1><p>20 年前，我创办了一家名为 Optimal Decisions 的公司，利用机器学习和优化帮助巨大的保险公司设定价格，影响数千亿美元的风险。我们使用这里描述的方法来管理可能出错的潜在风险。此外，在与客户合作将任何东西投入生产之前，我们尝试通过在他们去年的数据上测试端到端系统的影响来模拟影响。将这些新算法投入生产总是一个非常紧张的过程，但每次推出都取得了成功。</p>
+<h2 id="意想不到的后果和反馈循环"><a href="#意想不到的后果和反馈循环" class="headerlink" title="意想不到的后果和反馈循环"></a>意想不到的后果和反馈循环</h2><p>推出模型的最大挑战之一是，您的模型可能会改变其所属系统的行为。例如，考虑一个“预测执法”算法，它预测某些社区的犯罪率更高，导致更多警察被派往这些社区，这可能导致这些社区记录更多犯罪，依此类推。在皇家统计学会的论文“预测和服务？”中，Kristian Lum 和 William Isaac 观察到“预测性执法的命名恰如其分：它预测未来的执法，而不是未来的犯罪。”</p>
+<p>在这种情况下的部分问题是，在存在偏见的情况下（我们将在下一章中深入讨论），<em>反馈循环</em>可能导致该偏见的负面影响变得越来越严重。例如，在美国已经存在着在种族基础上逮捕率存在显著偏见的担忧。根据美国公民自由联盟的说法，“尽管使用率大致相等，黑人因大麻被逮捕的可能性是白人的 3.73 倍。”这种偏见的影响，以及在美国许多地区推出预测性执法算法，导致 Bärí Williams 在<em>纽约时报</em>中写道：“在我的职业生涯中引起如此多兴奋的技术正在以可能意味着在未来几年，我的 7 岁儿子更有可能因为他的种族和我们居住的地方而被无故定性或逮捕，甚至更糟。”</p>
+<p>在推出重要的机器学习系统之前，一个有用的练习是考虑这个问题：“如果它真的很成功会发生什么？”换句话说，如果预测能力非常高，对行为的影响非常显著，那么会发生什么？谁会受到最大影响？最极端的结果可能是什么样的？你怎么知道到底发生了什么？</p>
+<p>这样的思考练习可能会帮助你制定一个更加谨慎的推出计划，配备持续监控系统和人类监督。当然，如果人类监督没有被听取，那么它就没有用，因此确保可靠和有弹性的沟通渠道存在，以便正确的人会意识到问题并有权力解决它们。</p>
+<h1 id="课后练习"><a href="#课后练习" class="headerlink" title="课后练习"></a>课后练习</h1><ol>
+<li><p>文本模型目前存在哪些主要不足之处？</p>
+</li>
+<li><p>文本生成模型可能存在哪些负面社会影响？</p>
+</li>
+<li><p>在模型可能犯错且这些错误可能有害的情况下，自动化流程的一个好的替代方案是什么？</p>
+</li>
+<li><p>深度学习在哪种表格数据上特别擅长？</p>
+</li>
+<li><p>直接使用深度学习模型进行推荐系统的一个主要缺点是什么？</p>
+</li>
+<li><p>驱动器方法的步骤是什么？</p>
+</li>
+<li><p>驱动器方法的步骤如何映射到推荐系统？</p>
+</li>
+<li><p>使用你策划的数据创建一个图像识别模型，并将其部署在网络上。</p>
+</li>
+<li><p><code>DataLoaders</code>是什么？</p>
+</li>
+<li><p>我们需要告诉 fastai 创建<code>DataLoaders</code>的四件事是什么？</p>
+</li>
+<li><p><code>DataBlock</code>中的<code>splitter</code>参数是做什么的？</p>
+</li>
+<li><p>我们如何确保随机分割总是给出相同的验证集？</p>
+</li>
+<li><p>哪些字母通常用来表示自变量和因变量？</p>
+</li>
+<li><p>裁剪、填充和压缩调整方法之间有什么区别？在什么情况下你会选择其中之一？</p>
+</li>
+<li><p>什么是数据增强？为什么需要它？</p>
+</li>
+<li><p>提供一个例子，说明熊分类模型在生产中可能因训练数据的结构或风格差异而效果不佳。</p>
+</li>
+<li><p><code>item_tfms</code>和<code>batch_tfms</code>之间有什么区别？</p>
+</li>
+<li><p>混淆矩阵是什么？</p>
+</li>
+<li><p><code>export</code>保存了什么？</p>
+</li>
+<li><p>当我们使用模型进行预测而不是训练时，这被称为什么？</p>
+</li>
+<li><p>IPython 小部件是什么？</p>
+</li>
+<li><p>什么时候会使用 CPU 进行部署？什么时候 GPU 可能更好？</p>
+</li>
+<li><p>将应用部署到服务器而不是客户端（或边缘）设备（如手机或 PC）的缺点是什么？</p>
+</li>
+<li><p>在实践中推出熊警告系统时可能出现的三个问题的例子是什么？</p>
+</li>
+<li><p>什么是域外数据？</p>
+</li>
+<li><p>什么是领域转移？</p>
+</li>
+<li><p>部署过程中的三个步骤是什么？</p>
+</li>
+</ol>
+<h2 id="进一步研究"><a href="#进一步研究" class="headerlink" title="进一步研究"></a>进一步研究</h2><ol>
+<li><p>考虑一下驱动器方法如何映射到你感兴趣的项目或问题。</p>
+</li>
+<li><p>在什么情况下最好避免某些类型的数据增强？</p>
+</li>
+<li><p>对于你有兴趣应用深度学习的项目，考虑一下这个思维实验，“如果它进展得非常顺利会发生什么？”</p>
+</li>
+<li><p>开始写博客，撰写你的第一篇博客文章。例如，写一下你认为深度学习在你感兴趣的领域可能有用的地方。</p>
+</li>
+</ol>
 
       
     </div>
@@ -997,7 +1408,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-25 12:06:38" itemprop="dateModified" datetime="2025-04-25T12:06:38+08:00">2025-04-25</time>
+                <time title="修改时间：2025-04-27 16:26:26" itemprop="dateModified" datetime="2025-04-27T16:26:26+08:00">2025-04-27</time>
               </span>
 
           
@@ -1011,7 +1422,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="上传blog方法"><a href="#上传blog方法" class="headerlink" title="上传blog方法"></a>上传blog方法</h3><p>在md文件中写好了文档之后保存并放置在C:\Users\song\Desktop\blog\diary\source_posts文件夹中然后依次输入下列指令上传</p>
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为什么要写这个博客，因为在fastai课程中看到其中的一个观点：</p>
+<h2 id="开始写作吧！"><a href="#开始写作吧！" class="headerlink" title="开始写作吧！"></a>开始写作吧！</h2><p>我们的学生发现最有帮助巩固对这一材料的理解的事情之一是把它写下来。尝试教给别人是对你对一个主题的理解的最好测试。即使你从不向任何人展示你的写作，这也是有帮助的，但如果你分享了，那就更好了！因此，我们建议，如果你还没有开始写博客，那么现在就开始吧。现在你已经完成了这一章并学会了如何训练和部署模型，你已经可以写下你的第一篇关于深度学习之旅的博客文章了。你有什么惊讶？你在你的领域看到了深度学习的机会？你看到了什么障碍？</p>
+<p>fast.ai 的联合创始人 Rachel Thomas 在文章<a target="_blank" rel="noopener" href="https://oreil.ly/X9-3L">“为什么你（是的，你）应该写博客”</a>中写道：</p>
+<blockquote>
+<p>我会给年轻的自己的最重要建议是尽早开始写博客。以下是一些写博客的理由：</p>
+<ul>
+<li>这就像一份简历，只不过更好。我知道有几个人因为写博客文章而得到了工作机会！</li>
+<li></li>
+<li>帮助你学习。组织知识总是帮助我整合自己的想法。是否理解某事的一个测试是你是否能够向别人解释它。博客文章是一个很好的方式。</li>
+<li></li>
+<li>我通过我的博客文章收到了参加会议的邀请和演讲邀请。我因为写了一篇关于我不喜欢 TensorFlow 的博客文章而被邀请参加 TensorFlow Dev Summit（太棒了！）。</li>
+<li></li>
+<li>结识新朋友。我认识了几个回复我写的博客文章的人。</li>
+<li></li>
+<li>节省时间。每当你通过电子邮件多次回答同一个问题时，你应该把它变成一篇博客文章，这样下次有人问起时你就更容易分享了。</li>
+</ul>
+</blockquote>
+<p>也许她最重要的建议是：</p>
+<blockquote>
+<p>你最适合帮助比你落后一步的人。这些材料仍然新鲜在你的脑海中。许多专家已经忘记了作为初学者（或中级学习者）时的感受，忘记了当你第一次听到这个话题时为什么难以理解。你特定背景、风格和知识水平的背景将为你所写的内容带来不同的视角。</p>
+</blockquote>
+<p>我们已经提供了如何在附录 A 中设置博客的详细信息。如果你还没有博客，现在就看看吧，因为我们有一个非常好的方法让你免费开始写博客，没有广告，甚至可以使用 Jupyter Notebook！</p>
+<h3 id="上传blog方法"><a href="#上传blog方法" class="headerlink" title="上传blog方法"></a>上传blog方法</h3><p>在md文件中写好了文档之后保存并放置在C:\Users\song\Desktop\blog\diary\source_posts文件夹中然后依次输入下列指令上传</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
@@ -1103,7 +1536,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
