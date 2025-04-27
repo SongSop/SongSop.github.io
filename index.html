@@ -422,7 +422,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-27 17:52:57" itemprop="dateModified" datetime="2025-04-27T17:52:57+08:00">2025-04-27</time>
+                <time title="修改时间：2025-04-27 17:56:51" itemprop="dateModified" datetime="2025-04-27T17:56:51+08:00">2025-04-27</time>
               </span>
 
           
@@ -899,8 +899,8 @@
 </ul>
 <p>看到我们的错误发生在哪里是有帮助的，以便确定它们是由数据集问题（例如，根本不是熊的图像，或者标记错误）还是模型问题（也许它无法处理使用不同光照或从不同角度拍摄的图像等）。为了做到这一点，我们可以根据损失对图像进行排序。</p>
 <p><em>损失</em>是一个数字，如果模型不正确（尤其是如果它对其不正确的答案也很自信），或者如果它是正确的但对其正确答案不自信，那么损失就会更高。在第二部分的开头，我们将深入学习损失是如何计算和在训练过程中使用的。现在，<code>plot_top_losses</code>向我们展示了数据集中损失最高的图像。正如输出的标题所说，每个图像都标有四个内容：预测、实际（目标标签）、损失和概率。这里的<em>概率</em>是模型对其预测分配的置信水平，从零到一：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">interp.plot_top_losses(<span class="number">5</span>, nrows=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p><img src="/image/dlcf_02in08.png" alt=""></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">interp = ClassificationInterpretation.from_learner(learn)</span><br><span class="line">interp.plot_confusion_matrix()</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_02in07.png" alt=""></p>
 <ol>
 <li><code>export</code>保存了什么？</li>
 </ol>
