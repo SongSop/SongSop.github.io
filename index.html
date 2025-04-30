@@ -1870,10 +1870,87 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="关键交互时序"><a href="#关键交互时序" class="headerlink" title="关键交互时序"></a>关键交互时序</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sequenceDiagram</span><br><span class="line">    participant User</span><br><span class="line">    participant ASR</span><br><span class="line">    participant LLM</span><br><span class="line">    participant TTS</span><br><span class="line"></span><br><span class="line">    User-&gt;&gt;ASR: 说话</span><br><span class="line">    ASR-&gt;&gt;ASR: 实时识别</span><br><span class="line">    ASR-&gt;&gt;Main: 触发asr_callback</span><br><span class="line">    Main-&gt;&gt;ASR: 暂停识别</span><br><span class="line">    Main-&gt;&gt;LLM: 发送问题</span><br><span class="line">    LLM-&gt;&gt;TTS: 流式返回响应</span><br><span class="line">    TTS-&gt;&gt;TTS: 合成语音队列</span><br><span class="line">    TTS-&gt;&gt;Audio: 播放音频</span><br><span class="line">    loop 等待播放完成</span><br><span class="line">        Main-&gt;&gt;TTS: 检查缓冲区状态</span><br><span class="line">        TTS--&gt;&gt;Main: 状态反馈</span><br><span class="line">    end</span><br><span class="line">    Main-&gt;&gt;ASR: 恢复识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="大语言模型测试的基本流程"><a href="#大语言模型测试的基本流程" class="headerlink" title="大语言模型测试的基本流程"></a>大语言模型测试的基本流程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[程序启动] --&gt; B[注册信号处理]</span><br><span class="line">    B --&gt; C[初始化PortAudio音频管理]</span><br><span class="line">    C --&gt; D[初始化LLM服务器]</span><br><span class="line">    D --&gt; E[设置LLM回调函数]</span><br><span class="line">    E --&gt; F[初始化ASR模块]</span><br><span class="line">    F --&gt; G[设置ASR回调函数]</span><br><span class="line">    G --&gt; H[启动ASR录音]</span><br><span class="line">    H --&gt; I[进入主循环休眠10分钟]</span><br><span class="line">    </span><br><span class="line">    subgraph 语音识别流程</span><br><span class="line">        H --&gt; J[ASR持续采集音频]</span><br><span class="line">        J --&gt; K&#123;检测到有效语音?&#125;</span><br><span class="line">        K -- 是 --&gt; L[暂停ASR录音]</span><br><span class="line">        L --&gt; M[发送文本到LLM服务器]</span><br><span class="line">        K -- 否 --&gt; J</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph LLM处理流程</span><br><span class="line">        M --&gt; N[LLM处理请求]</span><br><span class="line">        N --&gt; O[处理完成调用llm_server_callback]</span><br><span class="line">        O --&gt; P[记录响应内容]</span><br><span class="line">        P --&gt; Q[恢复ASR录音]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph 信号处理流程</span><br><span class="line">        R[用户按下Ctrl+C] --&gt; S[触发signalHandler]</span><br><span class="line">        S --&gt; T[停止ASR服务]</span><br><span class="line">        T --&gt; U[释放资源]</span><br><span class="line">        U --&gt; V[退出程序]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    I --&gt; R</span><br><span class="line">    Q --&gt; J</span><br></pre></td></tr></table></figure>
-<h1 id="文字转语音测试流程"><a href="#文字转语音测试流程" class="headerlink" title="文字转语音测试流程"></a>文字转语音测试流程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[程序启动] --&gt; B[注册信号处理]</span><br><span class="line">    B --&gt; C[初始化PortAudio]</span><br><span class="line">    C --&gt; D[初始化TTS服务]</span><br><span class="line">    D --&gt; E[启动TTS音频输出]</span><br><span class="line">    E --&gt; F[初始化LLM客户端]</span><br><span class="line">    F --&gt; G[设置LLM回调]</span><br><span class="line">    G --&gt; H[初始化ASR引擎]</span><br><span class="line">    H --&gt; I[发送初始问候请求]</span><br><span class="line">    I --&gt; J[等待问候播放完成]</span><br><span class="line">    J --&gt; K[启动ASR监听]</span><br><span class="line">    K --&gt; L[进入主循环]</span><br><span class="line"></span><br><span class="line">    subgraph 语音交互流程</span><br><span class="line">        L --&gt; M&#123;ASR检测到语音&#125;</span><br><span class="line">        M -- 是 --&gt; N[暂停ASR]</span><br><span class="line">        N --&gt; O[发送问题到LLM]</span><br><span class="line">        O --&gt; P[LLM生成响应]</span><br><span class="line">        P --&gt; Q[TTS合成语音]</span><br><span class="line">        Q --&gt; R[音频播放]</span><br><span class="line">        R --&gt; S[等待播放完成]</span><br><span class="line">        S --&gt; T[恢复ASR监听]</span><br><span class="line">        M -- 否 --&gt; L</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph 终止流程</span><br><span class="line">        U[用户按下Ctrl+C] --&gt; V[触发signalHandler]</span><br><span class="line">        V --&gt; W[停止ASR服务]</span><br><span class="line">        W --&gt; X[停止TTS输出]</span><br><span class="line">        X --&gt; Y[释放所有资源]</span><br><span class="line">        Y --&gt; Z[退出程序]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    style A fill:#4CAF50,stroke:#388E3C</span><br><span class="line">    style U fill:#FF5252,stroke:#D32F2F</span><br><span class="line">    style M fill:#2196F3,stroke:#1976D2</span><br></pre></td></tr></table></figure>
-<h2 id="建议结合流程图中的颜色标识理解各模块作用："><a href="#建议结合流程图中的颜色标识理解各模块作用：" class="headerlink" title="建议结合流程图中的颜色标识理解各模块作用："></a>建议结合流程图中的颜色标识理解各模块作用：</h2><ol>
+          <h1 id="关键交互时序"><a href="#关键交互时序" class="headerlink" title="关键交互时序"></a>关键交互时序</h1><pre class="mermaid">
+sequenceDiagram
+    participant User
+    participant ASR
+    participant LLM
+    participant TTS
+
+    User->>ASR: 说话
+    ASR->>ASR: 实时识别
+    ASR->>Main: 触发asr_callback
+    Main->>ASR: 暂停识别
+    Main->>LLM: 发送问题
+    LLM->>TTS: 流式返回响应
+    TTS->>TTS: 合成语音队列
+    TTS->>Audio: 播放音频
+    loop 等待播放完成
+        Main->>TTS: 检查缓冲区状态
+        TTS-->>Main: 状态反馈
+    end
+    Main->>ASR: 恢复识别</pre>
+
+<h1 id="大语言模型测试的基本流程"><a href="#大语言模型测试的基本流程" class="headerlink" title="大语言模型测试的基本流程"></a>大语言模型测试的基本流程</h1><pre class="mermaid">graph TD
+    A[程序启动] --> B[注册信号处理]
+    B --> C[初始化PortAudio音频管理]
+    C --> D[初始化LLM服务器]
+    D --> E[设置LLM回调函数]
+    E --> F[初始化ASR模块]
+    F --> G[设置ASR回调函数]
+    G --> H[启动ASR录音]
+    H --> I[进入主循环休眠10分钟]
+
+    subgraph 语音识别流程
+        H --> J[ASR持续采集音频]
+        J --> K{检测到有效语音?}
+        K -- 是 --> L[暂停ASR录音]
+        L --> M[发送文本到LLM服务器]
+        K -- 否 --> J
+    end
+
+    subgraph LLM处理流程
+        M --> N[LLM处理请求]
+        N --> O[处理完成调用llm_server_callback]
+        O --> P[记录响应内容]
+        P --> Q[恢复ASR录音]
+    end
+
+    subgraph 信号处理流程
+        R[用户按下Ctrl+C] --> S[触发signalHandler]
+        S --> T[停止ASR服务]
+        T --> U[释放资源]
+        U --> V[退出程序]
+    end
+
+    I --> R
+    Q --> J</pre>
+
+<h1 id="文字转语音测试流程"><a href="#文字转语音测试流程" class="headerlink" title="文字转语音测试流程"></a>文字转语音测试流程</h1><p><pre class="mermaid">graph TD<br>    A[程序启动] —&gt; B[注册信号处理]<br>    B —&gt; C[初始化PortAudio]<br>    C —&gt; D[初始化TTS服务]<br>    D —&gt; E[启动TTS音频输出]<br>    E —&gt; F[初始化LLM客户端]<br>    F —&gt; G[设置LLM回调]<br>    G —&gt; H[初始化ASR引擎]<br>    H —&gt; I[发送初始问候请求]<br>    I —&gt; J[等待问候播放完成]<br>    J —&gt; K[启动ASR监听]<br>    K —&gt; L[进入主循环]</p>
+<pre><code>subgraph 语音交互流程
+    L --&gt; M&#123;ASR检测到语音&#125;
+    M -- 是 --&gt; N[暂停ASR]
+    N --&gt; O[发送问题到LLM]
+    O --&gt; P[LLM生成响应]
+    P --&gt; Q[TTS合成语音]
+    Q --&gt; R[音频播放]
+    R --&gt; S[等待播放完成]
+    S --&gt; T[恢复ASR监听]
+    M -- 否 --&gt; L
+end
+
+subgraph 终止流程
+    U[用户按下Ctrl+C] --&gt; V[触发signalHandler]
+    V --&gt; W[停止ASR服务]
+    W --&gt; X[停止TTS输出]
+    X --&gt; Y[释放所有资源]
+    Y --&gt; Z[退出程序]
+end
+
+style A fill:#4CAF50,stroke:#388E3C
+style U fill:#FF5252,stroke:#D32F2F
+style M fill:#2196F3,stroke:#1976D2&lt;/pre&gt;
+</code></pre><h2 id="建议结合流程图中的颜色标识理解各模块作用："><a href="#建议结合流程图中的颜色标识理解各模块作用：" class="headerlink" title="建议结合流程图中的颜色标识理解各模块作用："></a>建议结合流程图中的颜色标识理解各模块作用：</h2><ol>
 <li><p>绿色：初始化流程</p>
 </li>
 <li><p>蓝色：核心交互流程</p>
