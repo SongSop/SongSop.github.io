@@ -1856,7 +1856,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-30 17:50:44" itemprop="dateModified" datetime="2025-04-30T17:50:44+08:00">2025-04-30</time>
+                <time title="修改时间：2025-04-30 18:10:07" itemprop="dateModified" datetime="2025-04-30T18:10:07+08:00">2025-04-30</time>
               </span>
 
           
@@ -1927,7 +1927,7 @@ sequenceDiagram
     Q --> J</pre>
 
 <h1 id="文字转语音测试流程"><a href="#文字转语音测试流程" class="headerlink" title="文字转语音测试流程"></a>文字转语音测试流程</h1><p><pre class="mermaid">graph TD<br>    A[程序启动] —&gt; B[注册信号处理]<br>    B —&gt; C[初始化PortAudio]<br>    C —&gt; D[初始化TTS服务]<br>    D —&gt; E[启动TTS音频输出]<br>    E —&gt; F[初始化LLM客户端]<br>    F —&gt; G[设置LLM回调]<br>    G —&gt; H[初始化ASR引擎]<br>    H —&gt; I[发送初始问候请求]<br>    I —&gt; J[等待问候播放完成]<br>    J —&gt; K[启动ASR监听]<br>    K —&gt; L[进入主循环]</p>
-<pre><code>subgraph 语音交互流程
+<pre><code>subgraph &quot;语音交互流程&quot;
     L --&gt; M&#123;ASR检测到语音&#125;
     M -- 是 --&gt; N[暂停ASR]
     N --&gt; O[发送问题到LLM]
@@ -1939,7 +1939,7 @@ sequenceDiagram
     M -- 否 --&gt; L
 end
 
-subgraph 终止流程
+subgraph &quot;终止流程&quot;
     U[用户按下Ctrl+C] --&gt; V[触发signalHandler]
     V --&gt; W[停止ASR服务]
     W --&gt; X[停止TTS输出]
@@ -2238,7 +2238,7 @@ style M fill:#2196F3,stroke:#1976D2&lt;/pre&gt;
 if (document.querySelectorAll('pre.mermaid').length) {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
     mermaid.initialize({
-      theme    : 'forest',
+      theme    : 'default',
       logLevel : 3,
       flowchart: { curve     : 'linear' },
       gantt    : { axisFormat: '%m/%d/%Y' },
