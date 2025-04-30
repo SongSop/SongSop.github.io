@@ -22,9 +22,9 @@
 
   <meta name="description" content="a graduate student working at Huzhou institute of Zhejiang University">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Wsblog">
+<meta property="og:title" content="WangSong&#39;s blog">
 <meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="Wsblog">
+<meta property="og:site_name" content="WangSong&#39;s blog">
 <meta property="og:description" content="a graduate student working at Huzhou institute of Zhejiang University">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Wang Song">
@@ -44,7 +44,7 @@
   };
 </script>
 
-  <title>Wsblog</title>
+  <title>WangSong's blog</title>
   
 
 
@@ -75,7 +75,7 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="Wsblog" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="WangSong's blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -96,7 +96,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Wsblog</h1>
+      <h1 class="site-title">WangSong's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -189,7 +189,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -203,10 +203,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-28 09:30:20 / 修改时间：11:46:40" itemprop="dateCreated datePublished" datetime="2025-04-28T09:30:20+08:00">2025-04-28</time>
+              <time title="创建时间：2025-04-28 09:30:20" itemprop="dateCreated datePublished" datetime="2025-04-28T09:30:20+08:00">2025-04-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-29 16:03:27" itemprop="dateModified" datetime="2025-04-29T16:03:27+08:00">2025-04-29</time>
+              </span>
 
           
 
@@ -310,6 +316,140 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(tensor(<span class="number">0.1586</span>), tensor(<span class="number">0.3021</span>))</span><br></pre></td></tr></table></figure>
 <p>在这里，<code>MSE</code>代表<em>均方误差</em>，<code>l1</code>是标准数学术语<em>平均绝对值</em>的缩写（在数学中称为<em>L1 范数</em>）。</p>
 <h1 id="L1-范数和-均方误差（MSE）之间的区别"><a href="#L1-范数和-均方误差（MSE）之间的区别" class="headerlink" title="L1 范数和 均方误差（MSE）之间的区别"></a>L1 范数和 均方误差（MSE）之间的区别</h1><p>直观地，L1 范数和均方误差（MSE）之间的区别在于，后者会比前者更严厉地惩罚更大的错误（并对小错误更宽容）。</p>
+<h1 id="杰里米说"><a href="#杰里米说" class="headerlink" title="杰里米说"></a>杰里米说</h1><p>当我第一次遇到这个 L1 的东西时，我查了一下看它到底是什么意思。我在谷歌上发现它是使用“绝对值”作为“向量范数”，所以我查了“向量范数”并开始阅读：“给定一个实数或复数域 F 上的向量空间 V，V 上的范数是一个非负值的任意函数 p: V → [0,+∞)，具有以下属性：对于所有的 a ∈ F 和所有的 u, v ∈ V，p(u + v) ≤ p(u) + p(v)…”然后我停止阅读。“唉，我永远也理解不了数学！”我想，这已经是第一千次了。从那时起，我学到了每当实践中出现这些复杂的数学术语时，我可以用一点点代码来替换它们！比如，<em>L1 损失</em> 只等于 <code>(a-b).abs().mean()</code>，其中 <code>a</code> 和 <code>b</code> 是张量。我猜数学家们只是和我想法不同…我会确保在本书中，每当出现一些数学术语时，我会给你相应的代码片段，并用通俗的语言解释发生了什么。</p>
+<p>我们刚刚在 PyTorch 张量上完成了各种数学运算。如果你之前在 PyTorch 中进行过数值编程，你可能会发现这些与 NumPy 数组相似。让我们来看看这两个重要的数据结构。</p>
+<p>（请注意，fastai 在 NumPy 和 PyTorch 中添加了一些功能，使它们更加相似。如果本书中的任何代码在您的计算机上无法运行，可能是因为您忘记在笔记本的开头包含类似这样的一行代码：<code>from fastai.vision.all import *</code>。）</p>
+<p>但是数组和张量是什么，为什么你应该关心呢？</p>
+<p>Python 相对于许多语言来说速度较慢。在 Python、NumPy 或 PyTorch 中快速的任何东西，很可能是另一种语言（特别是 C）编写（并优化）的编译对象的包装器。事实上，<em>NumPy 数组和 PyTorch 张量可以比纯 Python 快几千倍完成计算</em>。</p>
+<p>NumPy 数组是一个多维数据表，所有项都是相同类型的。由于可以是任何类型，它们甚至可以是数组的数组，内部数组可能是不同大小的 - 这被称为 <em>不规则数组</em>。通过“多维数据表”，我们指的是，例如，一个列表（一维）、一个表或矩阵（二维）、一个表的表或立方体（三维），等等。如果所有项都是简单类型，如整数或浮点数，NumPy 将它们存储为紧凑的 C 数据结构在内存中。这就是 NumPy 的优势所在。NumPy 有各种运算符和方法，可以在这些紧凑结构上以优化的 C 速度运行计算，因为它们是用优化的 C 编写的。</p>
+<p>PyTorch 张量几乎与 NumPy 数组相同，但有一个额外的限制，可以解锁额外的功能。它与 NumPy 数组相同，也是一个多维数据表，所有项都是相同类型的。然而，限制是张量不能使用任何旧类型 - 它必须对所有组件使用单一基本数值类型。因此，张量不像真正的数组数组那样灵活。例如，PyTorch 张量不能是不规则的。它始终是一个形状规则的多维矩形结构。</p>
+<p>NumPy 在这些结构上支持的绝大多数方法和运算符在 PyTorch 上也支持，但 PyTorch 张量具有额外的功能。一个主要功能是这些结构可以存在于 GPU 上，这样它们的计算将被优化为 GPU，并且可以运行得更快（给定大量值进行处理）。此外，PyTorch 可以自动计算这些操作的导数，包括操作的组合。正如你将看到的，没有这种能力，实际上是不可能进行深度学习的。</p>
+<h1 id="如何有效地使用数组-张量-API-是最重要的新编码技能。"><a href="#如何有效地使用数组-张量-API-是最重要的新编码技能。" class="headerlink" title="如何有效地使用数组/张量 API 是最重要的新编码技能。"></a>如何有效地使用数组/张量 API 是最重要的新编码技能。</h1><p>要创建一个数组或张量，将列表（或列表的列表，或列表的列表的列表等）传递给<code>array</code>或<code>tensor</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data = [[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]]</span><br><span class="line">arr = array (data)</span><br><span class="line">tns = tensor(data)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arr  <span class="comment"># numpy</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">       [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns  <span class="comment"># pytorch</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">        [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br></pre></td></tr></table></figure>
+<p>以下所有操作都是在张量上展示的，但 NumPy 数组的语法和结果是相同的。</p>
+<p>你可以选择一行（请注意，与 Python 中的列表一样，张量是从 0 开始索引的，所以 1 指的是第二行/列）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br></pre></td></tr></table></figure>
+<p>或者通过使用<code>:</code>来指示<em>所有第一个轴</em>（我们有时将张量/数组的维度称为<em>轴</em>）选择一列。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns[:,<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">2</span>, <span class="number">5</span>])</span><br></pre></td></tr></table></figure>
+<p>你可以结合 Python 切片语法（<code>[*start*:*end*]</code>，其中<em><code>end</code></em>被排除）来选择一行或一列的一部分：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns[<span class="number">1</span>,<span class="number">1</span>:<span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">5</span>, <span class="number">6</span>])</span><br></pre></td></tr></table></figure>
+<p>你可以使用标准运算符，如<code>+</code>、<code>-</code>、<code>*</code>和<code>/</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns+<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">        [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]])</span><br></pre></td></tr></table></figure>
+<p>张量有一个类型：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns.<span class="built_in">type</span>()</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;torch.LongTensor&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>并且会根据需要自动更改该类型；例如，从<code>int</code>到<code>float</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tns*<span class="number">1.5</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">1.5000</span>, <span class="number">3.0000</span>, <span class="number">4.5000</span>],</span><br><span class="line">        [<span class="number">6.0000</span>, <span class="number">7.5000</span>, <span class="number">9.0000</span>]])</span><br></pre></td></tr></table></figure>
+<p>那么，我们的基准模型好吗？为了量化这一点，我们必须定义一个度量。</p>
+<h1 id="使用广播计算度量"><a href="#使用广播计算度量" class="headerlink" title="使用广播计算度量"></a>使用广播计算度量</h1><p>回想一下<em>度量</em>是基于我们模型的预测和数据集中正确标签计算出来的一个数字，以告诉我们我们的模型有多好。例如，我们可以使用我们在上一节中看到的两个函数之一，均方误差或平均绝对误差，并计算整个数据集上它们的平均值。然而，这两个数字对大多数人来说并不是很容易理解；实际上，我们通常使用<em>准确度</em>作为分类模型的度量。</p>
+<p>正如我们讨论过的，我们想要在<em>验证集</em>上计算我们的度量。这样我们就不会无意中过拟合——也就是说，训练一个模型只在我们的训练数据上表现良好。这对于我们在这里作为第一次尝试使用的像素相似度模型来说并不是真正的风险，因为它没有经过训练的组件，但我们仍然会使用一个验证集来遵循正常的实践，并为我们稍后的第二次尝试做好准备。</p>
+<p>为了获得一个验证集，我们需要完全从训练数据中删除一些数据，这样模型根本就看不到它。事实证明，MNIST 数据集的创建者已经为我们做了这个。你还记得<em>valid</em>这个整个独立的目录吗？这个目录就是为此而设立的！</p>
+<p>所以，让我们从那个目录中为我们的 3 和 7 创建张量。这些是我们将用来计算度量的张量，用来衡量我们第一次尝试模型的质量，这个度量衡量了与理想图像的距离：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">valid_3_tens = torch.stack([tensor(Image.<span class="built_in">open</span>(o))</span><br><span class="line">                            <span class="keyword">for</span> o <span class="keyword">in</span> (path/<span class="string">&#x27;valid&#x27;</span>/<span class="string">&#x27;3&#x27;</span>).ls()])</span><br><span class="line">valid_3_tens = valid_3_tens.<span class="built_in">float</span>()/<span class="number">255</span></span><br><span class="line">valid_7_tens = torch.stack([tensor(Image.<span class="built_in">open</span>(o))</span><br><span class="line">                            <span class="keyword">for</span> o <span class="keyword">in</span> (path/<span class="string">&#x27;valid&#x27;</span>/<span class="string">&#x27;7&#x27;</span>).ls()])</span><br><span class="line">valid_7_tens = valid_7_tens.<span class="built_in">float</span>()/<span class="number">255</span></span><br><span class="line">valid_3_tens.shape,valid_7_tens.shape</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(torch.Size([<span class="number">1010</span>, <span class="number">28</span>, <span class="number">28</span>]), torch.Size([<span class="number">1028</span>, <span class="number">28</span>, <span class="number">28</span>]))</span><br></pre></td></tr></table></figure>
+<p>在进行操作时检查形状是一个好习惯。在这里我们看到两个张量，一个代表了 1,010 张大小为 28×28 的 3 的验证集，另一个代表了 1,028 张大小为 28×28 的 7 的验证集。</p>
+<p>我们最终想要编写一个函数<code>is_3</code>，它将决定任意图像是 3 还是 7。它将通过确定任意图像更接近我们的两个“理想数字”中的哪一个来实现这一点。为此，我们需要定义<em>距离</em>的概念——即，计算两个图像之间距离的函数。</p>
+<p>我们可以编写一个简单的函数，使用与我们在上一节中编写的表达式非常相似的表达式来计算平均绝对误差：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mnist_distance</span>(<span class="params">a,b</span>): <span class="keyword">return</span> (a-b).<span class="built_in">abs</span>().mean((-<span class="number">1</span>,-<span class="number">2</span>))</span><br><span class="line">mnist_distance(a_3, mean3)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor(<span class="number">0.1114</span>)</span><br></pre></td></tr></table></figure>
+<p>这是我们先前为这两个图像之间的距离计算的相同值，理想数字 3 <code>mean_3</code>和任意样本 3 <code>a_3</code>，它们都是形状为<code>[28,28]</code>的单个图像张量。</p>
+<p>但是要计算整体准确度的指标，我们需要计算验证集中<em>每张</em>图像到理想数字 3 的距离。我们如何进行这种计算？我们可以编写一个循环，遍历验证集张量<code>valid_3_tens</code>中堆叠的所有单图像张量，其形状为<code>[1010,28,28]</code>，表示 1,010 张图像。但是有一种更好的方法。</p>
+<p>当我们使用相同的距离函数，设计用于比较两个单个图像，但将表示 3 的验证集张量<code>valid_3_tens</code>作为参数传入时，会发生一些有趣的事情：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valid_3_dist = mnist_distance(valid_3_tens, mean3)</span><br><span class="line">valid_3_dist, valid_3_dist.shape</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(tensor([<span class="number">0.1050</span>, <span class="number">0.1526</span>, <span class="number">0.1186</span>,  ..., <span class="number">0.1122</span>, <span class="number">0.1170</span>, <span class="number">0.1086</span>]),</span><br><span class="line"> torch.Size([<span class="number">1010</span>]))</span><br></pre></td></tr></table></figure>
+<p>它没有抱怨形状不匹配，而是为每个单个图像返回了一个距离（即，长度为 1,010 的秩-1 张量）。这是如何发生的？</p>
+<p>再看看我们的函数<code>mnist_distance</code>，您会看到我们在那里有减法<code>(a-b)</code>。魔术技巧在于 PyTorch 在尝试在不同秩的两个张量之间执行简单的减法操作时，将使用<em>广播</em>：它将自动扩展秩较小的张量，使其大小与秩较大的张量相同。广播是一种重要的功能，使张量代码更容易编写。</p>
+<p>在广播后，使两个参数张量具有相同的秩后，PyTorch 对于秩相同的两个张量应用其通常的逻辑：它对两个张量的每个对应元素执行操作，并返回张量结果。例如：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]) + tensor([<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br></pre></td></tr></table></figure>
+<p>因此，在这种情况下，PyTorch 将<code>mean3</code>视为一个表示单个图像的秩-2 张量，就好像它是 1,010 个相同图像的副本，然后从我们的验证集中的每个 3 中减去每个副本。您期望这个张量的形状是什么？在查看这里的答案之前，请尝试自己想出来：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(valid_3_tens-mean3).shape</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([<span class="number">1010</span>, <span class="number">28</span>, <span class="number">28</span>])</span><br></pre></td></tr></table></figure>
+<p>我们正在计算我们的理想数字 3 与验证集中的每个 1,010 个 3 之间的差异，对于每个 28×28 图像，结果形状为<code>[1010,28,28]</code>。</p>
+<p>有关广播实现的一些重要要点，使其不仅对于表达性有价值，而且对于性能也有价值：</p>
+<ul>
+<li><p>PyTorch 实际上并没有将<code>mean3</code>复制 1,010 次。它<em>假装</em>它是一个具有该形状的张量，但不分配任何额外内存。</p>
+</li>
+<li><p>它在 C 中完成整个计算（或者，如果您使用 GPU，则在 CUDA 中，相当于 GPU 上的 C），比纯 Python 快数万倍（在 GPU 上甚至快数百万倍！）。</p>
+</li>
+</ul>
+<p>这适用于 PyTorch 中所有广播和逐元素操作和函数。<em>这是您要了解的最重要的技术，以创建高效的 PyTorch 代码。</em></p>
+<p>接下来在<code>mnist_distance</code>中我们看到<code>abs</code>。现在您可能能猜到将其应用于张量时会发生什么。它将方法应用于张量中的每个单独元素，并返回结果的张量（即，它逐元素应用方法）。因此，在这种情况下，我们将得到 1,010 个绝对值。</p>
+<p>最后，我们的函数调用<code>mean((-1,-2))</code>。元组<code>(-1,-2)</code>表示一系列轴。在 Python 中，<code>-1</code>指的是最后一个元素，<code>-2</code>指的是倒数第二个元素。因此，在这种情况下，这告诉 PyTorch 我们要对张量的最后两个轴的值进行平均。最后两个轴是图像的水平和垂直维度。在对最后两个轴进行平均后，我们只剩下第一个张量轴，它索引我们的图像，这就是为什么我们的最终大小是<code>(1010)</code>。换句话说，对于每个图像，我们对该图像中所有像素的强度进行了平均。</p>
+<p>在本书中，我们将学习更多关于广播的知识，特别是在第十七章中，并且也会经常进行实践。</p>
+<p>我们可以使用<code>mnist_distance</code>来确定一幅图像是否为 3，方法是使用以下逻辑：如果问题中的数字与理想的 3 之间的距离小于到理想的 7 的距离，则它是一个 3。这个函数将自动进行广播，并逐个应用，就像所有 PyTorch 函数和运算符一样：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">is_3</span>(<span class="params">x</span>): <span class="keyword">return</span> mnist_distance(x,mean3) &lt; mnist_distance(x,mean7)</span><br></pre></td></tr></table></figure>
+<p>让我们在我们的示例案例上测试一下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">is_3(a_3), is_3(a_3).<span class="built_in">float</span>()</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(tensor(<span class="literal">True</span>), tensor(<span class="number">1.</span>))</span><br></pre></td></tr></table></figure>
+<p>请注意，当我们将布尔响应转换为浮点数时，<code>True</code>会得到<code>1.0</code>，<code>False</code>会得到<code>0.0</code>。</p>
+<p>由于广播，我们还可以在所有 3 的完整验证集上进行测试：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">is_3(valid_3_tens)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>,  ..., <span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>])</span><br></pre></td></tr></table></figure>
+<p>现在我们可以计算每个 3 和 7 的准确率，方法是对所有 3 的函数取平均值，对所有 7 的函数取其倒数的平均值：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">accuracy_3s =      is_3(valid_3_tens).<span class="built_in">float</span>() .mean()</span><br><span class="line">accuracy_7s = (<span class="number">1</span> - is_3(valid_7_tens).<span class="built_in">float</span>()).mean()</span><br><span class="line"></span><br><span class="line">accuracy_3s,accuracy_7s,(accuracy_3s+accuracy_7s)/<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(tensor(<span class="number">0.9168</span>), tensor(<span class="number">0.9854</span>), tensor(<span class="number">0.9511</span>))</span><br></pre></td></tr></table></figure>
+<p>这看起来是一个相当不错的开始！我们在 3 和 7 上都获得了超过 90%的准确率，我们已经看到了如何使用广播方便地定义度量。但让我们诚实一点：3 和 7 是非常不同的数字。到目前为止，我们只对 10 个可能的数字中的 2 个进行分类。所以我们需要做得更好！</p>
+<p>为了做得更好，也许现在是时候尝试一个真正学习的系统了，一个可以自动修改自身以提高性能的系统。换句话说，现在是时候谈论训练过程和 SGD 了。</p>
+<h1 id="随机梯度下降"><a href="#随机梯度下降" class="headerlink" title="随机梯度下降"></a>随机梯度下降</h1><p>你还记得 Arthur Samuel 在第一章中描述机器学习的方式吗？</p>
+<blockquote>
+<p>假设我们安排一些自动手段来测试任何当前权重分配的有效性，以实际性能为基础，并提供一种机制来改变权重分配以最大化性能。我们不需要详细了解这种程序的细节，就可以看到它可以完全自动化，并且可以看到一个这样编程的机器会从中学习。</p>
+</blockquote>
+<p>正如我们讨论过的，这是让我们拥有一个可以变得越来越好的模型的关键，可以学习。但我们的像素相似性方法实际上并没有做到这一点。我们没有任何权重分配，也没有任何根据测试权重分配的有效性来改进的方法。换句话说，我们无法通过修改一组参数来改进我们的像素相似性方法。为了充分利用深度学习的力量，我们首先必须按照 Samuel 描述的方式来表示我们的任务。</p>
+<p>与其尝试找到图像与“理想图像”之间的相似性，我们可以查看每个单独的像素，并为每个像素提出一组权重，使得最高的权重与最有可能为特定类别的黑色像素相关联。例如，向右下方的像素不太可能被激活为 7，因此它们对于 7 的权重应该很低，但它们很可能被激活为 8，因此它们对于 8 的权重应该很高。这可以表示为一个函数和每个可能类别的一组权重值，例如，成为数字 8 的概率：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">pr_eight</span>(<span class="params">x,w</span>) = (x*w).<span class="built_in">sum</span>()</span><br></pre></td></tr></table></figure>
+<p>在这里，我们假设<code>X</code>是图像，表示为一个向量—换句话说，所有行都堆叠在一起形成一个长长的单行。我们假设权重是一个向量<code>W</code>。如果我们有了这个函数，我们只需要一种方法来更新权重，使它们变得更好一点。通过这种方法，我们可以重复这个步骤多次，使权重变得越来越好，直到我们能够使它们尽可能好。</p>
+<p>我们希望找到导致我们的函数对于那些是 8 的图像结果高，对于那些不是的图像结果低的向量<code>W</code>的特定值。搜索最佳向量<code>W</code>是搜索最佳函数以识别 8 的一种方式。（因为我们还没有使用深度神经网络，我们受到我们的函数能力的限制，我们将在本章后面解决这个约束。）</p>
+<p>更具体地说，<font color=yellow>以下是将这个函数转化为机器学习分类器所需的步骤：</font></p>
+<ol>
+<li><p><em>初始化</em>权重。</p>
+</li>
+<li><p>对于每个图像，使用这些权重来<em>预测</em>它是 3 还是 7。</p>
+</li>
+<li><p>基于这些预测，计算模型有多好（它的<em>损失</em>）。</p>
+</li>
+<li><p>计算<em>梯度</em>，它衡量了每个权重的变化如何改变损失。</p>
+</li>
+<li><p>根据这个计算，<em>改变</em>（即，改变）所有权重。</p>
+</li>
+<li><p>回到步骤 2 并<em>重复</em>这个过程。</p>
+</li>
+<li><p>迭代直到你决定<em>停止</em>训练过程（例如，因为模型已经足够好或者你不想再等待了）。</p>
+</li>
+</ol>
+<p>这七个步骤，如图 4-1 所示，是所有深度学习模型训练的关键。深度学习完全依赖于这些步骤，这是非常令人惊讶和反直觉的。令人惊奇的是，这个过程可以解决如此复杂的问题。但是，正如你将看到的，它确实可以！</p>
+<p><img src="/image/dlcf_0401.png" alt="显示梯度下降步骤的图表"></p>
+<h6 id="图-4-1-梯度下降过程"><a href="#图-4-1-梯度下降过程" class="headerlink" title="图 4-1. 梯度下降过程"></a>图 4-1. 梯度下降过程</h6><p>每个步骤都有许多方法，我们将在本书的其余部分学习它们。这些细节对于深度学习从业者来说非常重要，但事实证明，对于每个步骤的一般方法都遵循一些基本原则。以下是一些建议：</p>
+<p>初始化</p>
+<p>我们将参数初始化为随机值。这可能听起来令人惊讶。我们当然可以做其他选择，比如将它们初始化为该类别激活该像素的百分比—但由于我们已经知道我们有一种方法来改进这些权重，结果证明只是从随机权重开始就可以完全正常运行。</p>
+<p>损失</p>
+<p>这就是 Samuel 所说的<em>根据实际表现测试任何当前权重分配的有效性</em>。我们需要一个函数，如果模型的表现好，它将返回一个小的数字（标准方法是将小的损失视为好的，大的损失视为坏的，尽管这只是一种约定）。</p>
+<p>步骤</p>
+<p>一个简单的方法来判断一个权重是否应该增加一点或减少一点就是尝试一下：增加一点权重，看看损失是增加还是减少。一旦找到正确的方向，你可以再多改变一点或少改变一点，直到找到一个效果好的量。然而，这很慢！正如我们将看到的，微积分的魔力使我们能够直接找出每个权重应该朝哪个方向改变，大概改变多少，而不必尝试所有这些小的改变。这样做的方法是通过计算<em>梯度</em>。这只是一种性能优化；我们也可以通过使用更慢的手动过程得到完全相同的结果。</p>
+<p>停止</p>
+<p>一旦我们决定要为模型训练多少个周期（之前的列表中给出了一些建议），我们就会应用这个决定。对于我们的数字分类器，我们会继续训练，直到模型的准确率开始变差，或者我们用完时间为止。</p>
+<p>在将这些步骤应用于我们的图像分类问题之前，让我们在一个更简单的情况下看看它们是什么样子。首先我们将定义一个非常简单的函数，二次函数—假设这是我们的损失函数，<code>x</code>是函数的权重参数：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>(<span class="params">x</span>): <span class="keyword">return</span> x**<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>这是该函数的图表：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_function(f, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;x**2&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_04in07.png" alt=""></p>
+<p>我们之前描述的步骤序列从选择参数的随机值开始，并计算损失的值：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plot_function(f, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;x**2&#x27;</span>)</span><br><span class="line">plt.scatter(-<span class="number">1.5</span>, f(-<span class="number">1.5</span>), color=<span class="string">&#x27;red&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_04in08.png" alt=""></p>
+<p>现在我们来看看如果我们稍微增加或减少参数会发生什么—<em>调整</em>。这只是特定点的斜率：</p>
+<p><img src="/image/dlcf_04in09.png" alt="显示在某一点的斜率的平方函数的图表"></p>
+<p>我们可以稍微改变我们的权重朝着斜坡的方向，计算我们的损失和调整，然后再重复几次。最终，我们将到达曲线上的最低点：</p>
+<p><img src="/image/dlcf_04in10.png" alt="梯度下降的示意图"></p>
+<p>这个基本思想最早可以追溯到艾萨克·牛顿，他指出我们可以以这种方式优化任意函数。无论我们的函数变得多么复杂，梯度下降的这种基本方法不会有太大变化。我们在本书后面看到的唯一微小变化是一些方便的方法，可以让我们更快地找到更好的步骤。</p>
 
       
     </div>
@@ -338,7 +478,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -402,7 +542,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -537,7 +677,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -613,7 +753,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1232,7 +1372,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1694,7 +1834,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1716,7 +1856,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-24 09:00:53" itemprop="dateModified" datetime="2025-04-24T09:00:53+08:00">2025-04-24</time>
+                <time title="修改时间：2025-04-30 17:50:44" itemprop="dateModified" datetime="2025-04-30T17:50:44+08:00">2025-04-30</time>
               </span>
 
           
@@ -1730,7 +1870,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h1 id="关键交互时序"><a href="#关键交互时序" class="headerlink" title="关键交互时序"></a>关键交互时序</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sequenceDiagram</span><br><span class="line">    participant User</span><br><span class="line">    participant ASR</span><br><span class="line">    participant LLM</span><br><span class="line">    participant TTS</span><br><span class="line"></span><br><span class="line">    User-&gt;&gt;ASR: 说话</span><br><span class="line">    ASR-&gt;&gt;ASR: 实时识别</span><br><span class="line">    ASR-&gt;&gt;Main: 触发asr_callback</span><br><span class="line">    Main-&gt;&gt;ASR: 暂停识别</span><br><span class="line">    Main-&gt;&gt;LLM: 发送问题</span><br><span class="line">    LLM-&gt;&gt;TTS: 流式返回响应</span><br><span class="line">    TTS-&gt;&gt;TTS: 合成语音队列</span><br><span class="line">    TTS-&gt;&gt;Audio: 播放音频</span><br><span class="line">    loop 等待播放完成</span><br><span class="line">        Main-&gt;&gt;TTS: 检查缓冲区状态</span><br><span class="line">        TTS--&gt;&gt;Main: 状态反馈</span><br><span class="line">    end</span><br><span class="line">    Main-&gt;&gt;ASR: 恢复识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="大语言模型测试的基本流程"><a href="#大语言模型测试的基本流程" class="headerlink" title="大语言模型测试的基本流程"></a>大语言模型测试的基本流程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[程序启动] --&gt; B[注册信号处理]</span><br><span class="line">    B --&gt; C[初始化PortAudio音频管理]</span><br><span class="line">    C --&gt; D[初始化LLM服务器]</span><br><span class="line">    D --&gt; E[设置LLM回调函数]</span><br><span class="line">    E --&gt; F[初始化ASR模块]</span><br><span class="line">    F --&gt; G[设置ASR回调函数]</span><br><span class="line">    G --&gt; H[启动ASR录音]</span><br><span class="line">    H --&gt; I[进入主循环休眠10分钟]</span><br><span class="line">    </span><br><span class="line">    subgraph 语音识别流程</span><br><span class="line">        H --&gt; J[ASR持续采集音频]</span><br><span class="line">        J --&gt; K&#123;检测到有效语音?&#125;</span><br><span class="line">        K -- 是 --&gt; L[暂停ASR录音]</span><br><span class="line">        L --&gt; M[发送文本到LLM服务器]</span><br><span class="line">        K -- 否 --&gt; J</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph LLM处理流程</span><br><span class="line">        M --&gt; N[LLM处理请求]</span><br><span class="line">        N --&gt; O[处理完成调用llm_server_callback]</span><br><span class="line">        O --&gt; P[记录响应内容]</span><br><span class="line">        P --&gt; Q[恢复ASR录音]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph 信号处理流程</span><br><span class="line">        R[用户按下Ctrl+C] --&gt; S[触发signalHandler]</span><br><span class="line">        S --&gt; T[停止ASR服务]</span><br><span class="line">        T --&gt; U[释放资源]</span><br><span class="line">        U --&gt; V[退出程序]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    I --&gt; R</span><br><span class="line">    Q --&gt; J</span><br></pre></td></tr></table></figure>
+<h1 id="文字转语音测试流程"><a href="#文字转语音测试流程" class="headerlink" title="文字转语音测试流程"></a>文字转语音测试流程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[程序启动] --&gt; B[注册信号处理]</span><br><span class="line">    B --&gt; C[初始化PortAudio]</span><br><span class="line">    C --&gt; D[初始化TTS服务]</span><br><span class="line">    D --&gt; E[启动TTS音频输出]</span><br><span class="line">    E --&gt; F[初始化LLM客户端]</span><br><span class="line">    F --&gt; G[设置LLM回调]</span><br><span class="line">    G --&gt; H[初始化ASR引擎]</span><br><span class="line">    H --&gt; I[发送初始问候请求]</span><br><span class="line">    I --&gt; J[等待问候播放完成]</span><br><span class="line">    J --&gt; K[启动ASR监听]</span><br><span class="line">    K --&gt; L[进入主循环]</span><br><span class="line"></span><br><span class="line">    subgraph 语音交互流程</span><br><span class="line">        L --&gt; M&#123;ASR检测到语音&#125;</span><br><span class="line">        M -- 是 --&gt; N[暂停ASR]</span><br><span class="line">        N --&gt; O[发送问题到LLM]</span><br><span class="line">        O --&gt; P[LLM生成响应]</span><br><span class="line">        P --&gt; Q[TTS合成语音]</span><br><span class="line">        Q --&gt; R[音频播放]</span><br><span class="line">        R --&gt; S[等待播放完成]</span><br><span class="line">        S --&gt; T[恢复ASR监听]</span><br><span class="line">        M -- 否 --&gt; L</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph 终止流程</span><br><span class="line">        U[用户按下Ctrl+C] --&gt; V[触发signalHandler]</span><br><span class="line">        V --&gt; W[停止ASR服务]</span><br><span class="line">        W --&gt; X[停止TTS输出]</span><br><span class="line">        X --&gt; Y[释放所有资源]</span><br><span class="line">        Y --&gt; Z[退出程序]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    style A fill:#4CAF50,stroke:#388E3C</span><br><span class="line">    style U fill:#FF5252,stroke:#D32F2F</span><br><span class="line">    style M fill:#2196F3,stroke:#1976D2</span><br></pre></td></tr></table></figure>
+<h2 id="建议结合流程图中的颜色标识理解各模块作用："><a href="#建议结合流程图中的颜色标识理解各模块作用：" class="headerlink" title="建议结合流程图中的颜色标识理解各模块作用："></a>建议结合流程图中的颜色标识理解各模块作用：</h2><ol>
+<li><p>绿色：初始化流程</p>
+</li>
+<li><p>蓝色：核心交互流程</p>
+</li>
+<li><p>红色：异常终止流程</p>
+</li>
+</ol>
+
       
     </div>
 
@@ -1758,7 +1909,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">

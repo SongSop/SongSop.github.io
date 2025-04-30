@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+  <meta name="description" content="关键交互时序123456789101112131415161718192021sequenceDiagram    participant User    participant ASR    participant LLM    participant TTS    User-&gt;&gt;ASR: 说话    ASR-&gt;&gt;ASR: 实时识别    ASR-&gt;&gt;Main">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Medicalrobot">
 <meta property="og:url" content="http://example.com/2025/04/22/Medicalrobot/index.html">
-<meta property="og:site_name" content="Wsblog">
-<meta property="og:description" content="a graduate student working at Huzhou institute of Zhejiang University">
+<meta property="og:site_name" content="WangSong&#39;s blog">
+<meta property="og:description" content="关键交互时序123456789101112131415161718192021sequenceDiagram    participant User    participant ASR    participant LLM    participant TTS    User-&gt;&gt;ASR: 说话    ASR-&gt;&gt;ASR: 实时识别    ASR-&gt;&gt;Main">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-04-22T04:43:44.000Z">
-<meta property="article:modified_time" content="2025-04-24T01:00:53.790Z">
+<meta property="article:modified_time" content="2025-04-30T09:50:44.789Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="ros  project  Maintain the code">
 <meta name="twitter:card" content="summary">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Medicalrobot | Wsblog</title>
+  <title>Medicalrobot | WangSong's blog</title>
   
 
 
@@ -77,7 +77,7 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="Wsblog" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="WangSong's blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -98,7 +98,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Wsblog</h1>
+      <h1 class="site-title">WangSong's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -192,7 +192,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wsblog">
+      <meta itemprop="name" content="WangSong's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -213,7 +213,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-24 09:00:53" itemprop="dateModified" datetime="2025-04-24T09:00:53+08:00">2025-04-24</time>
+                <time title="修改时间：2025-04-30 17:50:44" itemprop="dateModified" datetime="2025-04-30T17:50:44+08:00">2025-04-30</time>
               </span>
 
           
@@ -227,7 +227,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h1 id="关键交互时序"><a href="#关键交互时序" class="headerlink" title="关键交互时序"></a>关键交互时序</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sequenceDiagram</span><br><span class="line">    participant User</span><br><span class="line">    participant ASR</span><br><span class="line">    participant LLM</span><br><span class="line">    participant TTS</span><br><span class="line"></span><br><span class="line">    User-&gt;&gt;ASR: 说话</span><br><span class="line">    ASR-&gt;&gt;ASR: 实时识别</span><br><span class="line">    ASR-&gt;&gt;Main: 触发asr_callback</span><br><span class="line">    Main-&gt;&gt;ASR: 暂停识别</span><br><span class="line">    Main-&gt;&gt;LLM: 发送问题</span><br><span class="line">    LLM-&gt;&gt;TTS: 流式返回响应</span><br><span class="line">    TTS-&gt;&gt;TTS: 合成语音队列</span><br><span class="line">    TTS-&gt;&gt;Audio: 播放音频</span><br><span class="line">    loop 等待播放完成</span><br><span class="line">        Main-&gt;&gt;TTS: 检查缓冲区状态</span><br><span class="line">        TTS--&gt;&gt;Main: 状态反馈</span><br><span class="line">    end</span><br><span class="line">    Main-&gt;&gt;ASR: 恢复识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="大语言模型测试的基本流程"><a href="#大语言模型测试的基本流程" class="headerlink" title="大语言模型测试的基本流程"></a>大语言模型测试的基本流程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[程序启动] --&gt; B[注册信号处理]</span><br><span class="line">    B --&gt; C[初始化PortAudio音频管理]</span><br><span class="line">    C --&gt; D[初始化LLM服务器]</span><br><span class="line">    D --&gt; E[设置LLM回调函数]</span><br><span class="line">    E --&gt; F[初始化ASR模块]</span><br><span class="line">    F --&gt; G[设置ASR回调函数]</span><br><span class="line">    G --&gt; H[启动ASR录音]</span><br><span class="line">    H --&gt; I[进入主循环休眠10分钟]</span><br><span class="line">    </span><br><span class="line">    subgraph 语音识别流程</span><br><span class="line">        H --&gt; J[ASR持续采集音频]</span><br><span class="line">        J --&gt; K&#123;检测到有效语音?&#125;</span><br><span class="line">        K -- 是 --&gt; L[暂停ASR录音]</span><br><span class="line">        L --&gt; M[发送文本到LLM服务器]</span><br><span class="line">        K -- 否 --&gt; J</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph LLM处理流程</span><br><span class="line">        M --&gt; N[LLM处理请求]</span><br><span class="line">        N --&gt; O[处理完成调用llm_server_callback]</span><br><span class="line">        O --&gt; P[记录响应内容]</span><br><span class="line">        P --&gt; Q[恢复ASR录音]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    subgraph 信号处理流程</span><br><span class="line">        R[用户按下Ctrl+C] --&gt; S[触发signalHandler]</span><br><span class="line">        S --&gt; T[停止ASR服务]</span><br><span class="line">        T --&gt; U[释放资源]</span><br><span class="line">        U --&gt; V[退出程序]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    I --&gt; R</span><br><span class="line">    Q --&gt; J</span><br></pre></td></tr></table></figure>
+<h1 id="文字转语音测试流程"><a href="#文字转语音测试流程" class="headerlink" title="文字转语音测试流程"></a>文字转语音测试流程</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[程序启动] --&gt; B[注册信号处理]</span><br><span class="line">    B --&gt; C[初始化PortAudio]</span><br><span class="line">    C --&gt; D[初始化TTS服务]</span><br><span class="line">    D --&gt; E[启动TTS音频输出]</span><br><span class="line">    E --&gt; F[初始化LLM客户端]</span><br><span class="line">    F --&gt; G[设置LLM回调]</span><br><span class="line">    G --&gt; H[初始化ASR引擎]</span><br><span class="line">    H --&gt; I[发送初始问候请求]</span><br><span class="line">    I --&gt; J[等待问候播放完成]</span><br><span class="line">    J --&gt; K[启动ASR监听]</span><br><span class="line">    K --&gt; L[进入主循环]</span><br><span class="line"></span><br><span class="line">    subgraph 语音交互流程</span><br><span class="line">        L --&gt; M&#123;ASR检测到语音&#125;</span><br><span class="line">        M -- 是 --&gt; N[暂停ASR]</span><br><span class="line">        N --&gt; O[发送问题到LLM]</span><br><span class="line">        O --&gt; P[LLM生成响应]</span><br><span class="line">        P --&gt; Q[TTS合成语音]</span><br><span class="line">        Q --&gt; R[音频播放]</span><br><span class="line">        R --&gt; S[等待播放完成]</span><br><span class="line">        S --&gt; T[恢复ASR监听]</span><br><span class="line">        M -- 否 --&gt; L</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph 终止流程</span><br><span class="line">        U[用户按下Ctrl+C] --&gt; V[触发signalHandler]</span><br><span class="line">        V --&gt; W[停止ASR服务]</span><br><span class="line">        W --&gt; X[停止TTS输出]</span><br><span class="line">        X --&gt; Y[释放所有资源]</span><br><span class="line">        Y --&gt; Z[退出程序]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    style A fill:#4CAF50,stroke:#388E3C</span><br><span class="line">    style U fill:#FF5252,stroke:#D32F2F</span><br><span class="line">    style M fill:#2196F3,stroke:#1976D2</span><br></pre></td></tr></table></figure>
+<h2 id="建议结合流程图中的颜色标识理解各模块作用："><a href="#建议结合流程图中的颜色标识理解各模块作用：" class="headerlink" title="建议结合流程图中的颜色标识理解各模块作用："></a>建议结合流程图中的颜色标识理解各模块作用：</h2><ol>
+<li><p>绿色：初始化流程</p>
+</li>
+<li><p>蓝色：核心交互流程</p>
+</li>
+<li><p>红色：异常终止流程</p>
+</li>
+</ol>
+
     </div>
 
     
@@ -310,6 +321,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E4%BA%A4%E4%BA%92%E6%97%B6%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">关键交互时序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E6%B5%8B%E8%AF%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">大语言模型测试的基本流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E5%AD%97%E8%BD%AC%E8%AF%AD%E9%9F%B3%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">文字转语音测试流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E7%BB%93%E5%90%88%E6%B5%81%E7%A8%8B%E5%9B%BE%E4%B8%AD%E7%9A%84%E9%A2%9C%E8%89%B2%E6%A0%87%E8%AF%86%E7%90%86%E8%A7%A3%E5%90%84%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">建议结合流程图中的颜色标识理解各模块作用：</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
