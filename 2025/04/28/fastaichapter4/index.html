@@ -54,7 +54,7 @@
 <meta property="og:image" content="http://example.com/image/dlcf_04in15.png">
 <meta property="og:image" content="http://example.com/image/dlcf_04in16.png">
 <meta property="article:published_time" content="2025-04-28T01:30:20.000Z">
-<meta property="article:modified_time" content="2025-05-12T07:27:16.027Z">
+<meta property="article:modified_time" content="2025-05-12T07:46:52.027Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
 <meta name="twitter:card" content="summary">
@@ -240,7 +240,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-12 15:27:16" itemprop="dateModified" datetime="2025-05-12T15:27:16+08:00">2025-05-12</time>
+                <time title="修改时间：2025-05-12 15:46:52" itemprop="dateModified" datetime="2025-05-12T15:46:52+08:00">2025-05-12</time>
               </span>
 
           
@@ -496,15 +496,7 @@ flowchart TD
     D --> E[更新所有权重]
     E --> F{满足停止条件？}
     F -- 否 --> B
-    F -- 是 --> G[结束训练]
-
-    style A fill:#F6E3FF,stroke:#333
-    style B fill:#DAE8FC,stroke:#333
-    style C fill:#D5E8D4,stroke:#333
-    style D fill:#F8CECC,stroke:#333
-    style E fill:#FFF2CC,stroke:#333
-    style F fill:#E2E2E2,stroke:#333
-    style G fill:#FFCCCC,stroke:#333</pre>
+    F -- 是 --> G[结束训练]</pre>
 
 <p>这七个步骤，如图 4-1 所示，是所有深度学习模型训练的关键。深度学习完全依赖于这些步骤，这是非常令人惊讶和反直觉的。令人惊奇的是，这个过程可以解决如此复杂的问题。但是，正如你将看到的，它确实可以！</p>
 <p><img src="/image/dlcf_0401.png" alt="显示梯度下降步骤的图表"></p>
@@ -1030,44 +1022,37 @@ flowchart TD
 </div>
 <h1 id="选择你的冒险-提醒"><a href="#选择你的冒险-提醒" class="headerlink" title="选择你的冒险 提醒"></a><em>选择你的冒险</em> 提醒</h1><p>在你兴奋地想要窥探内部机制时，你选择跳过第 2 和第三章节了吗？好吧，这里提醒你现在回到第二章，因为你很快就会需要了解那些内容！</p>
 <h1 id="课后习题"><a href="#课后习题" class="headerlink" title="课后习题"></a>课后习题</h1><ol>
-<li>灰度图像在计算机上是如何表示的？彩色图像呢？</li>
-</ol>
+<li><p>灰度图像在计算机上是如何表示的？彩色图像呢？</p>
 <ul>
 <li>灰度图像通过单通道的二维矩阵（每个像素为0-255的亮度值）表示，而彩色图像通过三通道（RGB）的三维数组（每个像素包含红、绿、蓝三个0-255的强度值）表示。</li>
 </ul>
-<ol>
-<li><code>MNIST_SAMPLE</code>数据集中的文件和文件夹是如何结构化的？为什么？</li>
-</ol>
+</li>
+<li><p><code>MNIST_SAMPLE</code>数据集中的文件和文件夹是如何结构化的？为什么？</p>
 <ul>
 <li>MNIST_SAMPLE数据集通常按类别分层组织（如train/3、train/7和valid/3、valid/7），这种结构便于机器学习框架（如PyTorch的ImageFolder）自动识别标签并划分训练集/验证集，简化数据加载流程。</li>
 </ul>
-<ol>
-<li>解释“像素相似性”方法如何工作以对数字进行分类。</li>
-</ol>
+</li>
+<li><p>解释“像素相似性”方法如何工作以对数字进行分类。</p>
 <ul>
 <li>与其尝试找到图像与“理想图像”之间的相似性，我们可以查看每个单独的像素，并为每个像素提出一组权重，使得最高的权重与最有可能为特定类别的黑色像素相关联。例如，向右下方的像素不太可能被激活为 7，因此它们对于 7 的权重应该很低，但它们很可能被激活为 8，因此它们对于 8 的权重应该很高。这可以表示为一个函数和每个可能类别的一组权重值，例如，成为数字 8 的概率</li>
 </ul>
-<ol>
-<li>什么是列表推导？现在创建一个从列表中选择奇数并将其加倍的列表推导。</li>
-</ol>
+</li>
+<li><p>什么是列表推导？现在创建一个从列表中选择奇数并将其加倍的列表推导。</p>
 <ul>
 <li>new_list = [x*2 for x in a_list if x%2 != 0]</li>
 </ul>
-<ol>
-<li>什么是秩-3 张量？</li>
-</ol>
+</li>
+<li><p>什么是秩-3 张量？</p>
 <ul>
 <li>秩-3 张量是具有三个独立维度的多维数组（形状如 (a, b, c)），可表示多矩阵堆叠或复杂三维数据（如视频帧序列、批量文本的词向量等）。</li>
 </ul>
-<ol>
-<li>张量秩和形状之间有什么区别？如何从形状中获取秩？</li>
-</ol>
+</li>
+<li><p>张量秩和形状之间有什么区别？如何从形状中获取秩？</p>
 <ul>
 <li>张量秩指维度数量（如秩3是三维数组），形状描述各维度长度（如(2,3,4)）；秩等于形状元组的长度（len(tensor.shape)）。</li>
 </ul>
-<ol>
-<li>RMSE 和 L1 范数是什么？</li>
-</ol>
+</li>
+<li><p>RMSE 和 L1 范数是什么？</p>
 <ul>
 <li>RMSE（均方根误差）是预测值与真实值误差平方均值的平方根，用于衡量回归模型精度；<script type="math/tex; mode=display">RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}</script></li>
 </ul>
@@ -1082,44 +1067,43 @@ flowchart TD
 <ul>
 <li><strong>MAE（平均绝对误差）</strong>：<script type="math/tex; mode=display">MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|</script></li>
 </ul>
-<ol>
-<li>如何才能比 Python 循环快几千倍地一次性对数千个数字进行计算？</li>
+</li>
 </ol>
+<ol>
+<li><p>如何才能比 Python 循环快几千倍地一次性对数千个数字进行计算？</p>
 <ul>
-<li>将数据转换为 NumPy 数组，利用其底层C语言实现的向量化操作：<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 原生Python循环（慢）</span></span><br><span class="line">data = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, ..., <span class="number">10000</span>]</span><br><span class="line">result = [x * <span class="number">2</span> + <span class="number">5</span> <span class="keyword">for</span> x <span class="keyword">in</span> data]</span><br><span class="line"></span><br><span class="line"><span class="comment"># NumPy向量化（快几千倍）</span></span><br><span class="line">data_np = np.array(data)</span><br><span class="line">result_np = data_np * <span class="number">2</span> + <span class="number">5</span>  <span class="comment"># 无显式循环，逐元素操作</span></span><br></pre></td></tr></table></figure></li>
+<li>将数据转换为 NumPy 数组，利用其底层C语言实现的向量化操作：<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 原生Python循环（慢）</span></span><br><span class="line">data = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, ..., <span class="number">10000</span>]</span><br><span class="line">result = [x * <span class="number">2</span> + <span class="number">5</span> <span class="keyword">for</span> x <span class="keyword">in</span> data]</span><br><span class="line"></span><br><span class="line"><span class="comment"># NumPy向量化（快几千倍）</span></span><br><span class="line">data_np = np.array(data)</span><br><span class="line">result_np = data_np * <span class="number">2</span> + <span class="number">5</span>  <span class="comment"># 无显式循环，逐元素操作</span></span><br></pre></td></tr></table></figure>
+<ul>
 <li>超大规模数据时，通过 GPU 并行计算（需NVIDIA显卡）：<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cupy <span class="keyword">as</span> cp</span><br><span class="line"></span><br><span class="line">data_gpu = cp.array(data)  <span class="comment"># 数据传至GPU显存</span></span><br><span class="line">result_gpu = cp.exp(data_gpu) * <span class="number">10</span>  <span class="comment"># GPU并行计算指数和乘法</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
 <li>对复杂逻辑，通过 JIT编译 生成机器码加速</li>
 </ul>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="meta">@jit(<span class="params">nopython=<span class="literal">True</span></span>)  </span><span class="comment"># 强制编译为原生机器码</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_array</span>(<span class="params">arr</span>):</span><br><span class="line">    result = np.empty_like(arr)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(arr)):</span><br><span class="line">        result[i] = arr[i] ** <span class="number">2</span> + np.sin(arr[i])</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">data = np.random.rand(<span class="number">1000000</span>)</span><br><span class="line">result = process_array(data)  <span class="comment"># 首次运行编译，后续调用极快</span></span><br></pre></td></tr></table></figure>
-<ol>
-<li>创建一个包含从 1 到 9 的数字的 3×3 张量或数组。将其加倍。选择右下角的四个数字。</li>
-</ol>
+</li>
+<li><p>创建一个包含从 1 到 9 的数字的 3×3 张量或数组。将其加倍。选择右下角的四个数字。</p>
 <ul>
 <li>PyTorch<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 3x3 张量（数值1-9）</span></span><br><span class="line">tensor = torch.arange(<span class="number">1</span>, <span class="number">10</span>).view(<span class="number">3</span>, <span class="number">3</span>)  <span class="comment"># tensor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 所有元素加倍</span></span><br><span class="line">doubled_tensor = tensor * <span class="number">2</span>  <span class="comment"># tensor([[ 2,  4,  6], [ 8, 10, 12], [14, 16, 18]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择右下角四个数字（最后两行 &amp; 最后两列）</span></span><br><span class="line">selected = doubled_tensor[<span class="number">1</span>:, <span class="number">1</span>:]  <span class="comment"># tensor([[10, 12], [16, 18]])</span></span><br></pre></td></tr></table></figure></li>
 <li>numpy<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 3x3 数组（数值1-9）</span></span><br><span class="line">array = np.arange(<span class="number">1</span>, <span class="number">10</span>).reshape(<span class="number">3</span>, <span class="number">3</span>)  <span class="comment"># array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 所有元素加倍</span></span><br><span class="line">doubled_array = array * <span class="number">2</span>  <span class="comment"># array([[ 2,  4,  6], [ 8, 10, 12], [14, 16, 18]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择右下角四个数字</span></span><br><span class="line">selected = doubled_array[<span class="number">1</span>:, <span class="number">1</span>:]  <span class="comment"># array([[10, 12], [16, 18]])</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<ol>
-<li>广播是什么？</li>
-</ol>
+</li>
+<li><p>广播是什么？</p>
 <ul>
 <li>广播是一种重要的功能，使张量代码更容易编写。在广播后，使两个参数张量具有相同的秩后，PyTorch 对于秩相同的两个张量应用其通常的逻辑：它对两个张量的每个对应元素执行操作，并返回张量结果。</li>
 </ul>
-<ol>
-<li>度量通常是使用训练集还是验证集计算的？为什么？</li>
-</ol>
+</li>
+<li><p>度量通常是使用训练集还是验证集计算的？为什么？</p>
 <ul>
 <li>验证集，排除过拟合状态。</li>
 </ul>
-<ol>
-<li>SGD 是什么？</li>
-</ol>
+</li>
+<li><p>SGD 是什么？</p>
 <ul>
 <li>SGD（随机梯度下降，Stochastic Gradient Descent） 是一种用于优化模型参数的迭代算法，广泛应用于机器学习和深度学习。其核心思想是通过随机选取小批量数据（mini-batch） 计算梯度并更新参数，而非使用全部数据，从而显著提升训练效率。</li>
 </ul>
-<ol>
-<li>为什么 SGD 使用小批量？</li>
-</ol>
+</li>
+<li><p>为什么 SGD 使用小批量？</p>
 <ul>
 <li><p>利用硬件并行加速，提升计算效率；</p>
 </li>
@@ -1128,9 +1112,8 @@ flowchart TD
 <li><p>适应内存限制，灵活处理大规模数据。</p>
 </li>
 </ul>
-<ol>
-<li>SGD 在机器学习中有哪七个步骤？</li>
-</ol>
+</li>
+<li><p>SGD 在机器学习中有哪七个步骤？</p>
 <ul>
 <li><p><em>初始化</em>权重。</p>
 </li>
@@ -1147,141 +1130,126 @@ flowchart TD
 <li><p>迭代直到你决定<em>停止</em>训练过程（例如，因为模型已经足够好或者你不想再等待了）。</p>
 </li>
 </ul>
-<ol>
-<li>我们如何初始化模型中的权重？</li>
-</ol>
+</li>
+<li><p>我们如何初始化模型中的权重？</p>
 <ul>
 <li>我们将参数初始化为随机值。这可能听起来令人惊讶。我们当然可以做其他选择，比如将它们初始化为该类别激活该像素的百分比—但由于我们已经知道我们有一种方法来改进这些权重，结果证明只是从随机权重开始就可以完全正常运行。</li>
 </ul>
-<ol>
-<li>什么是损失？</li>
-</ol>
+</li>
+<li><p>什么是损失？</p>
 <ul>
 <li>这就是 Samuel 所说的<em>根据实际表现测试任何当前权重分配的有效性</em>。我们需要一个函数，如果模型的表现好，它将返回一个小的数字（标准方法是将小的损失视为好的，大的损失视为坏的，尽管这只是一种约定）。</li>
 </ul>
-<ol>
-<li>为什么我们不能总是使用高学习率？</li>
-</ol>
+</li>
+<li><p>为什么我们不能总是使用高学习率？</p>
 <ul>
 <li>如果学习率太高，它也可能会“弹跳”而不是发散；图 4-4 显示了这样做需要许多步骤才能成功训练。</li>
 </ul>
-<ol>
-<li>什么是梯度？</li>
+</li>
 </ol>
+<ol>
+<li><p>什么是梯度？</p>
 <ul>
 <li>SGD中的梯度是损失函数对参数的敏感度，指导参数向损失降低的方向调整。小批量计算兼顾了效率与稳定性，是深度学习的核心驱动力。</li>
 </ul>
-<ol>
-<li>你需要知道如何自己计算梯度吗？</li>
-</ol>
+</li>
+<li><p>你需要知道如何自己计算梯度吗？</p>
 <ul>
 <li>不需要</li>
 </ul>
-<ol>
-<li>为什么我们不能将准确率作为损失函数使用？</li>
-</ol>
+</li>
+<li><p>为什么我们不能将准确率作为损失函数使用？</p>
 <ul>
 <li>关键区别在于指标用于驱动人类理解，而损失用于驱动自动学习。为了驱动自动学习，损失必须是一个具有有意义导数的函数。它不能有大的平坦部分和大的跳跃，而必须是相当平滑的。这就是为什么我们设计了一个损失函数，可以对置信水平的小变化做出响应。这个要求意味着有时它实际上并不完全反映我们试图实现的目标，而是我们真正目标和一个可以使用其梯度进行优化的函数之间的妥协。损失函数是针对数据集中的每个项目计算的，然后在时代结束时，所有损失值都被平均，整体均值被报告为时代。</li>
 </ul>
-<ol>
-<li>绘制 Sigmoid 函数。它的形状有什么特别之处？</li>
-</ol>
+</li>
+<li><p>绘制 Sigmoid 函数。它的形状有什么特别之处？</p>
 <ul>
 <li>正如您所看到的，它接受任何输入值，正数或负数，并将其压缩为 0 和 1 之间的输出值。它还是一个只上升的平滑曲线，这使得 SGD 更容易找到有意义的梯度。</li>
 </ul>
 <p><img src="/image/dlcf_04in15.png" alt=""></p>
-<ol>
-<li>损失函数和度量之间有什么区别？</li>
+</li>
 </ol>
+<ol>
+<li><p>损失函数和度量之间有什么区别？</p>
 <ul>
 <li>损失函数：是模型训练的“指南针”，需可导且适合优化。<br>度量：是模型性能的“成绩单”，反映实际任务需求。<br>核心原则：损失函数服务于训练过程，度量服务于业务目标，两者需根据任务特性协同设计。</li>
 </ul>
-<ol>
-<li>使用学习率计算新权重的函数是什么？</li>
-</ol>
+</li>
+<li><p>使用学习率计算新权重的函数是什么？</p>
 <p>参数-=学习率*梯度</p>
-<ol>
-<li><code>DataLoader</code>类是做什么的？</li>
-</ol>
+</li>
+<li><p><code>DataLoader</code>类是做什么的？</p>
 <ul>
 <li>如果我们在训练过程中可以改变一些东西，我们会获得更好的泛化能力。我们可以改变的一个简单而有效的事情是将哪些数据项放入每个小批次。我们通常不是简单地按顺序枚举我们的数据集，而是在每个时代之前随机洗牌，然后创建小批次。PyTorch 和 fastai 提供了一个类，可以为您执行洗牌和小批次整理，称为<code>DataLoader</code>。</li>
 </ul>
-<ol>
-<li>编写伪代码，显示每个 epoch 中 SGD 所采取的基本步骤。</li>
-</ol>
+</li>
+<li><p>编写伪代码，显示每个 epoch 中 SGD 所采取的基本步骤。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化模型参数 θ（例如权重矩阵、偏置向量）</span></span><br><span class="line">Initialize θ randomly</span><br><span class="line"></span><br><span class="line"><span class="comment"># 超参数设置</span></span><br><span class="line">learning_rate = <span class="number">0.01</span></span><br><span class="line">batch_size = <span class="number">32</span></span><br><span class="line">num_epochs = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="number">1</span> to num_epochs:</span><br><span class="line">    <span class="comment"># 将训练数据随机打乱（确保样本独立性）</span></span><br><span class="line">    Shuffle training data</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 将数据划分为多个小批量（mini-batch）</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> to (num_samples / batch_size - <span class="number">1</span>):</span><br><span class="line">        <span class="comment"># 提取当前小批量数据</span></span><br><span class="line">        batch_X = X_train[i*batch_size : (i+<span class="number">1</span>)*batch_size]</span><br><span class="line">        batch_Y = Y_train[i*batch_size : (i+<span class="number">1</span>)*batch_size]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 前向传播：计算当前参数下的预测值</span></span><br><span class="line">        predictions = forward_pass(θ, batch_X)  <span class="comment"># 例如 y_pred = θ^T X + b</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 计算损失函数值（如均方误差、交叉熵）</span></span><br><span class="line">        loss = compute_loss(predictions, batch_Y)  <span class="comment"># 例如 L = 1/m Σ(y_pred - y_true)^2</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 反向传播：计算损失对参数θ的梯度 ∇θ</span></span><br><span class="line">        gradients = compute_gradients(θ, batch_X, batch_Y)  <span class="comment"># ∇θ = dL/dθ</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 更新参数：沿梯度反方向调整θ</span></span><br><span class="line">        θ = θ - learning_rate * gradients</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># （可选）在每轮结束后计算验证集损失/度量</span></span><br><span class="line">    val_predictions = forward_pass(θ, X_val)</span><br><span class="line">    val_loss = compute_loss(val_predictions, Y_val)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Epoch <span class="subst">&#123;epoch&#125;</span>: Train Loss = <span class="subst">&#123;loss&#125;</span>, Val Loss = <span class="subst">&#123;val_loss&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<ol>
-<li>创建一个函数，如果传递两个参数<code>[1,2,3,4]</code>和<code>&#39;abcd&#39;</code>，则返回<code>[(1, &#39;a&#39;), (2, &#39;b&#39;), (3, &#39;c&#39;), (4, &#39;d&#39;)]</code>。该输出数据结构有什么特别之处？</li>
-</ol>
+</li>
+<li><p>创建一个函数，如果传递两个参数<code>[1,2,3,4]</code>和<code>&#39;abcd&#39;</code>，则返回<code>[(1, &#39;a&#39;), (2, &#39;b&#39;), (3, &#39;c&#39;), (4, &#39;d&#39;)]</code>。该输出数据结构有什么特别之处？</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">pair_elements</span>(<span class="params">nums, chars</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(<span class="built_in">zip</span>(nums, chars))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line"><span class="built_in">print</span>(pair_elements([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], <span class="string">&#x27;abcd&#x27;</span>))  <span class="comment"># 输出 [(1, &#x27;a&#x27;), (2, &#x27;b&#x27;), (3, &#x27;c&#x27;), (4, &#x27;d&#x27;)]</span></span><br></pre></td></tr></table></figure>
-<ol>
-<li>PyTorch 中的<code>view</code>是做什么的？</li>
-</ol>
+</li>
+<li><p>PyTorch 中的<code>view</code>是做什么的？</p>
 <ul>
 <li>我们已经有了我们的<code>x</code>—也就是我们的自变量，图像本身。我们将它们全部连接成一个单一的张量，并且还将它们从矩阵列表（一个秩为 3 的张量）转换为向量列表（一个秩为 2 的张量）。我们可以使用<code>view</code>来做到这一点，<code>view</code>是一个 PyTorch 方法，可以改变张量的形状而不改变其内容。<code>-1</code>是<code>view</code>的一个特殊参数，意思是“使这个轴尽可能大以适应所有数据”</li>
 </ul>
-<ol>
-<li>神经网络中的偏差参数是什么？我们为什么需要它们？</li>
-</ol>
+</li>
+<li><p>神经网络中的偏差参数是什么？我们为什么需要它们？</p>
 <ul>
 <li><p>神经网络中的偏差参数（Bias）是每个神经元中的一个可学习参数，用于在加权和计算后添加一个常数偏移。</p>
 </li>
 <li><p>平移激活函数的输入：允许调整加权和的基线位置，使激活函数能适应不同数据分布。增强模型表达能力：没有偏差时，模型只能学习经过原点的超平面；加入偏差后，模型可以表示任意位置的超平面。</p>
 </li>
 </ul>
-<ol>
-<li>Python 中的<code>@</code>运算符是做什么的？</li>
-</ol>
+</li>
+<li><p>Python 中的<code>@</code>运算符是做什么的？</p>
 <ul>
 <li>矩阵乘法用<code>@</code>运算符表示</li>
 </ul>
-<ol>
-<li><code>backward</code>方法是做什么的？</li>
-</ol>
+</li>
+<li><p><code>backward</code>方法是做什么的？</p>
 <ul>
 <li>这里的<code>backward</code>指的是<em>反向传播</em>，这是计算每一层导数的过程的名称。我们将在第十七章中看到这是如何精确完成的，当我们从头开始计算深度神经网络的梯度时。这被称为网络的<em>反向传播</em>，与<em>前向传播</em>相对，前者是计算激活的地方。如果<code>backward</code>只是被称为<code>calculate_grad</code>，生活可能会更容易，但深度学习的人确实喜欢在任何地方添加行话！</li>
 </ul>
-<ol>
-<li>为什么我们必须将梯度清零？</li>
-</ol>
+</li>
+<li><p>为什么我们必须将梯度清零？</p>
 <ul>
 <li>必须将梯度清零是为了防止不同批次（batch）的梯度在反向传播时累积，导致参数更新方向错误，确保每个批次的梯度独立计算并正确更新模型参数。</li>
 </ul>
-<ol>
-<li>我们需要向<code>Learner</code>传递什么信息？</li>
-</ol>
+</li>
+<li><p>我们需要向<code>Learner</code>传递什么信息？</p>
 <ul>
 <li>我们需要传入本章中创建的所有元素：<code>DataLoaders</code>，模型，优化函数（将传递参数），损失函数，以及可选的任何要打印的指标：</li>
 </ul>
-<ol>
-<li>展示训练循环的基本步骤的 Python 或伪代码。</li>
-</ol>
+</li>
+<li><p>展示训练循环的基本步骤的 Python 或伪代码。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 初始化模型、损失函数、优化器</span></span><br><span class="line">model = 初始化神经网络()</span><br><span class="line">loss_function = 选择损失函数()  <span class="comment"># 如交叉熵、均方误差</span></span><br><span class="line">optimizer = 选择优化器(model.parameters(), 学习率)  <span class="comment"># 如SGD、Adam</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 数据预处理</span></span><br><span class="line">dataset = 加载数据集()</span><br><span class="line">dataloader = 分批次(dataset, batch_size=<span class="number">32</span>, shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 训练循环（按epoch迭代）</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="number">1</span>到最大训练轮次:</span><br><span class="line">    model.训练模式()  <span class="comment"># 启用Dropout/BatchNorm等训练特定层</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 遍历所有小批量（mini-batch）</span></span><br><span class="line">    <span class="keyword">for</span> 每个batch的输入数据x, 标签y <span class="keyword">in</span> dataloader:</span><br><span class="line">        <span class="comment"># 3.1 梯度清零（关键！防止梯度累积）</span></span><br><span class="line">        optimizer.清空梯度()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 3.2 前向传播：计算预测值</span></span><br><span class="line">        预测值 = model.前向计算(x)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 3.3 计算损失（预测值与真实值差距）</span></span><br><span class="line">        loss = loss_function(预测值, y)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 3.4 反向传播：计算梯度</span></span><br><span class="line">        loss.反向传播()  <span class="comment"># 自动计算各参数梯度</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 3.5 参数更新：沿梯度反方向调整参数</span></span><br><span class="line">        optimizer.更新参数()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># （可选）4. 验证/测试循环</span></span><br><span class="line">    model.评估模式()  <span class="comment"># 禁用Dropout/BatchNorm等训练特定层</span></span><br><span class="line">    total_loss = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> 每个验证batch的输入x_val, 标签y_val <span class="keyword">in</span> 验证集:</span><br><span class="line">        预测_val = model.前向计算(x_val)</span><br><span class="line">        total_loss += loss_function(预测_val, y_val)</span><br><span class="line">    平均验证损失 = total_loss / 验证batch数量</span><br><span class="line">    打印(<span class="string">f&quot;Epoch <span class="subst">&#123;epoch&#125;</span>, 验证损失: <span class="subst">&#123;平均验证损失&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<ol>
-<li>ReLU 是什么？为值从<code>-2</code>到<code>+2</code>绘制一个图。</li>
-</ol>
+</li>
+<li><p>ReLU 是什么？为值从<code>-2</code>到<code>+2</code>绘制一个图。</p>
 <ul>
 <li>那个小函数<code>res.max(tensor(0.0))</code>被称为<em>修正线性单元</em>，也被称为<em>ReLU</em>。我们认为我们都可以同意<em>修正线性单元</em>听起来相当花哨和复杂…但实际上，它不过是<code>res.max(tensor(0.0))</code>——换句话说，用零替换每个负数。这个微小的函数在 PyTorch 中也可以作为<code>F.relu</code>使用：</li>
 </ul>
+</li>
+</ol>
 <p><img src="/image/dlcf_04in16.png" alt=""></p>
 <ol>
-<li>什么是激活函数？</li>
-</ol>
+<li><p>什么是激活函数？</p>
 <ul>
 <li>神经网络包含多个层。每一层都是<em>线性</em>或<em>非线性</em>的。我们通常在神经网络中交替使用这两种类型的层。有时人们将线性层及其后续的非线性一起称为一个单独的层。是的，这很令人困惑。有时非线性被称为<em>激活函数</em>。</li>
 </ul>
-<ol>
-<li><code>F.relu</code>和<code>nn.ReLU</code>之间有什么区别？</li>
-</ol>
+</li>
+<li><p><code>F.relu</code>和<code>nn.ReLU</code>之间有什么区别？</p>
 <ul>
 <li>nn.ReLU：是 模块化的层，适合定义静态模型结构，参数在初始化时固定。<br>F.relu：是 函数式接口，适合动态或条件性激活场景，参数在调用时指定。<br>当需要将激活函数作为模型的一部分（如保存/加载模型）时，优先用 nn.ReLU。<br>当需要灵活控制激活逻辑时，用 F.relu。</li>
 </ul>
-<ol>
-<li>通用逼近定理表明，任何函数都可以使用一个非线性逼近得到所需的精度。那么为什么我们通常使用更多的非线性函数？</li>
-</ol>
+</li>
+<li><p>通用逼近定理表明，任何函数都可以使用一个非线性逼近得到所需的精度。那么为什么我们通常使用更多的非线性函数？</p>
 <ul>
 <li>在 1990 年代，研究人员如此专注于通用逼近定理，以至于很少有人尝试超过一个非线性。这种理论但不实际的基础阻碍了该领域多年。然而，一些研究人员确实尝试了深度模型，并最终能够证明这些模型在实践中表现得更好。最终，出现了理论结果，解释了为什么会发生这种情况。今天，几乎不可能找到任何人只使用一个非线性的神经网络。</li>
 </ul>
+</li>
+</ol>
 <h2 id="进一步研究"><a href="#进一步研究" class="headerlink" title="进一步研究"></a>进一步研究</h2><ol>
 <li><p>从头开始创建自己的<code>Learner</code>实现，基于本章展示的训练循环。</p>
 </li>
