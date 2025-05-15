@@ -36,8 +36,11 @@
 <meta property="og:image" content="http://example.com/image/dlcf_0502.png">
 <meta property="og:image" content="http://example.com/image/dlcf_05in01.png">
 <meta property="og:image" content="http://example.com/image/dlcf_05in02.png">
+<meta property="og:image" content="http://example.com/image/dlcf_0503.png">
+<meta property="og:image" content="http://example.com/image/dlcf_05in03.png">
+<meta property="og:image" content="http://example.com/image/dlcf_05in04.png">
 <meta property="article:published_time" content="2025-05-13T01:01:09.000Z">
-<meta property="article:modified_time" content="2025-05-14T03:28:26.751Z">
+<meta property="article:modified_time" content="2025-05-15T03:31:48.232Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
 <meta name="twitter:card" content="summary">
@@ -223,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-14 11:28:26" itemprop="dateModified" datetime="2025-05-14T11:28:26+08:00">2025-05-14</time>
+                <time title="修改时间：2025-05-15 11:31:48" itemprop="dateModified" datetime="2025-05-15T11:31:48+08:00">2025-05-15</time>
               </span>
 
           
@@ -407,6 +410,127 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">0.6025</span>, <span class="number">0.5021</span>, <span class="number">0.1332</span>, <span class="number">0.9966</span>, <span class="number">0.5959</span>, <span class="number">0.3661</span>])</span><br></pre></td></tr></table></figure>
 <p>第二列（它是 7 的概率）将是该值从 1 中减去的值。现在，我们需要一种适用于多于两列的方法。事实证明，这个名为<code>softmax</code>的函数正是这样的：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">softmax</span>(<span class="params">x</span>): <span class="keyword">return</span> exp(x) / exp(x).<span class="built_in">sum</span>(dim=<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="术语：指数函数（exp）"><a href="#术语：指数函数（exp）" class="headerlink" title="术语：指数函数（exp）"></a>术语：指数函数（exp）</h1><p>定义为<code>e**x</code>，其中<code>e</code>是一个特殊的数字，约等于 2.718。它是自然对数函数的倒数。请注意，<code>exp</code>始终为正，并且增长<em>非常</em>迅速！</p>
+<p>让我们检查<code>softmax</code>是否为第一列返回与<code>sigmoid</code>相同的值，以及这些值从 1 中减去的值为第二列：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sm_acts = torch.softmax(acts, dim=<span class="number">1</span>)</span><br><span class="line">sm_acts</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">0.6025</span>, <span class="number">0.3975</span>],</span><br><span class="line">        [<span class="number">0.5021</span>, <span class="number">0.4979</span>],</span><br><span class="line">        [<span class="number">0.1332</span>, <span class="number">0.8668</span>],</span><br><span class="line">        [<span class="number">0.9966</span>, <span class="number">0.0034</span>],</span><br><span class="line">        [<span class="number">0.5959</span>, <span class="number">0.4041</span>],</span><br><span class="line">        [<span class="number">0.3661</span>, <span class="number">0.6339</span>]])</span><br></pre></td></tr></table></figure>
+<p><code>softmax</code>是<code>sigmoid</code>的多类别等价物——每当我们有超过两个类别且类别的概率必须加起来为 1 时，我们必须使用它，即使只有两个类别，我们通常也会使用它，只是为了使事情更加一致。我们可以创建其他具有所有激活在 0 和 1 之间且总和为 1 的属性的函数；然而，没有其他函数与我们已经看到是平滑且对称的 sigmoid 函数具有相同的关系。此外，我们很快将看到 softmax 函数与我们将在下一节中看到的损失函数密切配合。</p>
+<p>如果我们有三个输出激活，就像在我们的熊分类器中一样，为单个熊图像计算 softmax 看起来会像图 5-3 那样。</p>
+<p><img src="/image/dlcf_0503.png" alt="熊 softmax 示例"></p>
+<h6 id="图-5-3-熊分类器上-softmax-的示例"><a href="#图-5-3-熊分类器上-softmax-的示例" class="headerlink" title="图 5-3. 熊分类器上 softmax 的示例"></a>图 5-3. 熊分类器上 softmax 的示例</h6><p>实际上，这个函数是做什么的呢？取指数确保我们所有的数字都是正数，然后除以总和确保我们将得到一堆加起来等于 1 的数字。指数还有一个很好的特性：如果我们激活中的某个数字略大于其他数字，指数将放大这个差异（因为它呈指数增长），这意味着在 softmax 中，该数字将更接近 1。</p>
+<p>直观地，softmax 函数<em>真的</em>想要在其他类别中选择一个类别，因此在我们知道每张图片都有一个明确标签时，训练分类器时是理想的选择。（请注意，在推断过程中可能不太理想，因为有时您可能希望模型告诉您它在训练过程中看到的类别中没有识别出任何一个，并且不选择一个类别，因为它的激活分数略高。在这种情况下，最好使用多个二进制输出列来训练模型，每个列使用 sigmoid 激活。）</p>
+<p>Softmax 是交叉熵损失的第一部分，第二部分是对数似然。</p>
+<h2 id="对数似然"><a href="#对数似然" class="headerlink" title="对数似然"></a>对数似然</h2><p>在上一章中为我们的 MNIST 示例计算损失时，我们使用了这个：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mnist_loss</span>(<span class="params">inputs, targets</span>):</span><br><span class="line">    inputs = inputs.sigmoid()</span><br><span class="line">    <span class="keyword">return</span> torch.where(targets==<span class="number">1</span>, <span class="number">1</span>-inputs, inputs).mean()</span><br></pre></td></tr></table></figure>
+<p>就像我们从 sigmoid 到 softmax 的转变一样，我们需要扩展损失函数，使其能够处理不仅仅是二元分类，还需要能够对任意数量的类别进行分类（在本例中，我们有 37 个类别）。我们的激活，在 softmax 之后，介于 0 和 1 之间，并且对于预测批次中的每一行，总和为 1。我们的目标是介于 0 和 36 之间的整数。</p>
+<p>在二元情况下，我们使用<code>torch.where</code>在<code>inputs</code>和<code>1-inputs</code>之间进行选择。当我们将二元分类作为具有两个类别的一般分类问题处理时，它变得更容易，因为（正如我们在前一节中看到的）现在有两列包含等同于<code>inputs</code>和<code>1-inputs</code>的内容。因此，我们只需要从适当的列中进行选择。让我们尝试在 PyTorch 中实现这一点。对于我们合成的 3 和 7 的示例，假设这些是我们的标签：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">targ = tensor([<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<p>这些是 softmax 激活：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sm_acts</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">0.6025</span>, <span class="number">0.3975</span>],</span><br><span class="line">        [<span class="number">0.5021</span>, <span class="number">0.4979</span>],</span><br><span class="line">        [<span class="number">0.1332</span>, <span class="number">0.8668</span>],</span><br><span class="line">        [<span class="number">0.9966</span>, <span class="number">0.0034</span>],</span><br><span class="line">        [<span class="number">0.5959</span>, <span class="number">0.4041</span>],</span><br><span class="line">        [<span class="number">0.3661</span>, <span class="number">0.6339</span>]])</span><br></pre></td></tr></table></figure>
+<p>然后对于每个<code>targ</code>项，我们可以使用它来使用张量索引选择<code>sm_acts</code>的适当列，如下所示：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">idx = <span class="built_in">range</span>(<span class="number">6</span>)</span><br><span class="line">sm_acts[idx, targ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">0.6025</span>, <span class="number">0.4979</span>, <span class="number">0.1332</span>, <span class="number">0.0034</span>, <span class="number">0.4041</span>, <span class="number">0.3661</span>])</span><br></pre></td></tr></table></figure>
+<p>为了准确了解这里发生了什么，让我们将所有列放在一起放在一个表中。这里，前两列是我们的激活，然后是目标，行索引，最后是前面代码中显示的结果：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>3</th>
+<th>7</th>
+<th>targ</th>
+<th>idx</th>
+<th>loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.602469</td>
+<td>0.397531</td>
+<td>0</td>
+<td>0</td>
+<td>0.602469</td>
+</tr>
+<tr>
+<td>0.502065</td>
+<td>0.497935</td>
+<td>1</td>
+<td>1</td>
+<td>0.497935</td>
+</tr>
+<tr>
+<td>0.133188</td>
+<td>0.866811</td>
+<td>0</td>
+<td>2</td>
+<td>0.133188</td>
+</tr>
+<tr>
+<td>0.99664</td>
+<td>0.00336017</td>
+<td>1</td>
+<td>3</td>
+<td>0.00336017</td>
+</tr>
+<tr>
+<td>0.595949</td>
+<td>0.404051</td>
+<td>1</td>
+<td>4</td>
+<td>0.404051</td>
+</tr>
+<tr>
+<td>0.366118</td>
+<td>0.633882</td>
+<td>0</td>
+<td>5</td>
+<td>0.366118</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>从这个表中可以看出，最后一列可以通过将<code>targ</code>和<code>idx</code>列作为索引，指向包含<code>3</code>和<code>7</code>列的两列矩阵来计算。这就是<code>sm_acts[idx, targ]</code>的作用。</p>
+<p>这里真正有趣的是，这种方法同样适用于超过两列的情况。想象一下，如果我们为每个数字（0 到 9）添加一个激活列，然后<code>targ</code>包含从 0 到 9 的数字。只要激活列总和为 1（如果我们使用 softmax，它们将是这样），我们将有一个损失函数，显示我们预测每个数字的准确程度。</p>
+<p>我们只从包含正确标签的列中选择损失。我们不需要考虑其他列，因为根据 softmax 的定义，它们加起来等于 1 减去与正确标签对应的激活。因此，使正确标签的激活尽可能高必须意味着我们也在降低其余列的激活。</p>
+<p>PyTorch 提供了一个与<code>sm_acts[range(n), targ]</code>完全相同的函数（除了它取负数，因为之后应用对数时，我们将得到负数），称为<code>nll_loss</code>（<em>NLL</em>代表<em>负对数似然</em>）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-sm_acts[idx, targ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([-<span class="number">0.6025</span>, -<span class="number">0.4979</span>, -<span class="number">0.1332</span>, -<span class="number">0.0034</span>, -<span class="number">0.4041</span>, -<span class="number">0.3661</span>])</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F.nll_loss(sm_acts, targ, reduction=<span class="string">&#x27;none&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([-<span class="number">0.6025</span>, -<span class="number">0.4979</span>, -<span class="number">0.1332</span>, -<span class="number">0.0034</span>, -<span class="number">0.4041</span>, -<span class="number">0.3661</span>])</span><br></pre></td></tr></table></figure>
+<p>尽管它的名字是这样的，但这个 PyTorch 函数并不取对数。我们将在下一节看到原因，但首先，让我们看看为什么取对数会有用。</p>
+<h2 id="取对数"><a href="#取对数" class="headerlink" title="取对数"></a>取对数</h2><p>在前一节中我们看到的函数作为损失函数效果很好，但我们可以让它更好一些。问题在于我们使用的是概率，概率不能小于 0 或大于 1。这意味着我们的模型不会在乎它是预测 0.99 还是 0.999。确实，这些数字非常接近，但从另一个角度来看，0.999 比 0.99 自信程度高 10 倍。因此，我们希望将我们的数字从 0 到 1 转换为从负无穷到无穷。有一个数学函数可以做到这一点：<em>对数</em>（可用<code>torch.log</code>）。它对小于 0 的数字没有定义，并且如下所示：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_function(torch.log, <span class="built_in">min</span>=<span class="number">0</span>,<span class="built_in">max</span>=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_05in03.png" alt=""></p>
+<p>“对数”这个词让你想起了什么吗？对数函数有这个恒等式：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y = b**a</span><br><span class="line">a = log(y,b)</span><br></pre></td></tr></table></figure>
+<p>在这种情况下，我们假设<code>log(y,b)</code>返回<em>log y 以 b 为底</em>。然而，PyTorch 并没有这样定义<code>log</code>：Python 中的<code>log</code>使用特殊数字<code>e</code>（2.718…）作为底。</p>
+<p>也许对数是您在过去 20 年中没有考虑过的东西。但对于深度学习中的许多事情来说，对数是一个非常关键的数学概念，所以现在是一个很好的时机来刷新您的记忆。关于对数的关键事情是这样的关系：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log(a*b) = log(a)+log(b)</span><br></pre></td></tr></table></figure>
+<p>当我们以这种格式看到它时，它看起来有点无聊；但想想这实际上意味着什么。这意味着当基础信号呈指数或乘法增长时，对数会线性增加。例如，在地震严重程度的里氏震级和噪音级别的分贝尺中使用。它也经常用于金融图表中，我们希望更清楚地显示复合增长率。计算机科学家喜欢使用对数，因为这意味着可以用加法代替修改，这样可以避免产生计算机难以处理的难以处理的规模。</p>
+<h1 id="TIP"><a href="#TIP" class="headerlink" title="TIP"></a>TIP</h1><p>对我们的概率取正对数或负对数的平均值（取决于是否是正确或不正确的类）给出了<em>负对数似然</em>损失。在 PyTorch 中，<code>nll_loss</code>假设您已经对 softmax 取了对数，因此不会为您执行对数运算。</p>
+<h1 id="请注意一下函数名称"><a href="#请注意一下函数名称" class="headerlink" title="请注意一下函数名称"></a>请注意一下函数名称</h1><p><code>nll_loss</code>中的“nll”代表“负对数似然”，但实际上它根本不进行对数运算！它假设您已经<em>已经</em>进行了对数运算。PyTorch 有一个名为<code>log_softmax</code>的函数，以快速准确的方式结合了<code>log</code>和<code>softmax</code>。<code>nll_loss</code>设计用于在<code>log_softmax</code>之后使用。</p>
+<p>当我们首先进行 softmax，然后对其进行对数似然，这种组合被称为<em>交叉熵损失</em>。在 PyTorch 中，这可以通过<code>nn.CrossEntropyLoss</code>来实现（实际上执行<code>log_softmax</code>然后<code>nll_loss</code>）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss_func = nn.CrossEntropyLoss()</span><br></pre></td></tr></table></figure>
+<p>正如您所看到的，这是一个类。实例化它会给您一个像函数一样行为的对象：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss_func(acts, targ)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor(<span class="number">1.8045</span>)</span><br></pre></td></tr></table></figure>
+<p>所有 PyTorch 损失函数都以两种形式提供，刚刚显示的类形式以及在<code>F</code>命名空间中提供的普通函数形式：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F.cross_entropy(acts, targ)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor(<span class="number">1.8045</span>)</span><br></pre></td></tr></table></figure>
+<p>两者都可以正常工作，并且可以在任何情况下使用。我们注意到大多数人倾向于使用类版本，并且在 PyTorch 的官方文档和示例中更常见，因此我们也会倾向于使用它。</p>
+<p>默认情况下，PyTorch 损失函数取所有项目的损失的平均值。您可以使用<code>reduction=&#39;none&#39;</code>来禁用这一点：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.CrossEntropyLoss(reduction=<span class="string">&#x27;none&#x27;</span>)(acts, targ)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">0.5067</span>, <span class="number">0.6973</span>, <span class="number">2.0160</span>, <span class="number">5.6958</span>, <span class="number">0.9062</span>, <span class="number">1.0048</span>])</span><br></pre></td></tr></table></figure>
+<h1 id="模型解释"><a href="#模型解释" class="headerlink" title="模型解释"></a>模型解释</h1><p>直接解释损失函数非常困难，因为它们被设计为计算机可以区分和优化的东西，而不是人类可以理解的东西。这就是为什么我们有指标。这些指标不用于优化过程，而只是帮助我们这些可怜的人类理解发生了什么。在这种情况下，我们的准确率已经看起来相当不错！那么我们在哪里犯了错误呢？</p>
+<p>我们在第一章中看到，我们可以使用混淆矩阵来查看模型表现好和表现不佳的地方：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">interp = ClassificationInterpretation.from_learner(learn)</span><br><span class="line">interp.plot_confusion_matrix(figsize=(<span class="number">12</span>,<span class="number">12</span>), dpi=<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_05in04.png" alt=""></p>
+<p>哦，亲爱的——在这种情况下，混淆矩阵很难阅读。我们有 37 种宠物品种，这意味着在这个巨大矩阵中有 37×37 个条目！相反，我们可以使用<code>most_confused</code>方法，它只显示混淆矩阵中预测错误最多的单元格（这里至少有 5 个或更多）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">interp.most_confused(min_val=<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">&#x27;american_pit_bull_terrier&#x27;</span>, <span class="string">&#x27;staffordshire_bull_terrier&#x27;</span>, <span class="number">10</span>),</span><br><span class="line"> (<span class="string">&#x27;Ragdoll&#x27;</span>, <span class="string">&#x27;Birman&#x27;</span>, <span class="number">6</span>)]</span><br></pre></td></tr></table></figure>
+<p>由于我们不是宠物品种专家，很难知道这些类别错误是否反映了识别品种时的实际困难。因此，我们再次求助于谷歌。一点点搜索告诉我们，这里显示的最常见的类别错误是即使是专家育种者有时也会对其存在分歧的品种差异。因此，这让我们有些安慰，我们正在走在正确的道路上。</p>
+<p>我们似乎有一个良好的基线。现在我们可以做些什么来使它变得更好呢？</p>
+
     </div>
 
     
@@ -483,7 +607,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">第五章：图像分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E7%9B%AE%E6%A0%87"><span class="nav-number">1.0.1.</span> <span class="nav-text">本章目标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E7%8B%97%E5%92%8C%E7%8C%AB%E8%AF%86%E5%88%AB%E5%88%B0%E5%AE%A0%E7%89%A9%E5%93%81%E7%A7%8D%E8%AF%86%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">从狗和猫识别到宠物品种识别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">了解数据布局</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.0.1.</span> <span class="nav-text">正则表达式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4"><span class="nav-number">3.</span> <span class="nav-text">预调整</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">目的：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">预调整策略：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-2%E3%80%82fastai-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E7%AD%96%E7%95%A5%EF%BC%88%E5%B7%A6%EF%BC%89%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%EF%BC%88%E5%8F%B3%EF%BC%89%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.0.0.3.0.1.</span> <span class="nav-text">图 5-2。fastai 数据增强策略（左）与传统方法（右）的比较</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%92%8C%E8%B0%83%E8%AF%95-DataBlock"><span class="nav-number">3.1.</span> <span class="nav-text">检查和调试 DataBlock</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1"><span class="nav-number">4.</span> <span class="nav-text">交叉熵损失</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%BF%80%E6%B4%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">4.1.</span> <span class="nav-text">查看激活和标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">4.2.</span> <span class="nav-text">Softmax</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">第五章：图像分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E7%9B%AE%E6%A0%87"><span class="nav-number">1.0.1.</span> <span class="nav-text">本章目标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E7%8B%97%E5%92%8C%E7%8C%AB%E8%AF%86%E5%88%AB%E5%88%B0%E5%AE%A0%E7%89%A9%E5%93%81%E7%A7%8D%E8%AF%86%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">从狗和猫识别到宠物品种识别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">了解数据布局</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.0.1.</span> <span class="nav-text">正则表达式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4"><span class="nav-number">3.</span> <span class="nav-text">预调整</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">目的：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">预调整策略：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-2%E3%80%82fastai-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E7%AD%96%E7%95%A5%EF%BC%88%E5%B7%A6%EF%BC%89%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%EF%BC%88%E5%8F%B3%EF%BC%89%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.0.0.3.0.1.</span> <span class="nav-text">图 5-2。fastai 数据增强策略（左）与传统方法（右）的比较</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%92%8C%E8%B0%83%E8%AF%95-DataBlock"><span class="nav-number">3.1.</span> <span class="nav-text">检查和调试 DataBlock</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1"><span class="nav-number">4.</span> <span class="nav-text">交叉熵损失</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%BF%80%E6%B4%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">4.1.</span> <span class="nav-text">查看激活和标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">4.2.</span> <span class="nav-text">Softmax</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%EF%BC%9A%E6%8C%87%E6%95%B0%E5%87%BD%E6%95%B0%EF%BC%88exp%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">术语：指数函数（exp）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-3-%E7%86%8A%E5%88%86%E7%B1%BB%E5%99%A8%E4%B8%8A-softmax-%E7%9A%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.0.0.0.0.1.</span> <span class="nav-text">图 5-3. 熊分类器上 softmax 的示例</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%95%B0%E4%BC%BC%E7%84%B6"><span class="nav-number">5.1.</span> <span class="nav-text">对数似然</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E5%AF%B9%E6%95%B0"><span class="nav-number">5.2.</span> <span class="nav-text">取对数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TIP"><span class="nav-number">6.</span> <span class="nav-text">TIP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B7%E6%B3%A8%E6%84%8F%E4%B8%80%E4%B8%8B%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0"><span class="nav-number">7.</span> <span class="nav-text">请注意一下函数名称</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%A7%A3%E9%87%8A"><span class="nav-number">8.</span> <span class="nav-text">模型解释</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
