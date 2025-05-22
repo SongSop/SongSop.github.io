@@ -39,8 +39,9 @@
 <meta property="og:image" content="http://example.com/image/dlcf_0503.png">
 <meta property="og:image" content="http://example.com/image/dlcf_05in03.png">
 <meta property="og:image" content="http://example.com/image/dlcf_05in04.png">
+<meta property="og:image" content="http://example.com/image/dlcf_05in05.png">
 <meta property="article:published_time" content="2025-05-13T01:01:09.000Z">
-<meta property="article:modified_time" content="2025-05-15T03:31:48.232Z">
+<meta property="article:modified_time" content="2025-05-22T09:05:19.331Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
 <meta name="twitter:card" content="summary">
@@ -226,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-15 11:31:48" itemprop="dateModified" datetime="2025-05-15T11:31:48+08:00">2025-05-15</time>
+                <time title="修改时间：2025-05-22 17:05:19" itemprop="dateModified" datetime="2025-05-22T17:05:19+08:00">2025-05-22</time>
               </span>
 
           
@@ -530,6 +531,280 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">&#x27;american_pit_bull_terrier&#x27;</span>, <span class="string">&#x27;staffordshire_bull_terrier&#x27;</span>, <span class="number">10</span>),</span><br><span class="line"> (<span class="string">&#x27;Ragdoll&#x27;</span>, <span class="string">&#x27;Birman&#x27;</span>, <span class="number">6</span>)]</span><br></pre></td></tr></table></figure>
 <p>由于我们不是宠物品种专家，很难知道这些类别错误是否反映了识别品种时的实际困难。因此，我们再次求助于谷歌。一点点搜索告诉我们，这里显示的最常见的类别错误是即使是专家育种者有时也会对其存在分歧的品种差异。因此，这让我们有些安慰，我们正在走在正确的道路上。</p>
 <p>我们似乎有一个良好的基线。现在我们可以做些什么来使它变得更好呢？</p>
+<h1 id="改进模型"><a href="#改进模型" class="headerlink" title="改进模型"></a>改进模型</h1><p>解释迁移学习以及如何尽可能最好地微调我们的预训练模型，而不破坏预训练权重。</p>
+<p>重点在于设置学习率（在fastai中有一个高效快捷的工具）</p>
+<h1 id="学习率查找器"><a href="#学习率查找器" class="headerlink" title="学习率查找器"></a>学习率查找器</h1><p><pre class="mermaid">flowchart TD<br>    A[选择合适的学习率] —&gt;|学习率过低| B<br>    A —&gt;|学习率过高| C</p>
+<pre><code>B[训练过程] --&gt; B1[需要更多 epoch]
+B1 --&gt; B2[时间浪费]
+B2 --&gt; B3[过拟合风险增加]
+B3 --&gt; B4[模型记住数据]
+B4 --&gt; B5[泛化能力下降]
+
+C[训练过程] --&gt; C1[优化器发散]
+C1 --&gt; C2[损失无法收敛]
+C2 --&gt; C3[模型性能差]
+C3 --&gt; C4[训练失败]&lt;/pre&gt;
+</code></pre><p>学习率过高现象：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">learn = cnn_learner(dls, resnet34, metrics=error_rate)</span><br><span class="line">learn.fine_tune(<span class="number">1</span>, base_lr=<span class="number">0.1</span>)</span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>epoch</th>
+<th>train_loss</th>
+<th>valid_loss</th>
+<th>error_rate</th>
+<th>time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>8.946717</td>
+<td>47.954632</td>
+<td>0.893775</td>
+<td>00:20</td>
+</tr>
+<tr>
+<td>epoch</td>
+<td>train_loss</td>
+<td>valid_loss</td>
+<td>error_rate</td>
+<td>time</td>
+</tr>
+<tr>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+</tr>
+<tr>
+<td>0</td>
+<td>7.231843</td>
+<td>4.119265</td>
+<td>0.954668</td>
+<td>00:24</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="现在问题来了怎么找到合适的学习率？"><a href="#现在问题来了怎么找到合适的学习率？" class="headerlink" title="现在问题来了怎么找到合适的学习率？"></a>现在问题来了怎么找到合适的学习率？</h2><p>快使用<em>学习率查找器</em>。他的想法是从一个非常非常小的学习率开始，一个我们永远不会认为它太大而无法处理的学习率。我们用这个学习率进行一个 mini-batch，找到之后的损失，然后按一定百分比增加学习率（例如每次加倍）。然后我们再做另一个 mini-batch，跟踪损失，并再次加倍学习率。我们一直这样做，直到损失变得更糟没有变得更好。然后我们按照要求选择一个比这个点稍低的学习率：</p>
+<ul>
+<li><p>比最小损失达到的地方少一个数量级（即最小值除以 10）</p>
+</li>
+<li><p>最后一次损失明显减少的点</p>
+</li>
+</ul>
+<p>学习率查找器计算曲线上的这些点来帮助您。这两个规则通常给出大致相同的值。在第一章中，我们没有指定学习率，而是使用了 fastai 库的默认值（即 1e-3）</p>
+<p>关于mini-batch：我们已知在梯度下降中需要对所有样本进行处理过后然后走一步，那么如果我们的样本规模的特别大的话效率就会比较低。假如有500万，甚至5000万个样本(在我们的业务场景中，一般有几千万行，有些大数据有10亿行)的话走一轮迭代就会非常的耗时。这个时候的梯度下降叫做full batch。 所以为了提高效率，我们可以把样本分成等量的子集。 例如我们把100万样本分成1000份， 每份1000个样本， 这些子集就称为mini batch。然后我们分别用一个for循环遍历这1000个子集。 针对每一个子集做一次梯度下降。 然后更新参数w和b的值。接着到下一个子集中继续进行梯度下降。 这样在遍历完所有的mini batch之后我们相当于在梯度下降中做了1000次迭代。 我们将遍历一次所有样本的行为叫做一个 epoch，也就是一个世代。 在mini batch下的梯度下降中做的事情其实跟full batch一样，只不过我们训练的数据不再是所有的样本，而是一个个的子集。 这样在mini batch我们在一个epoch中就能进行1000次的梯度下降，而在full batch中只有一次。 这样就大大的提高了我们算法的运行速度。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">learn = cnn_learner(dls, resnet34, metrics=error_rate)</span><br><span class="line">lr_min,lr_steep = learn.lr_find()</span><br></pre></td></tr></table></figure>
+<p><img src="/image/dlcf_05in05.png" alt=""></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Minimum/10: <span class="subst">&#123;lr_min:<span class="number">.2</span>e&#125;</span>, steepest point: <span class="subst">&#123;lr_steep:<span class="number">.2</span>e&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Minimum/<span class="number">10</span>: <span class="number">8.32e-03</span>, steepest point: <span class="number">6.31e-03</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到在 1e-6 到 1e-3 的范围内，没有什么特别的事情发生，模型不会训练。然后损失开始减少，直到达到最小值，然后再次增加。我们不希望学习率大于 1e-1，因为这会导致训练发散（您可以自行尝试），但 1e-1 已经太高了：在这个阶段，我们已经离开了损失稳定下降的阶段。</p>
+<p>在这个学习率图中，看起来学习率约为 3e-3 可能是合适的，所以让我们选择这个：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">learn = cnn_learner(dls, resnet34, metrics=error_rate)</span><br><span class="line">learn.fine_tune(<span class="number">2</span>, base_lr=<span class="number">3e-3</span>)</span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>epoch</th>
+<th>train_loss</th>
+<th>valid_loss</th>
+<th>error_rate</th>
+<th>time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1.071820</td>
+<td>0.427476</td>
+<td>0.133965</td>
+<td>00:19</td>
+</tr>
+<tr>
+<td>epoch</td>
+<td>train_loss</td>
+<td>valid_loss</td>
+<td>error_rate</td>
+<td>time</td>
+</tr>
+<tr>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+<td>—-</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0.738273</td>
+<td>0.541828</td>
+<td>0.150880</td>
+<td>00:24</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.401544</td>
+<td>0.266623</td>
+<td>0.081867</td>
+<td>00:24</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="问卷调查"><a href="#问卷调查" class="headerlink" title="问卷调查"></a>问卷调查</h1><ol>
+<li>为什么我们首先在 CPU 上调整大小到较大尺寸，然后在 GPU 上调整到较小尺寸？</li>
+</ol>
+<ul>
+<li>先在CPU上放大以高效处理大尺寸插值，再在GPU上缩小以利用并行加速动态增强并节省显存。</li>
+</ul>
+<ol>
+<li>如果您不熟悉正则表达式，请查找正则表达式教程和一些问题集，并完成它们。查看书籍网站以获取建议。</li>
+</ol>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/regexp/regexp-syntax.html">一个可以将文件名字利用起来的程序</a></li>
+</ul>
+<ol>
+<li>对于大多数深度学习数据集，数据通常以哪两种方式提供？</li>
+</ol>
+<ul>
+<li><p>表示数据项的个别文件，例如文本文档或图像，可能组织成文件夹或具有表示有关这些项信息的文件名</p>
+</li>
+<li><p>数据表（例如，以 CSV 格式）中的数据，其中每行是一个项目，可能包括文件名，提供表中数据与其他格式（如文本文档和图像）中数据之间的连接</p>
+</li>
+</ul>
+<p>有一些例外情况——特别是在基因组学等领域，可能存在二进制数据库格式或甚至网络流——但总体而言，您将处理的绝大多数数据集将使用这两种格式的某种组合。</p>
+<ol>
+<li>查阅<code>L</code>的文档，并尝试使用它添加的一些新方法。查阅 Python <code>pathlib</code>模块的文档，并尝试使用<code>Path</code>类的几种方法。</li>
+</ol>
+<ul>
+<li>如何找类和模块的文档：问ai最高效<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.13/library/pathlib.html">pathlib</a>,L文档本地查看：使用 help() 函数help(L)查看文档，print(dir(L))查看所有类和对象。</li>
+</ul>
+<ol>
+<li>给出两个图像转换可能降低数据质量的示例。</li>
+</ol>
+<ul>
+<li>许多旋转和缩放操作将需要插值来创建像素。这些插值像素是从原始图像数据派生的，但质量较低。</li>
+</ul>
+<ol>
+<li>fastai 提供了哪种方法来查看<code>DataLoaders</code>中的数据？</li>
+</ol>
+<ul>
+<li>‘one_batch’的方法</li>
+</ul>
+<ol>
+<li>fastai 提供了哪种方法来帮助您调试<code>DataBlock</code>？</li>
+</ol>
+<ul>
+<li><p>现在我们确认了正则表达式对示例的有效性，让我们用它来标记整个数据集。fastai 提供了许多类来帮助标记。对于使用正则表达式进行标记，我们可以使用<code>RegexLabeller</code>类。在这个例子中，我们使用了数据块 API，我们在第二章中看到过（实际上，我们几乎总是使用数据块 API——它比我们在第一章中看到的简单工厂方法更灵活）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pets = DataBlock(blocks = (ImageBlock, CategoryBlock),</span><br><span class="line">                get_items=get_image_files,</span><br><span class="line">                splitter=RandomSplitter(seed=<span class="number">42</span>),</span><br><span class="line">                get_y=using_attr(RegexLabeller(<span class="string">r&#x27;(.+)_\d+.jpg$&#x27;</span>), <span class="string">&#x27;name&#x27;</span>),</span><br><span class="line">                item_tfms=Resize(<span class="number">460</span>),</span><br><span class="line">                batch_tfms=aug_transforms(size=<span class="number">224</span>, min_scale=<span class="number">0.75</span>))</span><br><span class="line">dls = pets.dataloaders(path/<span class="string">&quot;images&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这个<code>DataBlock</code>调用中一个重要的部分是我们以前没有见过的这两行：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">item_tfms=Resize(<span class="number">460</span>),</span><br><span class="line">batch_tfms=aug_transforms(size=<span class="number">224</span>, min_scale=<span class="number">0.75</span>)</span><br></pre></td></tr></table></figure>
+<p>这些行实现了一个我们称之为<em>预调整</em>的 fastai 数据增强策略。预调整是一种特殊的图像增强方法，旨在最大限度地减少数据破坏，同时保持良好的性能。</p>
+</li>
+</ul>
+<ol>
+<li>在彻底清理数据之前，是否应该暂停训练模型？</li>
+</ol>
+<ul>
+<li>必要的</li>
+</ul>
+<ol>
+<li>在 PyTorch 中，交叉熵损失是由哪两个部分组合而成的？</li>
+</ol>
+<ul>
+<li>Softmax 是交叉熵损失的第一部分，第二部分是对数似然。</li>
+</ul>
+<ol>
+<li>softmax 确保的激活函数的两个属性是什么？为什么这很重要？</li>
+</ol>
+<ul>
+<li>以确保激活值都在 0 到 1 之间，并且它们总和为 1。</li>
+</ul>
+<ol>
+<li>何时可能希望激活函数不具有这两个属性？</li>
+</ol>
+<ul>
+<li>非二元情况下</li>
+</ul>
+<ol>
+<li>自己计算图 5-3 中的<code>exp</code>和<code>softmax</code>列（即在电子表格、计算器或笔记本中）。</li>
+</ol>
+<ul>
+<li>exp = exp(output),softmax = exp(output)/count(exp)</li>
+</ul>
+<ol>
+<li>为什么我们不能使用<code>torch.where</code>为标签可能有多于两个类别的数据集创建损失函数？</li>
+</ol>
+<ul>
+<li>我们使用<code>torch.where</code>在<code>inputs</code>和<code>1-inputs</code>之间进行选择</li>
+</ul>
+<ol>
+<li>log（-2）的值是多少？为什么？</li>
+</ol>
+<ul>
+<li>不存在吧 这玩意 哪有log负数这玩意的</li>
+</ul>
+<ol>
+<li>选择学习率时有哪两个好的经验法则来自学习率查找器？</li>
+</ol>
+<ul>
+<li>从一个非常非常小的学习率开始，一个我们永远不会认为它太大而无法处理的学习率。我们用这个学习率进行一个 mini-batch，找到之后的损失，然后按一定百分比增加学习率（例如每次加倍）。然后我们再做另一个 mini-batch，跟踪损失，并再次加倍学习率。</li>
+</ul>
+<ol>
+<li><code>fine_tune</code>方法执行了哪两个步骤？</li>
+</ol>
+<ul>
+<li><p>训练随机添加的层一个周期，同时冻结所有其他层</p>
+</li>
+<li><p>解冻所有层，并根据请求的周期数进行训练</p>
+</li>
+</ul>
+<ol>
+<li>在 Jupyter Notebook 中，如何获取方法或函数的源代码？</li>
+</ol>
+<ul>
+<li>在 Jupyter Notebook 中，使用 ?? 符号（如 函数名??）或 inspect.getsource(函数名) 可直接查看方法或函数的源代码。</li>
+</ul>
+<ol>
+<li>什么是区分性学习率？</li>
+</ol>
+<ul>
+<li>对神经网络的早期层使用较低的学习率，对后期层（尤其是随机添加的层）使用较高的学习率。</li>
+</ul>
+<ol>
+<li>当将 Python <code>slice</code>对象作为学习率传递给 fastai 时，它是如何解释的？</li>
+</ol>
+<ul>
+<li>传递的第一个值将是神经网络最早层的学习率，第二个值将是最后一层的学习率。中间的层将在该范围内等距地乘法地具有学习率。让我们使用这种方法复制先前的训练，但这次我们只将我们网络的<em>最低</em>层的学习率设置为 1e-6；其他层将增加到 1e-4。让我们训练一段时间。</li>
+</ul>
+<ol>
+<li>为什么在使用 1cycle 训练时，提前停止是一个不好的选择？</li>
+</ol>
+<ul>
+<li>因为那些中间的 epochs 出现在学习率还没有机会达到小值的情况下，这时它才能真正找到最佳结果。因此，如果你发现你过拟合了，你应该重新从头开始训练模型，并根据之前找到最佳结果的地方选择一个总的 epochs 数量。</li>
+</ul>
+<ol>
+<li><code>resnet50</code>和<code>resnet101</code>之间有什么区别？</li>
+</ol>
+<ul>
+<li>架构往往只有少数几种变体。例如，在本章中使用的 ResNet 架构有 18、34、50、101 和 152 层的变体，都是在 ImageNet 上预训练的。一个更大的（更多层和参数；有时被描述为模型的<em>容量</em>）ResNet 版本总是能够给我们更好的训练损失，但它可能更容易过拟合，因为它有更多参数可以过拟合。</li>
+</ul>
+<ol>
+<li><code>to_fp16</code>是做什么的？</li>
+</ol>
+<ul>
+<li>将训练的数据精度降低提高训练速度。（半精度浮点数，也称为 fp16）</li>
+</ul>
+<h2 id="进一步研究"><a href="#进一步研究" class="headerlink" title="进一步研究"></a>进一步研究</h2><ol>
+<li><p>找到 Leslie Smith 撰写的介绍学习率查找器的论文，并阅读。</p>
+</li>
+<li><p>看看是否可以提高本章分类器的准确性。您能达到的最佳准确性是多少？查看论坛和书籍网站，看看其他学生在这个数据集上取得了什么成就以及他们是如何做到的。</p>
+</li>
+</ol>
 
     </div>
 
@@ -607,7 +882,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">第五章：图像分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E7%9B%AE%E6%A0%87"><span class="nav-number">1.0.1.</span> <span class="nav-text">本章目标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E7%8B%97%E5%92%8C%E7%8C%AB%E8%AF%86%E5%88%AB%E5%88%B0%E5%AE%A0%E7%89%A9%E5%93%81%E7%A7%8D%E8%AF%86%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">从狗和猫识别到宠物品种识别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">了解数据布局</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.0.1.</span> <span class="nav-text">正则表达式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4"><span class="nav-number">3.</span> <span class="nav-text">预调整</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">目的：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">预调整策略：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-2%E3%80%82fastai-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E7%AD%96%E7%95%A5%EF%BC%88%E5%B7%A6%EF%BC%89%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%EF%BC%88%E5%8F%B3%EF%BC%89%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.0.0.3.0.1.</span> <span class="nav-text">图 5-2。fastai 数据增强策略（左）与传统方法（右）的比较</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%92%8C%E8%B0%83%E8%AF%95-DataBlock"><span class="nav-number">3.1.</span> <span class="nav-text">检查和调试 DataBlock</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1"><span class="nav-number">4.</span> <span class="nav-text">交叉熵损失</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%BF%80%E6%B4%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">4.1.</span> <span class="nav-text">查看激活和标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">4.2.</span> <span class="nav-text">Softmax</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%EF%BC%9A%E6%8C%87%E6%95%B0%E5%87%BD%E6%95%B0%EF%BC%88exp%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">术语：指数函数（exp）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-3-%E7%86%8A%E5%88%86%E7%B1%BB%E5%99%A8%E4%B8%8A-softmax-%E7%9A%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.0.0.0.0.1.</span> <span class="nav-text">图 5-3. 熊分类器上 softmax 的示例</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%95%B0%E4%BC%BC%E7%84%B6"><span class="nav-number">5.1.</span> <span class="nav-text">对数似然</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E5%AF%B9%E6%95%B0"><span class="nav-number">5.2.</span> <span class="nav-text">取对数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TIP"><span class="nav-number">6.</span> <span class="nav-text">TIP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B7%E6%B3%A8%E6%84%8F%E4%B8%80%E4%B8%8B%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0"><span class="nav-number">7.</span> <span class="nav-text">请注意一下函数名称</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%A7%A3%E9%87%8A"><span class="nav-number">8.</span> <span class="nav-text">模型解释</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">第五章：图像分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E7%9B%AE%E6%A0%87"><span class="nav-number">1.0.1.</span> <span class="nav-text">本章目标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E7%8B%97%E5%92%8C%E7%8C%AB%E8%AF%86%E5%88%AB%E5%88%B0%E5%AE%A0%E7%89%A9%E5%93%81%E7%A7%8D%E8%AF%86%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">从狗和猫识别到宠物品种识别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">了解数据布局</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.0.1.</span> <span class="nav-text">正则表达式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4"><span class="nav-number">3.</span> <span class="nav-text">预调整</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">目的：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E8%B0%83%E6%95%B4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">预调整策略：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-2%E3%80%82fastai-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E7%AD%96%E7%95%A5%EF%BC%88%E5%B7%A6%EF%BC%89%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%EF%BC%88%E5%8F%B3%EF%BC%89%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.0.0.3.0.1.</span> <span class="nav-text">图 5-2。fastai 数据增强策略（左）与传统方法（右）的比较</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%92%8C%E8%B0%83%E8%AF%95-DataBlock"><span class="nav-number">3.1.</span> <span class="nav-text">检查和调试 DataBlock</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1"><span class="nav-number">4.</span> <span class="nav-text">交叉熵损失</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%BF%80%E6%B4%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">4.1.</span> <span class="nav-text">查看激活和标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">4.2.</span> <span class="nav-text">Softmax</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%EF%BC%9A%E6%8C%87%E6%95%B0%E5%87%BD%E6%95%B0%EF%BC%88exp%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">术语：指数函数（exp）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9B%BE-5-3-%E7%86%8A%E5%88%86%E7%B1%BB%E5%99%A8%E4%B8%8A-softmax-%E7%9A%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.0.0.0.0.1.</span> <span class="nav-text">图 5-3. 熊分类器上 softmax 的示例</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%95%B0%E4%BC%BC%E7%84%B6"><span class="nav-number">5.1.</span> <span class="nav-text">对数似然</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E5%AF%B9%E6%95%B0"><span class="nav-number">5.2.</span> <span class="nav-text">取对数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TIP"><span class="nav-number">6.</span> <span class="nav-text">TIP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B7%E6%B3%A8%E6%84%8F%E4%B8%80%E4%B8%8B%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0"><span class="nav-number">7.</span> <span class="nav-text">请注意一下函数名称</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%A7%A3%E9%87%8A"><span class="nav-number">8.</span> <span class="nav-text">模型解释</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B%E6%A8%A1%E5%9E%8B"><span class="nav-number">9.</span> <span class="nav-text">改进模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E7%8E%87%E6%9F%A5%E6%89%BE%E5%99%A8"><span class="nav-number">10.</span> <span class="nav-text">学习率查找器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%B0%E5%9C%A8%E9%97%AE%E9%A2%98%E6%9D%A5%E4%BA%86%E6%80%8E%E4%B9%88%E6%89%BE%E5%88%B0%E5%90%88%E9%80%82%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%8E%87%EF%BC%9F"><span class="nav-number">10.1.</span> <span class="nav-text">现在问题来了怎么找到合适的学习率？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E5%8D%B7%E8%B0%83%E6%9F%A5"><span class="nav-number">11.</span> <span class="nav-text">问卷调查</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E7%A0%94%E7%A9%B6"><span class="nav-number">11.1.</span> <span class="nav-text">进一步研究</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
