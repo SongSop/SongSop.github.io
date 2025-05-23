@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2025-05-22T10:23:41.415Z</updated>
+  <updated>2025-05-23T08:07:33.386Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>fastaichapter6</title>
+    <link href="http://example.com/2025/05/23/fastaichapter6/"/>
+    <id>http://example.com/2025/05/23/fastaichapter6/</id>
+    <published>2025-05-23T02:12:02.000Z</published>
+    <updated>2025-05-23T08:07:33.386Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="其他计算机视觉问题"><a href="#其他计算机视觉问题" class="headerlink" title="其他计算机视觉问题"></a>其他计算机视觉问题</h1><p>上一章学习了实践中训练模型的一些基本技术，例如：学习率和周期律的选择。这一章我们需要深入学习其他两种机器视觉问题。</p><ul><li><p>多标签分类：发生在你想要预测每个图像的多个标签（有时甚至没有标签）</p></li><li><p>回归： 你的标签是一个或多个数字——数量而不是类别。</p></li></ul><p>这需要深入学习：输出激活，目标和损失函数。</p><h1 id="多标签分类"><a href="#多标签分类" class="headerlink" title="多标签分类"></a>多标签分类</h1><p><em>多标签分类</em>指的是识别图像中可能不只包含一种对象类别的问题。可能有多种对象，或者在你寻找的类别中根本没有对象。</p><p>tip:模型架构与前一章没有大改变，只有损失函数改变了。</p><h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><p>对于我们的示例，我们将使用 PASCAL 数据集，该数据集中的每个图像可以有多种分类对象。</p><p>我们首先按照通常的方式下载和提取数据集：</p><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastai.vision.<span class="built_in">all</span> <span class="keyword">import</span> *</span><br><span class="line">path = untar_data(URLs.PASCAL_2007)</span><br></pre></td></tr></table></figure><p>这个数据集与我们之前看到的不同，它不是按文件名或文件夹结构化的，而是附带一个 CSV 文件，告诉我们每个图像要使用的标签。我们可以通过将其读入 Pandas DataFrame 来检查 CSV 文件：</p><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df = pd.read_csv(path/<span class="string">&#x27;train.csv&#x27;</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure><div class="table-container"><table><thead><tr><th></th><th>文件名</th><th>标签</th><th>是否有效</th></tr></thead><tbody><tr><td>0</td><td>000005.jpg</td><td>椅子</td><td>True</td></tr><tr><td>1</td><td>000007.jpg</td><td>汽车</td><td>True</td></tr><tr><td>2</td><td>000009.jpg</td><td>马 人</td><td>True</td></tr><tr><td>3</td><td>000012.jpg</td><td>汽车</td><td>False</td></tr><tr><td>4</td><td>000016.jpg</td><td>自行车</td><td>True</td></tr></tbody></table></div><p>正如你所看到的，每个图像中的类别列表显示为一个以空格分隔的字符串。</p><p>既然我们已经看到了数据的样子，让我们准备好进行模型训练。</p><h2 id="构建数据块"><a href="#构建数据块" class="headerlink" title="构建数据块"></a>构建数据块</h2><p>将<code>DataFrame</code>对象转换为<code>DataLoaders</code>对象:使用数据块API 来创建<code>DataLoaders</code>对象，因为它提供了灵活性和简单性的良好组合。</p><p>以该数据集为例，展示使用数据块 API 构建<code>DataLoaders</code>对象的实践步骤。</p><p><code>数据集</code></p><p>返回单个项目的独立变量和依赖变量的元组的集合</p><p><code>数据加载器</code></p><p>提供一系列小批量的迭代器，其中每个小批量是一批独立变量和一批因变量的组合</p><p>除此之外，fastai 还提供了两个类来将您的训练和验证集合在一起：</p><p><code>Datasets</code></p><p>包含一个训练<code>Dataset</code>和一个验证<code>Dataset</code>的迭代器</p><p><code>DataLoaders</code></p><p>包含一个训练<code>DataLoader</code>和一个验证<code>DataLoader</code>的对象</p><p>由于<code>DataLoader</code>是建立在<code>Dataset</code>之上并为其添加附加功能（将多个项目整合成一个小批量），通常最容易的方法是首先创建和测试<code>Datasets</code>，然后再查看<code>DataLoaders</code>。</p><p>当我们创建<code>DataBlock</code>时，我们逐步逐步构建，并使用笔记本检查我们的数据。这是一个很好的方式，可以确保您在编码时保持动力，并留意任何问题。易于调试，因为您知道如果出现问题，它就在您刚刚输入的代码行中！</p><p>让我们从没有参数创建的数据块开始，这是最简单的情况：</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;其他计算机视觉问题&quot;&gt;&lt;a href=&quot;#其他计算机视觉问题&quot; class=&quot;headerlink&quot; title=&quot;其他计算机视觉问题&quot;&gt;&lt;/a&gt;其他计算机视觉问题&lt;/h1&gt;&lt;p&gt;上一章学习了实践中训练模型的一些基本技术，例如：学习率和周期律的选择。这一章我们需要</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>fastaichapter5</title>

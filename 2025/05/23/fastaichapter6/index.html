@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="前言正如我们在第一章和第二章中讨论的，有时机器学习模型可能出错。它们可能有错误。它们可能被呈现出以前没有见过的数据，并以我们意料之外的方式行事。或者它们可能完全按设计工作，但被用于我们非常希望它们永远不要被用于的事情。 因为深度学习是如此强大的工具，可以用于很多事情，所以我们特别需要考虑我们选择的后果。哲学上对伦理的研究是对对错的研究，包括我们如何定义这些术语，识别对错行为，以及理解行为和后果之间">
+  <meta name="description" content="其他计算机视觉问题上一章学习了实践中训练模型的一些基本技术，例如：学习率和周期律的选择。这一章我们需要深入学习其他两种机器视觉问题。  多标签分类：发生在你想要预测每个图像的多个标签（有时甚至没有标签）  回归： 你的标签是一个或多个数字——数量而不是类别。   这需要深入学习：输出激活，目标和损失函数。 多标签分类多标签分类指的是识别图像中可能不只包含一种对象类别的问题。可能有多种对象，或者在你">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Fastai Chapter 3">
-<meta property="og:url" content="http://example.com/2025/04/28/fastaichapter3/index.html">
+<meta property="og:title" content="fastaichapter6">
+<meta property="og:url" content="http://example.com/2025/05/23/fastaichapter6/index.html">
 <meta property="og:site_name" content="WangSong&#39;s blog">
-<meta property="og:description" content="前言正如我们在第一章和第二章中讨论的，有时机器学习模型可能出错。它们可能有错误。它们可能被呈现出以前没有见过的数据，并以我们意料之外的方式行事。或者它们可能完全按设计工作，但被用于我们非常希望它们永远不要被用于的事情。 因为深度学习是如此强大的工具，可以用于很多事情，所以我们特别需要考虑我们选择的后果。哲学上对伦理的研究是对对错的研究，包括我们如何定义这些术语，识别对错行为，以及理解行为和后果之间">
+<meta property="og:description" content="其他计算机视觉问题上一章学习了实践中训练模型的一些基本技术，例如：学习率和周期律的选择。这一章我们需要深入学习其他两种机器视觉问题。  多标签分类：发生在你想要预测每个图像的多个标签（有时甚至没有标签）  回归： 你的标签是一个或多个数字——数量而不是类别。   这需要深入学习：输出激活，目标和损失函数。 多标签分类多标签分类指的是识别图像中可能不只包含一种对象类别的问题。可能有多种对象，或者在你">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-04-28T01:16:33.000Z">
-<meta property="article:modified_time" content="2025-04-28T01:28:51.583Z">
+<meta property="article:published_time" content="2025-05-23T02:12:02.000Z">
+<meta property="article:modified_time" content="2025-05-23T08:07:33.386Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2025/04/28/fastaichapter3/">
+<link rel="canonical" href="http://example.com/2025/05/23/fastaichapter6/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Fastai Chapter 3 | WangSong's blog</title>
+  <title>fastaichapter6 | WangSong's blog</title>
   
 
 
@@ -183,7 +183,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/28/fastaichapter3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/23/fastaichapter6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -196,7 +196,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Fastai Chapter 3
+          fastaichapter6
         </h1>
 
         <div class="post-meta">
@@ -207,7 +207,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2025-04-28 09:16:33 / 修改时间：09:28:51" itemprop="dateCreated datePublished" datetime="2025-04-28T09:16:33+08:00">2025-04-28</time>
+              <time title="创建时间：2025-05-23 10:12:02 / 修改时间：16:07:33" itemprop="dateCreated datePublished" datetime="2025-05-23T10:12:02+08:00">2025-05-23</time>
             </span>
 
           
@@ -221,12 +221,81 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>正如我们在第一章和第二章中讨论的，有时机器学习模型可能出错。它们可能有错误。它们可能被呈现出以前没有见过的数据，并以我们意料之外的方式行事。或者它们可能完全按设计工作，但被用于我们非常希望它们永远不要被用于的事情。</p>
-<p>因为深度学习是如此强大的工具，可以用于很多事情，所以我们特别需要考虑我们选择的后果。哲学上对<em>伦理</em>的研究是对对错的研究，包括我们如何定义这些术语，识别对错行为，以及理解行为和后果之间的联系。<em>数据伦理</em>领域已经存在很长时间，许多学者都专注于这个领域。它被用来帮助定义许多司法管辖区的政策；它被用在大大小小的公司中，考虑如何最好地确保产品开发对社会的良好结果；它被研究人员用来确保他们正在做的工作被用于好的目的，而不是坏的目的。</p>
-<p>因此，作为一个深度学习从业者，你很可能在某个时候会面临需要考虑数据伦理的情况。那么数据伦理是什么？它是伦理学的一个子领域，所以让我们从那里开始。</p>
-<font color=yellow> 第三章貌似是深度学习的思政课开始就是数据伦理感觉可以摸鱼了。</font>
-
-<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>鉴于我已经在学校修过《工程伦理了》所以让我们跳过这一章</p>
+        <h1 id="其他计算机视觉问题"><a href="#其他计算机视觉问题" class="headerlink" title="其他计算机视觉问题"></a>其他计算机视觉问题</h1><p>上一章学习了实践中训练模型的一些基本技术，例如：学习率和周期律的选择。这一章我们需要深入学习其他两种机器视觉问题。</p>
+<ul>
+<li><p>多标签分类：发生在你想要预测每个图像的多个标签（有时甚至没有标签）</p>
+</li>
+<li><p>回归： 你的标签是一个或多个数字——数量而不是类别。</p>
+</li>
+</ul>
+<p>这需要深入学习：输出激活，目标和损失函数。</p>
+<h1 id="多标签分类"><a href="#多标签分类" class="headerlink" title="多标签分类"></a>多标签分类</h1><p><em>多标签分类</em>指的是识别图像中可能不只包含一种对象类别的问题。可能有多种对象，或者在你寻找的类别中根本没有对象。</p>
+<p>tip:模型架构与前一章没有大改变，只有损失函数改变了。</p>
+<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><p>对于我们的示例，我们将使用 PASCAL 数据集，该数据集中的每个图像可以有多种分类对象。</p>
+<p>我们首先按照通常的方式下载和提取数据集：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastai.vision.<span class="built_in">all</span> <span class="keyword">import</span> *</span><br><span class="line">path = untar_data(URLs.PASCAL_2007)</span><br></pre></td></tr></table></figure>
+<p>这个数据集与我们之前看到的不同，它不是按文件名或文件夹结构化的，而是附带一个 CSV 文件，告诉我们每个图像要使用的标签。我们可以通过将其读入 Pandas DataFrame 来检查 CSV 文件：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df = pd.read_csv(path/<span class="string">&#x27;train.csv&#x27;</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>文件名</th>
+<th>标签</th>
+<th>是否有效</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>000005.jpg</td>
+<td>椅子</td>
+<td>True</td>
+</tr>
+<tr>
+<td>1</td>
+<td>000007.jpg</td>
+<td>汽车</td>
+<td>True</td>
+</tr>
+<tr>
+<td>2</td>
+<td>000009.jpg</td>
+<td>马 人</td>
+<td>True</td>
+</tr>
+<tr>
+<td>3</td>
+<td>000012.jpg</td>
+<td>汽车</td>
+<td>False</td>
+</tr>
+<tr>
+<td>4</td>
+<td>000016.jpg</td>
+<td>自行车</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>正如你所看到的，每个图像中的类别列表显示为一个以空格分隔的字符串。</p>
+<p>既然我们已经看到了数据的样子，让我们准备好进行模型训练。</p>
+<h2 id="构建数据块"><a href="#构建数据块" class="headerlink" title="构建数据块"></a>构建数据块</h2><p>将<code>DataFrame</code>对象转换为<code>DataLoaders</code>对象:使用数据块API 来创建<code>DataLoaders</code>对象，因为它提供了灵活性和简单性的良好组合。</p>
+<p>以该数据集为例，展示使用数据块 API 构建<code>DataLoaders</code>对象的实践步骤。</p>
+<p><code>数据集</code></p>
+<p>返回单个项目的独立变量和依赖变量的元组的集合</p>
+<p><code>数据加载器</code></p>
+<p>提供一系列小批量的迭代器，其中每个小批量是一批独立变量和一批因变量的组合</p>
+<p>除此之外，fastai 还提供了两个类来将您的训练和验证集合在一起：</p>
+<p><code>Datasets</code></p>
+<p>包含一个训练<code>Dataset</code>和一个验证<code>Dataset</code>的迭代器</p>
+<p><code>DataLoaders</code></p>
+<p>包含一个训练<code>DataLoader</code>和一个验证<code>DataLoader</code>的对象</p>
+<p>由于<code>DataLoader</code>是建立在<code>Dataset</code>之上并为其添加附加功能（将多个项目整合成一个小批量），通常最容易的方法是首先创建和测试<code>Datasets</code>，然后再查看<code>DataLoaders</code>。</p>
+<p>当我们创建<code>DataBlock</code>时，我们逐步逐步构建，并使用笔记本检查我们的数据。这是一个很好的方式，可以确保您在编码时保持动力，并留意任何问题。易于调试，因为您知道如果出现问题，它就在您刚刚输入的代码行中！</p>
+<p>让我们从没有参数创建的数据块开始，这是最简单的情况：</p>
 
     </div>
 
@@ -242,13 +311,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2025/04/27/aliyun/" rel="prev" title="Aliyun">
-      <i class="fa fa-chevron-left"></i> Aliyun
+    <a href="/2025/05/13/fastaichapter5/" rel="prev" title="fastaichapter5">
+      <i class="fa fa-chevron-left"></i> fastaichapter5
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2025/04/28/fastaichapter4/" rel="next" title="Fastai Chapter 4">
-      Fastai Chapter 4 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -307,7 +373,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">2.</span> <span class="nav-text">结论</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">其他计算机视觉问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E6%A0%87%E7%AD%BE%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">多标签分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE"><span class="nav-number">2.1.</span> <span class="nav-text">数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%9D%97"><span class="nav-number">2.2.</span> <span class="nav-text">构建数据块</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

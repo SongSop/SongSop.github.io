@@ -180,6 +180,139 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/23/fastaichapter6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Song">
+      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WangSong's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/05/23/fastaichapter6/" class="post-title-link" itemprop="url">fastaichapter6</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-05-23 10:12:02 / 修改时间：16:07:33" itemprop="dateCreated datePublished" datetime="2025-05-23T10:12:02+08:00">2025-05-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="其他计算机视觉问题"><a href="#其他计算机视觉问题" class="headerlink" title="其他计算机视觉问题"></a>其他计算机视觉问题</h1><p>上一章学习了实践中训练模型的一些基本技术，例如：学习率和周期律的选择。这一章我们需要深入学习其他两种机器视觉问题。</p>
+<ul>
+<li><p>多标签分类：发生在你想要预测每个图像的多个标签（有时甚至没有标签）</p>
+</li>
+<li><p>回归： 你的标签是一个或多个数字——数量而不是类别。</p>
+</li>
+</ul>
+<p>这需要深入学习：输出激活，目标和损失函数。</p>
+<h1 id="多标签分类"><a href="#多标签分类" class="headerlink" title="多标签分类"></a>多标签分类</h1><p><em>多标签分类</em>指的是识别图像中可能不只包含一种对象类别的问题。可能有多种对象，或者在你寻找的类别中根本没有对象。</p>
+<p>tip:模型架构与前一章没有大改变，只有损失函数改变了。</p>
+<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><p>对于我们的示例，我们将使用 PASCAL 数据集，该数据集中的每个图像可以有多种分类对象。</p>
+<p>我们首先按照通常的方式下载和提取数据集：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastai.vision.<span class="built_in">all</span> <span class="keyword">import</span> *</span><br><span class="line">path = untar_data(URLs.PASCAL_2007)</span><br></pre></td></tr></table></figure>
+<p>这个数据集与我们之前看到的不同，它不是按文件名或文件夹结构化的，而是附带一个 CSV 文件，告诉我们每个图像要使用的标签。我们可以通过将其读入 Pandas DataFrame 来检查 CSV 文件：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df = pd.read_csv(path/<span class="string">&#x27;train.csv&#x27;</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>文件名</th>
+<th>标签</th>
+<th>是否有效</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>000005.jpg</td>
+<td>椅子</td>
+<td>True</td>
+</tr>
+<tr>
+<td>1</td>
+<td>000007.jpg</td>
+<td>汽车</td>
+<td>True</td>
+</tr>
+<tr>
+<td>2</td>
+<td>000009.jpg</td>
+<td>马 人</td>
+<td>True</td>
+</tr>
+<tr>
+<td>3</td>
+<td>000012.jpg</td>
+<td>汽车</td>
+<td>False</td>
+</tr>
+<tr>
+<td>4</td>
+<td>000016.jpg</td>
+<td>自行车</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>正如你所看到的，每个图像中的类别列表显示为一个以空格分隔的字符串。</p>
+<p>既然我们已经看到了数据的样子，让我们准备好进行模型训练。</p>
+<h2 id="构建数据块"><a href="#构建数据块" class="headerlink" title="构建数据块"></a>构建数据块</h2><p>将<code>DataFrame</code>对象转换为<code>DataLoaders</code>对象:使用数据块API 来创建<code>DataLoaders</code>对象，因为它提供了灵活性和简单性的良好组合。</p>
+<p>以该数据集为例，展示使用数据块 API 构建<code>DataLoaders</code>对象的实践步骤。</p>
+<p><code>数据集</code></p>
+<p>返回单个项目的独立变量和依赖变量的元组的集合</p>
+<p><code>数据加载器</code></p>
+<p>提供一系列小批量的迭代器，其中每个小批量是一批独立变量和一批因变量的组合</p>
+<p>除此之外，fastai 还提供了两个类来将您的训练和验证集合在一起：</p>
+<p><code>Datasets</code></p>
+<p>包含一个训练<code>Dataset</code>和一个验证<code>Dataset</code>的迭代器</p>
+<p><code>DataLoaders</code></p>
+<p>包含一个训练<code>DataLoader</code>和一个验证<code>DataLoader</code>的对象</p>
+<p>由于<code>DataLoader</code>是建立在<code>Dataset</code>之上并为其添加附加功能（将多个项目整合成一个小批量），通常最容易的方法是首先创建和测试<code>Datasets</code>，然后再查看<code>DataLoaders</code>。</p>
+<p>当我们创建<code>DataBlock</code>时，我们逐步逐步构建，并使用笔记本检查我们的数据。这是一个很好的方式，可以确保您在编码时保持动力，并留意任何问题。易于调试，因为您知道如果出现问题，它就在您刚刚输入的代码行中！</p>
+<p>让我们从没有参数创建的数据块开始，这是最简单的情况：</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/13/fastaichapter5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3453,103 +3586,11 @@ sequenceDiagram
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/22/blogtmp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Song">
-      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WangSong's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/04/22/blogtmp/" class="post-title-link" itemprop="url">如何在github上写自己的blog(主要作为学习工作记录)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-04-22 10:09:55" itemprop="dateCreated datePublished" datetime="2025-04-22T10:09:55+08:00">2025-04-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-27 16:26:26" itemprop="dateModified" datetime="2025-04-27T16:26:26+08:00">2025-04-27</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为什么要写这个博客，因为在fastai课程中看到其中的一个观点：</p>
-<h2 id="开始写作吧！"><a href="#开始写作吧！" class="headerlink" title="开始写作吧！"></a>开始写作吧！</h2><p>我们的学生发现最有帮助巩固对这一材料的理解的事情之一是把它写下来。尝试教给别人是对你对一个主题的理解的最好测试。即使你从不向任何人展示你的写作，这也是有帮助的，但如果你分享了，那就更好了！因此，我们建议，如果你还没有开始写博客，那么现在就开始吧。现在你已经完成了这一章并学会了如何训练和部署模型，你已经可以写下你的第一篇关于深度学习之旅的博客文章了。你有什么惊讶？你在你的领域看到了深度学习的机会？你看到了什么障碍？</p>
-<p>fast.ai 的联合创始人 Rachel Thomas 在文章<a target="_blank" rel="noopener" href="https://oreil.ly/X9-3L">“为什么你（是的，你）应该写博客”</a>中写道：</p>
-<blockquote>
-<p>我会给年轻的自己的最重要建议是尽早开始写博客。以下是一些写博客的理由：</p>
-<ul>
-<li>这就像一份简历，只不过更好。我知道有几个人因为写博客文章而得到了工作机会！</li>
-<li></li>
-<li>帮助你学习。组织知识总是帮助我整合自己的想法。是否理解某事的一个测试是你是否能够向别人解释它。博客文章是一个很好的方式。</li>
-<li></li>
-<li>我通过我的博客文章收到了参加会议的邀请和演讲邀请。我因为写了一篇关于我不喜欢 TensorFlow 的博客文章而被邀请参加 TensorFlow Dev Summit（太棒了！）。</li>
-<li></li>
-<li>结识新朋友。我认识了几个回复我写的博客文章的人。</li>
-<li></li>
-<li>节省时间。每当你通过电子邮件多次回答同一个问题时，你应该把它变成一篇博客文章，这样下次有人问起时你就更容易分享了。</li>
-</ul>
-</blockquote>
-<p>也许她最重要的建议是：</p>
-<blockquote>
-<p>你最适合帮助比你落后一步的人。这些材料仍然新鲜在你的脑海中。许多专家已经忘记了作为初学者（或中级学习者）时的感受，忘记了当你第一次听到这个话题时为什么难以理解。你特定背景、风格和知识水平的背景将为你所写的内容带来不同的视角。</p>
-</blockquote>
-<p>我们已经提供了如何在附录 A 中设置博客的详细信息。如果你还没有博客，现在就看看吧，因为我们有一个非常好的方法让你免费开始写博客，没有广告，甚至可以使用 Jupyter Notebook！</p>
-<h3 id="上传blog方法"><a href="#上传blog方法" class="headerlink" title="上传blog方法"></a>上传blog方法</h3><p>在md文件中写好了文档之后保存并放置在C:\Users\song\Desktop\blog\diary\source_posts文件夹中然后依次输入下列指令上传</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>即可将文档上传到github</p>
-<h3 id="本地查看方法"><a href="#本地查看方法" class="headerlink" title="本地查看方法"></a>本地查看方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo serve</span><br></pre></td></tr></table></figure>
-<p>神奇的我让ai帮我写了一个bat现在可以一键部署了<br>您别说别的还挺好用，倍地道，嘀嘀嘀地道到…………..</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">call hexo clean</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> error：%errorlevel%</span><br><span class="line">    goto error</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> generate...</span><br><span class="line">call hexo generate</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> error：%errorlevel%</span><br><span class="line">    goto error</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> deploy...</span><br><span class="line">call hexo deploy</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> error：%errorlevel%</span><br><span class="line">    goto error</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> [Success] all Success!!</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span> /b 0</span><br><span class="line"></span><br><span class="line">:error</span><br><span class="line"><span class="built_in">echo</span>.</span><br><span class="line"><span class="built_in">echo</span> ******************************</span><br><span class="line"><span class="built_in">echo</span> * fatal error! pls check <span class="built_in">log</span> *</span><br><span class="line"><span class="built_in">echo</span> ******************************</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span> /b 1</span><br></pre></td></tr></table></figure>
-<p>有一说一其实应该再搞一个.sh的给linux用，但是无所谓了等要用的时候再让ai写吧。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -3616,7 +3657,7 @@ sequenceDiagram
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
