@@ -180,6 +180,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/27/%E5%82%BB%E5%AD%90%E5%A6%82%E4%BD%95%E5%86%99%E4%BB%A3%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Song">
+      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WangSong's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/05/27/%E5%82%BB%E5%AD%90%E5%A6%82%E4%BD%95%E5%86%99%E4%BB%A3%E7%A0%81/" class="post-title-link" itemprop="url">傻子如何写代码</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-05-27 15:30:07 / 修改时间：16:47:42" itemprop="dateCreated datePublished" datetime="2025-05-27T15:30:07+08:00">2025-05-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="傻子的git教程"><a href="#傻子的git教程" class="headerlink" title="傻子的git教程"></a>傻子的git教程</h1><p>tip:我现在只会git clone 和git push 应该也就是和傻子差不多了哈哈哈哈！</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>安装很简单我就不多说了，就算安装过程中选错了选项也没关系后面都可以在配置文件中改<a target="_blank" rel="noopener" href="https://git-scm.com/book/zh/v2/%E8%B5%B7%E6%AD%A5-%E5%AE%89%E8%A3%85-Git">官方教程</a></p>
+<p>验证安装：</p>
+<ol>
+<li>打开vscode即可验证</li>
+<li>终端运行 git —version<h2 id="初次配置"><a href="#初次配置" class="headerlink" title="初次配置"></a>初次配置</h2></li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://git-scm.com/book/zh/v2/%e8%b5%b7%e6%ad%a5-%e5%88%9d%e6%ac%a1%e8%bf%90%e8%a1%8c-Git-%e5%89%8d%e7%9a%84%e9%85%8d%e7%bd%ae">官方教程</a></p>
+<p>点开桌面上多出的神奇图标：</p>
+<p><img src="/image/gitbash.png" alt="pic_git"></p>
+<p>在他跳出的命令行进行对git的操作：</p>
+<p><img src="/image/gitwin.png" alt="git_win"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">&quot;yourname&quot;</span></span><br><span class="line">$ git config --global user.email youremail</span><br></pre></td></tr></table></figure>
+<h2 id="在本地创建一个git项目"><a href="#在本地创建一个git项目" class="headerlink" title="在本地创建一个git项目"></a>在本地创建一个git项目</h2><ol>
+<li><p>新建一个文件夹</p>
+</li>
+<li><p>在文件夹中创建一个index.html</p>
+</li>
+</ol>
+<p><img src="/image/index.png" alt="index"></p>
+<ol>
+<li>在vscode中打开文件夹此时会发现vscode的左边栏中的git图标点开后会发生变化。</li>
+</ol>
+<p><img src="/image/vsgit.png" alt="git_vs"></p>
+<p>如果没有相关的库我们需要初始化资源也就是第一个选项，打开之后如下：</p>
+<p><img src="/image/commit.png" alt="commit"></p>
+<p>上传成功但是我并不是这种傻子我需要学习更细的git操作。</p>
+<p>这些都是本地操作。</p>
+<h2 id="下一步上传github"><a href="#下一步上传github" class="headerlink" title="下一步上传github"></a>下一步上传github</h2><p><img src="/image/gogithub.png" alt="GitHub"></p>
+<p>登录github并授权但是我们会发现可能无法正常上传就算用了魔法上网也不行这时候就需要设置代理。</p>
+<p>打开终端在终端中输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">git config --global http.proxy http://proxyuser:proxypwd@proxy.server.com:8080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>一般来说可能会没用这个时候输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+<p>取消代理</p>
+<p>取消代理之后反而成功了现在出现了两个图标：<br><img src="/image/icongit.png" alt="icon"></p>
+<p>蓝色的main代表我们当前项目所处的位置，粉色的云代表远程仓库当前的位置。</p>
+<p><img src="/image/git02.png" alt="branch diff"></p>
+<p>在本地目录下的命令行输入<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> </span><br></pre></td></tr></table></figure><br>可以查看存档所有提交的版本</p>
+<h1 id="常见操作更正"><a href="#常见操作更正" class="headerlink" title="常见操作更正"></a>常见操作更正</h1><p>一般情况下我们并不会在本地创建仓库在发送到github，我们一般是已有github库后再本地进行操作。</p>
+<ol>
+<li><p>在github中新建仓库，写上你想要的名字，选择公开或私有</p>
+</li>
+<li><p>然后操作和之前一样但是在上传之前打开选项卡选择remote将本地的仓库连接到线上的仓库</p>
+</li>
+</ol>
+<p><img src="/image/remote.png" alt="remote"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/23/fastaichapter6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3827,169 +3932,6 @@ Python有6个序列的内置类型，但最常见的是列表和元组。
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/22/Medicalrobot/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Song">
-      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WangSong's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/04/22/Medicalrobot/" class="post-title-link" itemprop="url">Medicalrobot</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-04-22 12:43:44" itemprop="dateCreated datePublished" datetime="2025-04-22T12:43:44+08:00">2025-04-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-15 11:34:18" itemprop="dateModified" datetime="2025-05-15T11:34:18+08:00">2025-05-15</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="关键交互时序"><a href="#关键交互时序" class="headerlink" title="关键交互时序"></a>关键交互时序</h1><pre class="mermaid">
-sequenceDiagram
-    participant User
-    participant ASR
-    participant LLM
-    participant TTS
-
-    User->>ASR: 说话
-    ASR->>ASR: 实时识别
-    ASR->>Main: 触发asr_callback
-    Main->>ASR: 暂停识别
-    Main->>LLM: 发送问题
-    LLM->>TTS: 流式返回响应
-    TTS->>TTS: 合成语音队列
-    TTS->>Audio: 播放音频
-    loop 等待播放完成
-        Main->>TTS: 检查缓冲区状态
-        TTS-->>Main: 状态反馈
-    end
-    Main->>ASR: 恢复识别</pre>
-
-<h1 id="大语言模型测试的基本流程"><a href="#大语言模型测试的基本流程" class="headerlink" title="大语言模型测试的基本流程"></a>大语言模型测试的基本流程</h1><pre class="mermaid">graph TD
-    A[程序启动] --> B[注册信号处理]
-    B --> C[初始化PortAudio音频管理]
-    C --> D[初始化LLM服务器]
-    D --> E[设置LLM回调函数]
-    E --> F[初始化ASR模块]
-    F --> G[设置ASR回调函数]
-    G --> H[启动ASR录音]
-    H --> I[进入主循环休眠10分钟]
-
-    subgraph 语音识别流程
-        H --> J[ASR持续采集音频]
-        J --> K{检测到有效语音?}
-        K -- 是 --> L[暂停ASR录音]
-        L --> M[发送文本到LLM服务器]
-        K -- 否 --> J
-    end
-
-    subgraph LLM处理流程
-        M --> N[LLM处理请求]
-        N --> O[处理完成调用llm_server_callback]
-        O --> P[记录响应内容]
-        P --> Q[恢复ASR录音]
-    end
-
-    subgraph 信号处理流程
-        R[用户按下Ctrl+C] --> S[触发signalHandler]
-        S --> T[停止ASR服务]
-        T --> U[释放资源]
-        U --> V[退出程序]
-    end
-
-    I --> R
-    Q --> J</pre>
-
-
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>目前接手了llm大语言模型和语音合成和识别的工作这边需要查看之前编写的代码。</p>
-<h2 id="目前需要加入的功能是："><a href="#目前需要加入的功能是：" class="headerlink" title="目前需要加入的功能是："></a>目前需要加入的功能是：</h2><ol>
-<li><p>添加方言普通话修正环节：在语音识别将句子发送给大语言模型时先将原始识别句子送给大语言模型进行分析得到标准普通话结果后返回给大语言模型。</p>
-</li>
-<li><p>对于大语言模型医学问题不专业的问题，我尝试了华佗gpt后我发现还是没有很大的改变，因为医学问题十分的复杂不是三言两句和有限信息可以准确分析的。我这边的构想是涉及到医学专业问题减少类似与多少这样量词的使用，尽量以通识建议的口吻进行，而且一定要声明以医生诊断为准的免责声明。</p>
-</li>
-<li><p>我需要添加一段对固定内容的宣讲，这是死板的内容难度是不大的应该。</p>
-</li>
-</ol>
-<p>为了实现这些功能我需要学习和接手llm的代码目前看起来问题不算少，祝我好运！</p>
-<h1 id="目前运行问题总揽"><a href="#目前运行问题总揽" class="headerlink" title="目前运行问题总揽"></a>目前运行问题总揽</h1><p><img src="/image/codeerror_01.png" alt="无匹配输入设备"></p>
-<p>本来想用自己的耳机来进行测试发现这个错误</p>
-<h1 id="对deepseek-h的分析"><a href="#对deepseek-h的分析" class="headerlink" title="对deepseek.h的分析"></a>对deepseek.h的分析</h1><p><img src="/image/calss.png" alt="类的定义"><br>让我来瞅瞅DeepseekServer类里有什么。</p>
-<p>其中定义了一个名为 DeepseekServer 的类，继承它自 LlmBase 类</p>
-<p>然后定义<a target="_blank" rel="noopener" href="https://www.runoob.com/cplusplus/cpp-static-members.html">静态成员变量和函数</a></p>
-<p>其他都看看的差不多了补充个之前的知识盲点，其中的public:和private:是什么意思有什么作用说实话我还不太明白。</p>
-<h4 id="公开和私有"><a href="#公开和私有" class="headerlink" title="公开和私有"></a>公开和私有</h4><p>public: </p>
-<ul>
-<li><p>含义: </p>
-<ol>
-<li>public 表示类中的成员是公开的，可以在类的外部被访问。</li>
-</ol>
-</li>
-<li><p>作用: </p>
-<ol>
-<li>允许外部代码调用类中的 public 成员函数。</li>
-<li>允许外部代码直接访问和修改类中的 public 成员变量。</li>
-</ol>
-</li>
-</ul>
-<p>private:</p>
-<ul>
-<li>含义: <ol>
-<li>private 表示类中的成员是私有的，不能在类的外部直接访问。</li>
-</ol>
-</li>
-<li>作用<ol>
-<li>隐藏类的内部实现细节，保护成员变量和函数不被外部代码随意访问和修改。</li>
-<li>实现封装，确保类的内部状态的一致性和完整性，防止外部代码对类的内部机制产生依赖。</li>
-</ol>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -4061,7 +4003,7 @@ sequenceDiagram
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
