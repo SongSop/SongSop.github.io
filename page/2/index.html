@@ -180,6 +180,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/12/AboutConda/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Song">
+      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WangSong's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/05/12/AboutConda/" class="post-title-link" itemprop="url">AboutConda</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-05-12 14:47:11 / 修改时间：15:22:00" itemprop="dateCreated datePublished" datetime="2025-05-12T14:47:11+08:00">2025-05-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="这里会记录一些常用的conda指令"><a href="#这里会记录一些常用的conda指令" class="headerlink" title="这里会记录一些常用的conda指令"></a>这里会记录一些常用的conda指令</h1><h4 id="首先拿到一台陌生的电脑需要判断电脑上有没有安装conda，conda版本又是多少"><a href="#首先拿到一台陌生的电脑需要判断电脑上有没有安装conda，conda版本又是多少" class="headerlink" title="首先拿到一台陌生的电脑需要判断电脑上有没有安装conda，conda版本又是多少"></a>首先拿到一台陌生的电脑需要判断电脑上有没有安装conda，conda版本又是多少</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda --version</span><br></pre></td></tr></table></figure>
+<h4 id="如果遇到下载慢的问题就需要设置镜像解决"><a href="#如果遇到下载慢的问题就需要设置镜像解决" class="headerlink" title="如果遇到下载慢的问题就需要设置镜像解决"></a>如果遇到下载慢的问题就需要设置镜像解决</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#设置清华镜像</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/</span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/</span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/</span><br><span class="line"><span class="comment">#设置bioconda</span></span><br><span class="line">conda config --add channels bioconda</span><br><span class="line">conda config --add channels conda-forge</span><br><span class="line"><span class="comment">#设置搜索时显示通道地址</span></span><br><span class="line">conda config --<span class="built_in">set</span> show_channel_urls <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<p>tips:事实上之前我查询清华源已经把研究院的ip禁掉了因为有人频繁下载QT</p>
+<h4 id="准备好就可以创建虚拟环境了"><a href="#准备好就可以创建虚拟环境了" class="headerlink" title="准备好就可以创建虚拟环境了"></a>准备好就可以创建虚拟环境了</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda create -n env_name python=3.8</span><br></pre></td></tr></table></figure>
+<h4 id="激活虚拟环境"><a href="#激活虚拟环境" class="headerlink" title="激活虚拟环境"></a>激活虚拟环境</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda activate env_name</span><br></pre></td></tr></table></figure>
+<h4 id="退出虚拟环境"><a href="#退出虚拟环境" class="headerlink" title="退出虚拟环境"></a>退出虚拟环境</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda deactivate</span><br></pre></td></tr></table></figure>
+<h5 id="删除虚拟环境"><a href="#删除虚拟环境" class="headerlink" title="删除虚拟环境"></a>删除虚拟环境</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda remove --name env_name --all</span><br></pre></td></tr></table></figure>
+<h4 id="删除环境中的某个包"><a href="#删除环境中的某个包" class="headerlink" title="删除环境中的某个包"></a>删除环境中的某个包</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda remove --name env_name  package_name</span><br></pre></td></tr></table></figure>
+<h4 id="查看当前拥有的包"><a href="#查看当前拥有的包" class="headerlink" title="查看当前拥有的包"></a>查看当前拥有的包</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda list</span><br></pre></td></tr></table></figure>
+<h4 id="安装包的方式"><a href="#安装包的方式" class="headerlink" title="安装包的方式"></a>安装包的方式</h4><p>根据我的使用经验可以使用conda安装也可以安装pip进行安装所以总结一下安装的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install package_name</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install package_name</span><br></pre></td></tr></table></figure>
+<p>卸载的话就是相应的uninstall</p>
+<p><font color = orange>特别说明:</font> pip和conda在安装软件包时，在依赖关系方面的处理机制不同。pip在递归的串行循环中安装依赖项，不会确保同时满足所有软件包的依赖关系，如果按顺序较早安装的软件包相对于按顺序较晚安装的软件包具有不兼容的依赖项版本，则可能导致环境以微妙的方式被破坏掉；conda使用SAT（satisfiability）solver来验证是否满足环境中安装的所有软件包的所有要求，只要有关依赖项的软件包元数据正确，conda就会按预期产生可用的环境。</p>
+<p><font color = red >关于混用问题:</font>不建议混用，不然容易出现错误。</p>
+<p><font color = geern>关于包的位置:</font></p>
+<ul>
+<li>conda install xxx：这种方式安装的库都会放在anaconda3/pkgs目录下，这样的好处就是，当在某个环境下已经下载好了某个库，再在另一个环境中还需要这个库时，就可以直接从pkgs目录下将该库复制至新环境而不用重复下载。</li>
+<li>pip install xxx：分两种情况，一种情况就是当前conda环境的python是conda安装的，和系统的不一样，那么xxx会被安装到anaconda3/envs/current_env/lib/python3.x/site-packages文件夹中，如果当前conda环境用的是系统的python，那么xxx会通常会被安装到~/.local/lib/python3.x/site-packages文件夹中 </li>
+</ul>
+<h4 id="清理-conda-缓存"><a href="#清理-conda-缓存" class="headerlink" title="清理 conda 缓存"></a>清理 conda 缓存</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda clean -h</span><br></pre></td></tr></table></figure>
+<p>查看清理的具体细节</p>
+<h4 id="变更python版本"><a href="#变更python版本" class="headerlink" title="变更python版本"></a>变更python版本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install python=3.5</span><br></pre></td></tr></table></figure>
+<h4 id="更新python版本到最新"><a href="#更新python版本到最新" class="headerlink" title="更新python版本到最新"></a>更新python版本到最新</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda update python</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/04/28/fastaichapter4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2921,7 +3002,7 @@ sequenceDiagram
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
