@@ -29,9 +29,12 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/image/Probabilisticpic/%E8%B4%9D%E5%8F%B6%E6%96%AF.png">
 <meta property="og:image" content="http://example.com/image/Probabilisticpic/fak.png">
-<meta property="og:image" content="http://example.com/image/iou.png">
+<meta property="og:image" content="http://example.com/image/Probabilisticpic/iou.png">
+<meta property="og:image" content="http://example.com/image/Probabilisticpic/paperpic1.png">
+<meta property="og:image" content="http://example.com/image/Probabilisticpic/midvslast.png">
+<meta property="og:image" content="http://example.com/image/Probabilisticpic/probencode.png">
 <meta property="article:published_time" content="2025-06-16T10:52:44.000Z">
-<meta property="article:modified_time" content="2025-06-23T09:57:59.100Z">
+<meta property="article:modified_time" content="2025-06-24T05:41:38.873Z">
 <meta property="article:author" content="Wang Song">
 <meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
 <meta name="twitter:card" content="summary">
@@ -217,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-23 17:57:59" itemprop="dateModified" datetime="2025-06-23T17:57:59+08:00">2025-06-23</time>
+                <time title="修改时间：2025-06-24 13:41:38" itemprop="dateModified" datetime="2025-06-24T13:41:38+08:00">2025-06-24</time>
               </span>
 
           
@@ -284,8 +287,66 @@ $$ P(S | \mathbf{M}) = \frac{P(S) \prod_{k=1}^{K} P(M_k | S)}{\sum_{S'} P(S') \p
 <h3 id="NMS非最大值抑制"><a href="#NMS非最大值抑制" class="headerlink" title="NMS非最大值抑制"></a>NMS非最大值抑制</h3><p>简单来说就是抑制不是极大值的元素，目标检测与图像分类不同，图像分类往往只有一个输出，但目标检测的输出个数却是未知的。除了Ground-Truth（标注数据）训练，模型永远无法百分百确信自己要在一张图上预测多少物体。</p>
 <p>NMS伪代码：</p>
 <p><img src="/image/Probabilisticpic/fak.png" alt="fakecodeNMS"></p>
-<p>虽然有点反直觉但是情况确实如上述所说，nms的比对算法是这样进行的，选择一个元素与左右相邻的两个元素进行比较，如果他比相邻的元素都大那麽将会直接输出为maximumAt(i)。<br>如果出现I[i]&lt;=I[i+1]的情况函数会直接跳转到相邻的I[i+1]将其更新为新的I[i]进行下一步比对。</p>
-<p>IoU（交并比）：<br><img src="/image/iou.png" alt="IoU"></p>
+<p>虽然有点反直觉但是情况确实如上述所说，nms的比对算法是这样进行的，选择一个元素与左右相邻的两个元素进行比较，如果他比相邻的元素都大那麽将会直接输出为maximumAt(i)。<br>如果出现I[i]&lt;=I[i+1]的情况函数会直接跳转到相邻的I[i+1]将其更新为新的I[i]进行下一步比对。<br>在本文中将NMS也作为一种多模态融合地策略，非极大值抑制（NMS）未能融合来自低置信度模态的线索。</p>
+<p>IoU（交并比）：<br><img src="/image/Probabilisticpic/iou.png" alt="IoU"></p>
+<p>还使用了一个重叠检测平均值作为对比(检测框因该是NMS得来的)</p>
+<p><img src="/image/Probabilisticpic/paperpic1.png" alt="compare"></p>
+<p>总结：所有的一般融合方式都是1+1＜1的效果他们大多都是降低了检测的分数。而proben就是要实现1+1＞2的效果。</p>
+<h2 id="Multimodal-Data"><a href="#Multimodal-Data" class="headerlink" title="Multimodal Data."></a>Multimodal Data.</h2><ul>
+<li><p>缺乏多模态配对数据数据</p>
+</li>
+<li><p>对准RGB和热成像需要专业设备（如果后期考虑多模融合可以优先考虑RGB和深度图像结合）</p>
+</li>
+</ul>
+<p>许多未对齐数据集和仅仅标注了一种模态的的数据集使多模态学习变得复杂。</p>
+<p>本文中提到了KAIST行人检测数据集其中就涉及了热成像和RGB。</p>
+<h2 id="Multimodal-Fusion"><a href="#Multimodal-Fusion" class="headerlink" title="Multimodal Fusion."></a>Multimodal Fusion.</h2><ul>
+<li><p>早期融合：早期融合构建了一个四通道RGB加热输入，然后由（典型的）深度网络处理。</p>
+</li>
+<li><p>中期融合：midfusion将RGB和热输入保持在不同的流中，然后在网络中合并它们的下游特征。</p>
+</li>
+<li><p>晚期融合和中期融合对比：</p>
+</li>
+</ul>
+<p><img src="/image/Probabilisticpic/midvslast.png" alt="mid compare last"></p>
+<p>本文的工作更多的是从不同检测器的检测结果进行融合而非不同检测输入的特征。所以他在使用过程中也需要注意处理某个1探测器失效时的失踪问题。</p>
+<h2 id="Multimodal-Object-Detection-via-Probabilistic-Ensembling"><a href="#Multimodal-Object-Detection-via-Probabilistic-Ensembling" class="headerlink" title="Multimodal Object Detection via Probabilistic Ensembling"></a>Multimodal Object Detection via Probabilistic Ensembling</h2><p><img src="/image/Probabilisticpic/probencode.png" alt="fcode"></p>
+<h1 id="算法-1"><a href="#算法-1" class="headerlink" title="算法 1"></a>算法 1</h1><p>我们假设有一个带有标签 (y)（例如，“人”）的对象，并从两种模态测量信号：(x_1)（RGB）和 (x_2)（热成像）。我们写出适用于两种模态的公式，但扩展到多种模态（在我们的实验中进行了评估）是直接的。至关重要的是，我们假设测量在给定对象标签 (y) 的条件下是条件独立的：</p>
+<p>[<br>p(x_1, x_2 | y) = p(x_1 | y) p(x_2 | y) \tag{1}<br>]</p>
+<p>这也可以写成 (p(x_1 | y) = p(x_1 | x_2, y))，这可能更容易直观理解。给定人员标签 (y)，预测其 RGB 外观 (x_1)；如果此预测不会改变对热信号 (x_2) 的已有知识，则条件独立性成立。我们希望根据多模态测量推断标签：</p>
+<script type="math/tex; mode=display">
+p(y | x_1, x_2) = \frac{p(x_1, x_2 | y) p(y)}{p(x_1, x_2)} \propto p(x_1, x_2 | y) p(y) \tag{2}</script><p>通过将条件独立性假设从公式 (1) 应用到公式 (2)，我们得到：</p>
+<script type="math/tex; mode=display">
+p(y | x_1, x_2) \propto p(x_1 | y) p(x_2 | y) p(y) \propto \frac{p(x_1 | y) p(y) p(x_2 | y) p(y)}{p(y)} \tag{3}</script><script type="math/tex; mode=display">
+\propto \frac{p(y | x_1) p(y | x_2)}{p(y)} \tag{4}</script><p>以上建议了一种简单的融合方法，当单模态特征在给定真实对象标签的条件下是条件独立的时，该方法是可证明的最优的：</p>
+<ol>
+<li>训练独立的单模态分类器，以预测给定每个单独特征模态的标签 (y) 的分布 (p(y | x_1)) 和 (p(y | x_2))。</li>
+<li>通过将两个分布相乘、除以类别先验分布，并将最终结果（公式 4）标准化为总和为一，来生成最终分数。</li>
+</ol>
+<p>tip:此处我有一点无法理解$ p(y) $按照直接理解他是这张图片是否有人的概率，这是一个令人疑惑的参数，查找以后我发现他可能是收到训练数据中有人和无人数据比例影响的一个参数，比如训练数据中一半是有人的一半是没有人的那么其就会等于0.5.（这是我目前的猜想，现在再继续阅读下文后其对$p(y)$ 有了更加深入的介绍）</p>
+<h4 id="关于获取类别先验概率及-ProbEn-方法的扩展"><a href="#关于获取类别先验概率及-ProbEn-方法的扩展" class="headerlink" title="关于获取类别先验概率及 ProbEn 方法的扩展"></a>关于获取类别先验概率及 ProbEn 方法的扩展</h4><p>为了获得类别先验概率 (p(y))，我们可以简单地对每个类别的样本数量进行归一化处理。将 ProbEn（公式 4）扩展到 (M) 种模态是简单的：</p>
+<p>[<br>p(y|{x<em>i}</em>{i=1}^M) \propto \frac{\prod_{i=1}^M p(y|x_i)}{p(y)^{M-1}} \tag{5}<br>]</p>
+<p>这里公式 (5) 详细阐述了如何将 ProbEn 方法从两种模态扩展到 (M) 种模态的情况。其中 (p(y)) 是类别先验概率，通过归一化每个类别的样本计数得到。分子部分是 (M) 种模态下条件概率的乘积，分母部分则是类别先验概率的 (M-1) 次方，这样的形式体现了多模态融合过程中对各类别先验信息的综合考量。</p>
+<h6 id="归一化"><a href="#归一化" class="headerlink" title="归一化"></a>归一化</h6><p>公式 (5) 中提到的归一化操作，是将每个类别的样本计数进行处理，使得所有类别的概率之和为 1，具体步骤如下：</p>
+<ol>
+<li><strong>统计样本计数</strong>：对于每个类别 (y)，统计训练集中属于该类别的样本数量。</li>
+<li><strong>计算总样本数</strong>：将所有类别的样本数量相加，得到训练集的总样本数。</li>
+<li><strong>计算归一化因子</strong>：对于每个类别 (y)，将其样本数量除以总样本数，得到 (p(y))。<br>[<br>p(y) = \frac{\text{类别 } y\text{ 的样本数}}{\text{总样本数}}<br>]</li>
+</ol>
+<p>这种归一化操作确保了所有类别先验概率之和为 1，符合概率的基本性质。通过这种方式，类别先验概率 (p(y)) 反映了训练数据中各类别的相对频率，为模型提供了关于类别分布的先验信息。</p>
+<p>是的！上面的内容进一步详细解释了 (p(y)) 的作用和处理方式，尤其是与 ProbEn 方法的关系。以下是对 (p(y)) 的更详细解释：</p>
+<h3 id="与-ProbEn-的关系"><a href="#与-ProbEn-的关系" class="headerlink" title="与 ProbEn 的关系"></a>与 ProbEn 的关系</h3><ul>
+<li>在公式 [ p(y = k|{x<em>i}</em>{i=1}^M) \propto \frac{\prod<em>{i=1}^M p(y = k|x_i)}{p(y = k)^{M-1}} \propto \frac{\exp(\sum</em>{i=1}^M s_i[k])}{p(y = k)^{M-1}} ] 中，分母 (p(y = k)^{M-1}) 直接体现了 (p(y)) 在计算多模态后验概率时的作用。ProbEn 方法通过对各单模态的条件概率进行处理（求积后除以 (p(y = k)^{M - 1})），实现了对多模态数据的融合，这表明 (p(y)) 是融合过程中的一个重要参数。</li>
+</ul>
+<h3 id="确定方式"><a href="#确定方式" class="headerlink" title="确定方式"></a>确定方式</h3><ul>
+<li><strong>基于数据集统计</strong> ：如果训练数据集中有每个类别的样本占比，如类别 (y_1) 占 (30\%)，类别 (y_2) 占 (70\%)，则 (p(y_1) = 0.3)，(p(y_2) = 0.7)。</li>
+<li><strong>假设均匀分布</strong> ：当对类别分布没有特别了解时，通常假设每个类别的先验概率相等。例如一共有 (C) 个类别，则 (p(y_i) = \frac{1}{C})（(i = 1,2,…,C)）。</li>
+<li><strong>领域知识</strong> ：在一些特定领域，如医学诊断中，某些疾病的发病率是已知的，就可以用发病率作为该疾病标签的先验概率。</li>
+</ul>
+<h3 id="处理缺失模态时的作用"><a href="#处理缺失模态时的作用" class="headerlink" title="处理缺失模态时的作用"></a>处理缺失模态时的作用</h3><ul>
+<li>在处理缺失模态时，ProbEn 能够优雅地应对。因为它基于概率归一化的多模态后验概率 (p(y|x_1, x_2))，这些后验概率可以直接与单模态后验概率 (p(y|x_1)) 进行比较，无需额外复杂的处理步骤，这一过程也体现了 (p(y)) 的重要性。</li>
+</ul>
+<p>总之，这段内容对 (p(y)) 的来源、确定方法和作用等进行了深入解释，更加明确了 (p(y)) 在 ProbEn 方法及多模态融合中的重要地位。</p>
 
     </div>
 
@@ -363,7 +424,7 @@ $$ P(S | \mathbf{M}) = \frac{P(S) \prod_{k=1}^{K} P(M_k | S)}{\sum_{S'} P(S') \p
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%AA%E8%AE%BA%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">绪论部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E8%A7%84%E5%88%99"><span class="nav-number">1.1.1.</span> <span class="nav-text">贝叶斯规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.1.2.</span> <span class="nav-text">贝叶斯公式推导</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1. 条件概率定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%81%94%E5%90%88%E6%A6%82%E7%8E%87%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2. 联合概率关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%BB%A3%E5%85%A5%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">3. 代入条件概率公式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%85%A8%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F%E5%B1%95%E5%BC%80%E5%88%86%E6%AF%8D"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">4. 全概率公式展开分母</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E6%9C%80%E7%BB%88%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%85%AC%E5%BC%8F"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">5. 最终贝叶斯公式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%88%E5%BD%93-A-%E5%92%8C-A-c-%E6%9E%84%E6%88%90%E5%AE%8C%E5%A4%87%E4%BA%8B%E4%BB%B6%E7%BB%84%E6%97%B6%EF%BC%89"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">简化版（当 $A$ 和 $A^c$ 构成完备事件组时）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.3.</span> <span class="nav-text">第一原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A6%82%E7%8E%87%E8%AE%BA%E5%9F%BA%E6%9C%AC%E5%85%AC%E7%90%86"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">1. 概率论基本公理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">2. 条件概率定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%8B%AC%E7%AB%8B%E6%80%A7%E5%85%AC%E7%90%86"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">3. 独立性公理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%9D%A1%E4%BB%B6%E7%8B%AC%E7%AB%8B%E6%80%A7%E5%81%87%E8%AE%BE-ProbEn-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">4. 条件独立性假设 (ProbEn 核心原理)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%85%A8%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">5. 全概率公式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NMS%E9%9D%9E%E6%9C%80%E5%A4%A7%E5%80%BC%E6%8A%91%E5%88%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">NMS非最大值抑制</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%AA%E8%AE%BA%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">绪论部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E8%A7%84%E5%88%99"><span class="nav-number">1.1.1.</span> <span class="nav-text">贝叶斯规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.1.2.</span> <span class="nav-text">贝叶斯公式推导</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1. 条件概率定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%81%94%E5%90%88%E6%A6%82%E7%8E%87%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2. 联合概率关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%BB%A3%E5%85%A5%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">3. 代入条件概率公式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%85%A8%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F%E5%B1%95%E5%BC%80%E5%88%86%E6%AF%8D"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">4. 全概率公式展开分母</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E6%9C%80%E7%BB%88%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%85%AC%E5%BC%8F"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">5. 最终贝叶斯公式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%88%E5%BD%93-A-%E5%92%8C-A-c-%E6%9E%84%E6%88%90%E5%AE%8C%E5%A4%87%E4%BA%8B%E4%BB%B6%E7%BB%84%E6%97%B6%EF%BC%89"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">简化版（当 $A$ 和 $A^c$ 构成完备事件组时）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.3.</span> <span class="nav-text">第一原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%A6%82%E7%8E%87%E8%AE%BA%E5%9F%BA%E6%9C%AC%E5%85%AC%E7%90%86"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">1. 概率论基本公理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">2. 条件概率定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%8B%AC%E7%AB%8B%E6%80%A7%E5%85%AC%E7%90%86"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">3. 独立性公理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%9D%A1%E4%BB%B6%E7%8B%AC%E7%AB%8B%E6%80%A7%E5%81%87%E8%AE%BE-ProbEn-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">4. 条件独立性假设 (ProbEn 核心原理)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%85%A8%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">5. 全概率公式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NMS%E9%9D%9E%E6%9C%80%E5%A4%A7%E5%80%BC%E6%8A%91%E5%88%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">NMS非最大值抑制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multimodal-Data"><span class="nav-number">1.3.</span> <span class="nav-text">Multimodal Data.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multimodal-Fusion"><span class="nav-number">1.4.</span> <span class="nav-text">Multimodal Fusion.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multimodal-Object-Detection-via-Probabilistic-Ensembling"><span class="nav-number">1.5.</span> <span class="nav-text">Multimodal Object Detection via Probabilistic Ensembling</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95-1"><span class="nav-number">2.</span> <span class="nav-text">算法 1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E8%8E%B7%E5%8F%96%E7%B1%BB%E5%88%AB%E5%85%88%E9%AA%8C%E6%A6%82%E7%8E%87%E5%8F%8A-ProbEn-%E6%96%B9%E6%B3%95%E7%9A%84%E6%89%A9%E5%B1%95"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">关于获取类别先验概率及 ProbEn 方法的扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96"><span class="nav-number">2.0.0.1.0.1.</span> <span class="nav-text">归一化</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-ProbEn-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.0.1.</span> <span class="nav-text">与 ProbEn 的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E6%96%B9%E5%BC%8F"><span class="nav-number">2.0.2.</span> <span class="nav-text">确定方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%BC%BA%E5%A4%B1%E6%A8%A1%E6%80%81%E6%97%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.0.3.</span> <span class="nav-text">处理缺失模态时的作用</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
