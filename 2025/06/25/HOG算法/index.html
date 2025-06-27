@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前言在学习和阅读相关多模态目标检测的论文时因为对其中的很多相关名词和核心方法不了解需要额外的学习补充为了防止大量的方法在学习之后忘记所以将他们每次学习的时候汇总到本章节中，利用博客自带的搜索功能进行快速查找复习方便后续的学习阅读。 目标检测的图像特征提取之HOG特征方向梯度直方图（Histogram of Oriented Gradient, HOG）特征是一种在计算机视觉和图像处理中用来进行物体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HOG算法">
+<meta property="og:url" content="http://example.com/2025/06/25/HOG%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="WangSong&#39;s blog">
+<meta property="og:description" content="前言在学习和阅读相关多模态目标检测的论文时因为对其中的很多相关名词和核心方法不了解需要额外的学习补充为了防止大量的方法在学习之后忘记所以将他们每次学习的时候汇总到本章节中，利用博客自带的搜索功能进行快速查找复习方便后续的学习阅读。 目标检测的图像特征提取之HOG特征方向梯度直方图（Histogram of Oriented Gradient, HOG）特征是一种在计算机视觉和图像处理中用来进行物体">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/hog/original.png">
+<meta property="og:image" content="http://example.com/image/hog/%E4%BC%BD%E9%A9%AC%E5%8F%98%E6%8D%A2%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="http://example.com/image/hog/%E6%A2%AF%E5%BA%A6%E6%96%B9%E5%90%91(%E8%BD%AC%E6%8D%A2%E4%B8%BA%E8%A7%92%E5%BA%A6%E5%9B%BE">
+<meta property="og:image" content="http://example.com/image/hog/%E6%A2%AF%E5%BA%A6%E5%B9%85%E5%80%BC%EF%BC%88%E5%BD%92%E4%B8%80%E5%8C%96%EF%BC%89.png">
+<meta property="og:image" content="http://example.com/image/hog/HOG.png">
+<meta property="article:published_time" content="2025-06-25T06:36:13.000Z">
+<meta property="article:modified_time" content="2025-06-27T01:37:24.495Z">
+<meta property="article:author" content="Wang Song">
+<meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/hog/original.png">
+
+<link rel="canonical" href="http://example.com/2025/06/25/HOG%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HOG算法 | WangSong's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WangSong's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">WangSong's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/SongSop" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/25/HOG%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Song">
+      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WangSong's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HOG算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-06-25 14:36:13" itemprop="dateCreated datePublished" datetime="2025-06-25T14:36:13+08:00">2025-06-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-27 09:37:24" itemprop="dateModified" datetime="2025-06-27T09:37:24+08:00">2025-06-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在学习和阅读相关多模态目标检测的论文时因为对其中的很多相关名词和核心方法不了解需要额外的学习补充为了防止大量的方法在学习之后忘记所以将他们每次学习的时候汇总到本章节中，利用博客自带的搜索功能进行快速查找复习方便后续的学习阅读。</p>
+<h2 id="目标检测的图像特征提取之HOG特征"><a href="#目标检测的图像特征提取之HOG特征" class="headerlink" title="目标检测的图像特征提取之HOG特征"></a>目标检测的图像特征提取之HOG特征</h2><p>方向梯度直方图（Histogram of Oriented Gradient, HOG）特征是一种在计算机视觉和图像处理中用来进行物体检测的特征描述子。它通过计算和统计图像局部区域的梯度方向直方图来构成特征。Hog特征结合SVM分类器已经被广泛应用于图像识别中，尤其在行人检测中获得了极大的成功。需要提醒的是，HOG+SVM进行行人检测的方法是法国研究人员Dalal在2005的CVPR上提出的，而如今虽然有很多行人检测算法不断提出，但基本都是以HOG+SVM的思路为主。</p>
+<h4 id="核心算法"><a href="#核心算法" class="headerlink" title="核心算法"></a>核心算法</h4><ul>
+<li><p>灰度化（将图像看做一个x,y,z（灰度）的三维图像）</p>
+</li>
+<li><p>采用Gamma校正法对输入图像进行颜色空间的标准化（归一化）；目的是调节图像的对比度，降低图像局部的阴影和光照变化所造成的影响，同时可以抑制噪音的干扰；</p>
+</li>
+</ul>
+<p>公式：$I_{\text{norm}} = \sqrt{I}$  </p>
+<ul>
+<li>计算图像每个像素的梯度（包括大小和方向）；主要是为了捕获轮廓信息，同时进一步弱化光照的干扰。</li>
+</ul>
+<p>使用中心差分法：<br><strong>水平梯度 $G_x$</strong>：$I(x+1,y) - I(x-1,y)$<br><strong>垂直梯度 $G_y$</strong>：$I(x,y+1) - I(x,y-1)$ </p>
+<p><strong>梯度幅值</strong>：$\sqrt{G_x + G_y} $<br><strong>梯度方向</strong>：$\arctan(G_x/G_y) $  </p>
+<ul>
+<li><p>将图像划分成小cells（例如6*6像素/cell）</p>
+</li>
+<li><p>统计每个cell的梯度直方图（不同梯度的个数），即可形成每个cell的descriptor</p>
+</li>
+<li><p>将每几个cell组成一个block（例如3*3个cell/block），一个block内所有cell的特征descriptor串联起来便得到该block的HOG特征descriptor。</p>
+</li>
+<li><p>将图像image内的所有block的HOG特征descriptor串联起来就可以得到该image（你要检测的目标）的HOG特征descriptor了。这个就是最终的可供分类使用的特征向量了。</p>
+</li>
+</ul>
+<h6 id="这是对目标检测经典论文Histograms-of-Oriented-Gradients-for-Human-Detection的学习和复刻下面是代码复现过程"><a href="#这是对目标检测经典论文Histograms-of-Oriented-Gradients-for-Human-Detection的学习和复刻下面是代码复现过程" class="headerlink" title="这是对目标检测经典论文Histograms of Oriented Gradients for Human Detection的学习和复刻下面是代码复现过程"></a>这是对目标检测经典论文Histograms of Oriented Gradients for Human Detection的学习和复刻下面是代码复现过程</h6><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/opencv.hpp&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* @param cv::Mat src	输入图像</span></span><br><span class="line"><span class="comment">* @param cv::Mat&amp; dst	输出图像</span></span><br><span class="line"><span class="comment">* @param float c		常数，用于控制变化幅度</span></span><br><span class="line"><span class="comment">* @param float gamma	指数</span></span><br><span class="line"><span class="comment">* @breif 伽马变换</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">GammaGrayTrans</span><span class="params">(<span class="type">const</span> cv::Mat&amp; src, cv::Mat&amp; dst, <span class="type">float</span> c, <span class="type">float</span> gamma)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//建立灰度映射表</span></span><br><span class="line">	<span class="type">float</span> grayTable[<span class="number">256</span>];</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		grayTable[i] = c * <span class="built_in">pow</span>(i, gamma);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//遍历修改灰度值</span></span><br><span class="line">	<span class="type">int</span> temp = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; src.rows; i++)</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; src.cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			temp = src.<span class="built_in">at</span>&lt;uchar&gt;(i, j);</span><br><span class="line">			dst.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) = grayTable[temp];</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//将数据缩放到0-255</span></span><br><span class="line">	cv::<span class="built_in">normalize</span>(dst, dst, <span class="number">0</span>, <span class="number">255</span>, cv::NORM_MINMAX);</span><br><span class="line">	<span class="comment">//dst的数据类型还原为CV_8UC1</span></span><br><span class="line">	dst.<span class="built_in">convertTo</span>(dst, CV_8UC1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* @param cv::Mat angleImg 梯度方向矩阵</span></span><br><span class="line"><span class="comment">* @param cv::Mat magnitudeImg 梯度幅值矩阵</span></span><br><span class="line"><span class="comment">* @param cv::Size cellSize cell的尺寸</span></span><br><span class="line"><span class="comment">* @param std::vector&lt;std::vector&lt;double&gt;&gt; cellVector 存储每个cell的特征向量</span></span><br><span class="line"><span class="comment">* @brief 计算每个cell的特征向量</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">getCellVector</span><span class="params">(cv::Mat&amp; angleImg,cv::Mat&amp; magnitudeImg,cv::Size cellSize, std::vector&lt;std::vector&lt;<span class="type">double</span>&gt;&gt;&amp; cellVector)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> cell_i=<span class="number">0</span>; cell_i &lt; angleImg.rows; cell_i=cell_i+cellSize.height)</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> cell_j = <span class="number">0</span>; cell_j &lt; angleImg.cols; cell_j=cell_j + cellSize.width)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//映射直方图</span></span><br><span class="line">			<span class="comment">//[0, 180] 度以20度为一个bin，平均分成9份</span></span><br><span class="line">			<span class="function">std::vector&lt;<span class="type">double</span>&gt; <span class="title">table</span><span class="params">(<span class="number">9</span>)</span></span>;</span><br><span class="line">			<span class="type">int</span> temp_floor = <span class="number">0</span>;</span><br><span class="line">			<span class="type">double</span> scale = <span class="number">0</span>;</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">int</span> i = cell_i; i &lt; cell_i + cellSize.height; i++)</span><br><span class="line">				<span class="keyword">for</span> (<span class="type">int</span> j = cell_j; j &lt; cell_j + cellSize.width; j++)</span><br><span class="line">				&#123;</span><br><span class="line">					temp_floor = std::<span class="built_in">floor</span>(angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) / <span class="number">20</span>);	<span class="comment">//向下取整</span></span><br><span class="line">					<span class="keyword">switch</span> (temp_floor) &#123;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">0</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">0</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">1</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">20</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">1</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">2</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">40</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">2</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">3</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">60</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">3</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">4</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">80</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">4</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">5</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">100</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">5</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">6</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">120</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">6</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">7</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">						scale = (angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) - <span class="number">140</span>) / <span class="number">20</span>;</span><br><span class="line">						table[<span class="number">7</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * scale;</span><br><span class="line">						table[<span class="number">8</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) * (<span class="number">1</span> - scale);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					<span class="keyword">case</span> <span class="number">8</span>:</span><br><span class="line">						table[<span class="number">8</span>] += magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j);</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			cellVector.<span class="built_in">push_back</span>(table);</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* @param cv::Mat src 输入图像（CV_8U）,灰度图</span></span><br><span class="line"><span class="comment">* @param cv::Mat dst 输出图像</span></span><br><span class="line"><span class="comment">* @param int	thresh OTSU最大类间方差的灰度值</span></span><br><span class="line"><span class="comment">* @brief 计算HOG描述子</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">getHOGDescriptor</span><span class="params">(cv::Mat&amp; src, std::vector&lt;<span class="type">double</span>&gt;&amp; HOGVector, </span></span></span><br><span class="line"><span class="params"><span class="function">                     cv::Mat&amp; gammaOut, cv::Mat&amp; magOut, cv::Mat&amp; angOut)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//gamma变换</span></span><br><span class="line">	<span class="function">cv::Mat <span class="title">gammaImg</span><span class="params">(src.size(),CV_32F)</span></span>;</span><br><span class="line">	<span class="built_in">GammaGrayTrans</span>(src, gammaImg, <span class="number">1</span>, <span class="number">0.5</span>);</span><br><span class="line">	gammaOut = gammaImg.<span class="built_in">clone</span>();</span><br><span class="line"></span><br><span class="line">	<span class="comment">//计算梯度</span></span><br><span class="line">	cv::Mat sobel_x, sobel_y;</span><br><span class="line">	cv::<span class="built_in">Sobel</span>(gammaImg, sobel_x, CV_32F, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">	cv::<span class="built_in">Sobel</span>(gammaImg, sobel_y, CV_32F, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">	<span class="function">cv::Mat <span class="title">magnitudeImg</span><span class="params">(sobel_x.size(),CV_32F)</span>, <span class="title">angleImg</span><span class="params">(sobel_x.size(), CV_32F)</span></span>;</span><br><span class="line">	<span class="type">double</span> temp_mag = <span class="number">0</span>, temp_angle = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; sobel_x.rows; i++)</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; sobel_x.cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			temp_mag = cv::<span class="built_in">abs</span>(sobel_x.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j)) + cv::<span class="built_in">abs</span>(sobel_y.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j));</span><br><span class="line">			temp_angle = cv::<span class="built_in">fastAtan2</span>(sobel_y.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j), sobel_x.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j));</span><br><span class="line"></span><br><span class="line">			magnitudeImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) = temp_mag;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> ((temp_angle &gt; <span class="number">180</span>)) temp_angle -= <span class="number">180</span>;		<span class="comment">//将角度映射到0-180°，成为“无符号”梯度</span></span><br><span class="line">			angleImg.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) = temp_angle;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 保存中间结果</span></span><br><span class="line">	magOut = magnitudeImg.<span class="built_in">clone</span>();</span><br><span class="line">	angOut = angleImg.<span class="built_in">clone</span>();</span><br><span class="line"></span><br><span class="line">	<span class="comment">//构建直方图</span></span><br><span class="line">	<span class="comment">//设置cell的尺寸8*8,获得每个cell的向量</span></span><br><span class="line">	<span class="function">cv::Size <span class="title">cellSize</span><span class="params">(<span class="number">8</span>,<span class="number">8</span>)</span></span>;</span><br><span class="line">	std::vector&lt;std::vector&lt;<span class="type">double</span>&gt;&gt; cellVector;</span><br><span class="line">	<span class="built_in">getCellVector</span>(angleImg, magnitudeImg, cellSize, cellVector);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 计算每个block向量,选用2*2的block</span></span><br><span class="line">	std::vector &lt; std::vector &lt; <span class="type">double</span> &gt;&gt; blockVector;</span><br><span class="line">	<span class="type">int</span> block_i_end = angleImg.rows / cellSize.height;</span><br><span class="line">	<span class="type">int</span> block_j_end = angleImg.cols / cellSize.width;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> block_i = <span class="number">0</span>; block_i &lt; block_i_end<span class="number">-1</span>; block_i++) &#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> block_j = <span class="number">0</span>; block_j &lt; block_j_end<span class="number">-1</span>; block_j++)</span><br><span class="line">		&#123;</span><br><span class="line">			std::vector&lt;<span class="type">double</span>&gt; block;</span><br><span class="line">			block.<span class="built_in">insert</span>(block.<span class="built_in">end</span>(), cellVector[block_i*block_j_end+block_j].<span class="built_in">begin</span>(), cellVector[block_i * block_j_end + block_j].<span class="built_in">end</span>());</span><br><span class="line">			block.<span class="built_in">insert</span>(block.<span class="built_in">end</span>(), cellVector[block_i * block_j_end + block_j + <span class="number">1</span>].<span class="built_in">begin</span>(), cellVector[block_i * block_j_end + block_j + <span class="number">1</span>].<span class="built_in">end</span>());</span><br><span class="line">			block.<span class="built_in">insert</span>(block.<span class="built_in">end</span>(), cellVector[(block_i<span class="number">+1</span>) * block_j_end + block_j].<span class="built_in">begin</span>(), cellVector[(block_i<span class="number">+1</span>) * block_j_end + block_j].<span class="built_in">end</span>());</span><br><span class="line">			block.<span class="built_in">insert</span>(block.<span class="built_in">end</span>(), cellVector[(block_i<span class="number">+1</span>) * block_j_end + block_j + <span class="number">1</span>].<span class="built_in">begin</span>(), cellVector[(block_i<span class="number">+1</span>) * block_j_end + block_j + <span class="number">1</span>].<span class="built_in">end</span>());</span><br><span class="line">			cv::<span class="built_in">normalize</span>(block, block, <span class="number">1</span>, cv::NORM_L1);</span><br><span class="line">			blockVector.<span class="built_in">push_back</span>(block);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//构建HOG特征描述子，合并每个block</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; blockVector.<span class="built_in">size</span>(); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; blockVector[i].<span class="built_in">size</span>(); j++)</span><br><span class="line">		&#123;</span><br><span class="line">			HOGVector.<span class="built_in">push_back</span>(blockVector[i][j]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 可视化HOG特征</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">visualizeHOG</span><span class="params">(cv::Mat&amp; img, std::vector&lt;<span class="type">double</span>&gt;&amp; hogVector, cv::Size winSize)</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> CELL_SIZE = <span class="number">8</span>;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> BIN_NUM = <span class="number">9</span>;</span><br><span class="line">    <span class="type">const</span> <span class="type">float</span> DEG_PER_BIN = <span class="number">180.0</span> / BIN_NUM;</span><br><span class="line">    <span class="type">const</span> <span class="type">float</span> MAX_LEN = <span class="number">6.0</span>; <span class="comment">// 箭头最大长度</span></span><br><span class="line">    </span><br><span class="line">    cv::Mat hogImg = img.<span class="built_in">clone</span>();</span><br><span class="line">    cv::<span class="built_in">cvtColor</span>(hogImg, hogImg, cv::COLOR_GRAY2BGR);</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> cellsInX = winSize.width / CELL_SIZE;</span><br><span class="line">    <span class="type">int</span> cellsInY = winSize.height / CELL_SIZE;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> cy = <span class="number">0</span>; cy &lt; cellsInY - <span class="number">1</span>; cy++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> cx = <span class="number">0</span>; cx &lt; cellsInX - <span class="number">1</span>; cx++) &#123;</span><br><span class="line">            <span class="type">int</span> cellOffset = (cy * (cellsInX - <span class="number">1</span>) + cx) * BIN_NUM * <span class="number">4</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> by = <span class="number">0</span>; by &lt; <span class="number">2</span>; by++) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> bx = <span class="number">0</span>; bx &lt; <span class="number">2</span>; bx++) &#123;</span><br><span class="line">                    <span class="type">int</span> cellY = cy * CELL_SIZE + by * CELL_SIZE;</span><br><span class="line">                    <span class="type">int</span> cellX = cx * CELL_SIZE + bx * CELL_SIZE;</span><br><span class="line">                    </span><br><span class="line">                    <span class="function">cv::Point <span class="title">center</span><span class="params">(cellX + CELL_SIZE/<span class="number">2</span>, cellY + CELL_SIZE/<span class="number">2</span>)</span></span>;</span><br><span class="line">                    </span><br><span class="line">                    <span class="keyword">for</span> (<span class="type">int</span> bin = <span class="number">0</span>; bin &lt; BIN_NUM; bin++) &#123;</span><br><span class="line">                        <span class="type">float</span> binValue = hogVector[cellOffset + (by * <span class="number">2</span> + bx) * BIN_NUM + bin];</span><br><span class="line">                        <span class="type">float</span> angle = bin * DEG_PER_BIN;</span><br><span class="line">                        <span class="type">float</span> radian = angle * CV_PI / <span class="number">180.0</span>;</span><br><span class="line">                        </span><br><span class="line">                        <span class="comment">// 计算箭头方向</span></span><br><span class="line">                        <span class="type">float</span> dx = <span class="built_in">cos</span>(radian) * binValue * MAX_LEN;</span><br><span class="line">                        <span class="type">float</span> dy = <span class="built_in">sin</span>(radian) * binValue * MAX_LEN;</span><br><span class="line">                        </span><br><span class="line">                        <span class="function">cv::Point <span class="title">direction</span><span class="params">(<span class="keyword">static_cast</span>&lt;<span class="type">int</span>&gt;(dx), <span class="keyword">static_cast</span>&lt;<span class="type">int</span>&gt;(dy))</span></span>;</span><br><span class="line">                        cv::<span class="built_in">line</span>(hogImg, center, center + direction, </span><br><span class="line">                                 cv::<span class="built_in">Scalar</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">1</span>, cv::LINE_AA);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    cv::<span class="built_in">imshow</span>(<span class="string">&quot;HOG Visualization&quot;</span>, hogImg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//读取图片</span></span><br><span class="line">	string filepath = <span class="string">&quot;/home/song/object_detect_lab/HOGtestCPP/pic/miku.jpg&quot;</span>;</span><br><span class="line">	cv::Mat src = cv::<span class="built_in">imread</span>(filepath, cv::IMREAD_GRAYSCALE);</span><br><span class="line">	<span class="keyword">if</span> (src.<span class="built_in">empty</span>())</span><br><span class="line">	&#123;</span><br><span class="line">		std::cout &lt;&lt; <span class="string">&quot;imread error&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	cv::<span class="built_in">resize</span>(src, src, cv::<span class="built_in">Size</span>(<span class="number">64</span>, <span class="number">128</span>));</span><br><span class="line">	cv::<span class="built_in">imshow</span>(<span class="string">&quot;Original Image&quot;</span>, src);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 存储中间结果</span></span><br><span class="line">	cv::Mat gammaImg, magImg, angImg;</span><br><span class="line">	std::vector&lt;<span class="type">double</span>&gt; HOGVector;</span><br><span class="line">	<span class="built_in">getHOGDescriptor</span>(src, HOGVector, gammaImg, magImg, angImg);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 1. 显示伽马变换结果</span></span><br><span class="line">	cv::<span class="built_in">imshow</span>(<span class="string">&quot;1Gamma Transform&quot;</span>, gammaImg);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 2. 显示梯度幅值（归一化）</span></span><br><span class="line">	cv::Mat magShow;</span><br><span class="line">	cv::<span class="built_in">normalize</span>(magImg, magShow, <span class="number">0</span>, <span class="number">255</span>, cv::NORM_MINMAX);</span><br><span class="line">	magShow.<span class="built_in">convertTo</span>(magShow, CV_8U);</span><br><span class="line">	cv::<span class="built_in">imshow</span>(<span class="string">&quot;2Gradient Magnitude&quot;</span>, magShow);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 3. 显示梯度方向（转换为角度图）</span></span><br><span class="line">	cv::Mat angShow;</span><br><span class="line">	angImg.<span class="built_in">convertTo</span>(angShow, CV_32F);</span><br><span class="line">	angShow = angShow * <span class="number">255.0</span> / <span class="number">180.0</span>; <span class="comment">// 0-180°映射到0-255</span></span><br><span class="line">	angShow.<span class="built_in">convertTo</span>(angShow, CV_8U);</span><br><span class="line">	cv::<span class="built_in">imshow</span>(<span class="string">&quot;3Gradient Orientation&quot;</span>, angShow);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 4. 打印HOG特征信息</span></span><br><span class="line">	std::cout &lt;&lt; <span class="string">&quot;HOG Descriptor Size: &quot;</span> &lt;&lt; HOGVector.<span class="built_in">size</span>() &lt;&lt; std::endl;</span><br><span class="line">	std::cout &lt;&lt; <span class="string">&quot;First 10 values: &quot;</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span> &amp;&amp; i &lt; HOGVector.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">		std::cout &lt;&lt; HOGVector[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	std::cout &lt;&lt; std::endl;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 5. 可视化HOG特征</span></span><br><span class="line">	<span class="built_in">visualizeHOG</span>(src, HOGVector, src.<span class="built_in">size</span>());</span><br><span class="line">	</span><br><span class="line">	cv::<span class="built_in">waitKey</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到灰度化的原始图片：</p>
+<p><img src="/image/hog/original.png" alt="original"></p>
+<p>原始图片灰度化后用Gamma校正法对输入图像进行颜色空间的标准化：</p>
+<p><img src="/image/hog/伽马变换结果.png" alt="伽马变换结果"></p>
+<p>梯度方向角度图：</p>
+<p><img src="/image/hog/梯度方向(转换为角度图" alt="梯度方向(转换为角度图)">.png)</p>
+<p>梯度方向幅值图：</p>
+<p><img src="/image/hog/梯度幅值（归一化）.png" alt="梯度幅值（归一化）"></p>
+<p>HOG示意图：</p>
+<p><img src="/image/hog/HOG.png" alt="HOG"></p>
+<h4 id="学习思考"><a href="#学习思考" class="headerlink" title="学习思考"></a>学习思考</h4><p>如果按照我的复现过程一张维64×128的图片其得到的HOG检测子应该为3780维，而在opencv的HOG特征提取代码<code>getDefaultPeopleDetector()</code>中却得到了3781维我们来看一下原因以免在以后被疯狂困扰。</p>
+<p>这是因为另外一维是一维偏移</p>
+<p>利用hog+svm检测行人，最终的检测方法是最基本的线性判别函数，wx + b = 0，刚才所求的3780维向量其实就是w，而加了一维的b就形成了opencv默认的3781维检测算子，而检测分为train和test两部分，在train期间我们需要提取一些列训练样本的hog特征使用svm训练最终的目的是为了得到我们检测的w以及b，在test期间提取待检测目标的hog特征x，带入方程是不是就能进行判别了呢？</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/16/Probabilistic/" rel="prev" title="论文 Multimodal Object Detection via Probabilistic Ensembling 的阅读和代码复现过程记录">
+      <i class="fa fa-chevron-left"></i> 论文 Multimodal Object Detection via Probabilistic Ensembling 的阅读和代码复现过程记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/06/26/svm%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="next" title="svm算法学习">
+      svm算法学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E4%B9%8BHOG%E7%89%B9%E5%BE%81"><span class="nav-number">1.1.</span> <span class="nav-text">目标检测的图像特征提取之HOG特征</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">核心算法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%99%E6%98%AF%E5%AF%B9%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%BB%8F%E5%85%B8%E8%AE%BA%E6%96%87Histograms-of-Oriented-Gradients-for-Human-Detection%E7%9A%84%E5%AD%A6%E4%B9%A0%E5%92%8C%E5%A4%8D%E5%88%BB%E4%B8%8B%E9%9D%A2%E6%98%AF%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.0.1.0.1.</span> <span class="nav-text">这是对目标检测经典论文Histograms of Oriented Gradients for Human Detection的学习和复刻下面是代码复现过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E6%80%9D%E8%80%83"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">学习思考</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wang Song"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Wang Song</p>
+  <div class="site-description" itemprop="description">a graduate student working at Huzhou institute of Zhejiang University</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SongSop" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SongSop" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3042903197@qq.com" title="E-Mail → mailto:3042903197@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Song</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
