@@ -203,10 +203,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-06-26 17:00:57 / 修改时间：17:04:40" itemprop="dateCreated datePublished" datetime="2025-06-26T17:00:57+08:00">2025-06-26</time>
+              <time title="创建时间：2025-06-26 17:00:57" itemprop="dateCreated datePublished" datetime="2025-06-26T17:00:57+08:00">2025-06-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-27 13:04:28" itemprop="dateModified" datetime="2025-06-27T13:04:28+08:00">2025-06-27</time>
+              </span>
 
           
 
@@ -250,16 +256,82 @@
 </li>
 </ul>
 <h4 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h4><p>SVM通过优化一个凸二次规划问题来求解最佳的超平面，其中包括最小化模型的复杂度（即最小化权重的平方和），同时限制训练样本的误分类情况。这个优化问题可以使用拉格朗日乘子法来求解。对于非线性可分的情况，SVM可以通过核函数（Kernel Function）将输入特征映射到高维空间，使得原本线性不可分的数据在高维空间中变得线性可分。常用的核函数包括线性核、多项式核、高斯核等。</p>
-<pre class="mermaid">graph TD
-    A[输入数据] --> B[SVM 模型目标]
-    B --> C[目标函数]
-    C --> D[约束条件]
-    D --> E[引入惩罚项]
-    E --> F[核函数]
-    A --> F
-    B --> F
-    C --> F
-    D --> F</pre>
+<p>好的，以下是修改后的内容：</p>
+<p>在支持向量机（SVM）中，分割超平面公式为：</p>
+<script type="math/tex; mode=display">
+w^T x + b</script><p>其中：</p>
+<ul>
+<li><strong>(w^T x)</strong> ：这是向量 (w) 和向量 (x) 的点积。向量 (w) 是权重向量，它垂直于分割超平面，决定了超平面的方向。向量 (x) 是样本的特征向量。点积 (w^T x) 反映了样本点 (x) 在权重向量 (w) 方向上的投影长度。</li>
+<li><strong>(b)</strong> ：它是偏置项，用于确定超平面在特征空间中的位置，相当于对超平面的平移量。通过调整 (b) 的值，可以在保持超平面方向不变的情况下，改变超平面距离原点的距离，从而影响分类边界的位置。</li>
+</ul>
+<p>分割超平面的作用是将不同类别的样本分开。对于一个给定的样本 (x)，当</p>
+<script type="math/tex; mode=display">
+w^T x + b > 0</script><p>时，模型预测该样本属于正类，正类使用1表示；当</p>
+<script type="math/tex; mode=display">
+w^T x + b < 0</script><p>时，预测为负类，负类使用-1表示；而当</p>
+<script type="math/tex; mode=display">
+w^T x + b = 0</script><p>时，样本点正好位于超平面上。</p>
+<h4 id="分类器求解优化问题"><a href="#分类器求解优化问题" class="headerlink" title="分类器求解优化问题"></a>分类器求解优化问题</h4><h4 id="现在我们需要做的就是找出-w-和-b-。"><a href="#现在我们需要做的就是找出-w-和-b-。" class="headerlink" title="现在我们需要做的就是找出$w$和$b$。"></a>现在我们需要做的就是找出$w$和$b$。</h4><p>确定数据点到分割面的距离并确定分割面放置位置时，间隔通过<script type="math/tex">label*(w^t+b)</script>来计算他的函数间距（label一般取1或者-1）</p>
+<p>注：<script type="math/tex">label*(w^t+b)×1/||x||</script>为点到分割面的几何距离。</p>
+<p>找到具有最小间隔的数据点，对间隔进行最大化，写作：</p>
+<script type="math/tex; mode=display">\arg \max _ {w,b} \left\{ \min \left( \frac{\text{label} \cdot (w^T x + b)}{n}, \frac{1}{\|w\|} \right) \right\}</script><h6 id="公式解释："><a href="#公式解释：" class="headerlink" title="公式解释："></a>公式解释：</h6><p>$\arg \max _{w,b}$ 表示我们要找到使大括号内的表达式达到最大值的 $w$ 和 $b$ 组合。而大括号内的部分是一个最小值函数 $\min (…) $，所以我们是在寻找能够使这个最小值尽可能大的 $w$ 和 $b$。</p>
+<p>带约束条件的优化问题会让人很容易想到拉格朗日乘子法。</p>
+<h2 id="拉格朗日乘子法"><a href="#拉格朗日乘子法" class="headerlink" title="拉格朗日乘子法"></a>拉格朗日乘子法</h2><h3 id="问题定义"><a href="#问题定义" class="headerlink" title="问题定义"></a>问题定义</h3><p>给定优化问题：</p>
+<script type="math/tex; mode=display">\min_{\mathbf{x}} f(\mathbf{x}) \quad \text{subject to} \quad g_i(\mathbf{x}) = 0, \ i=1,...,m</script><p>其中：</p>
+<ul>
+<li>$f: \mathbb{R}^n \rightarrow \mathbb{R}$ 是目标函数</li>
+<li>$g_i: \mathbb{R}^n \rightarrow \mathbb{R}$ 是等式约束</li>
+<li>$\mathbf{x} \in \mathbb{R}^n$ 是优化变量</li>
+</ul>
+<h3 id="核心原理"><a href="#核心原理" class="headerlink" title="核心原理"></a>核心原理</h3><p>在约束极值点 $\mathbf{x}^*$ 处，目标函数梯度与约束函数梯度线性相关：</p>
+<script type="math/tex; mode=display">\nabla f(\mathbf{x}^*) = \sum_{i=1}^m \lambda_i \nabla g_i(\mathbf{x}^*)</script><p>其中 $\lambda_i$ 称为拉格朗日乘子。</p>
+<h3 id="拉格朗日函数"><a href="#拉格朗日函数" class="headerlink" title="拉格朗日函数"></a>拉格朗日函数</h3><p>构造增广函数：</p>
+<script type="math/tex; mode=display">\mathcal{L}(\mathbf{x}, \boldsymbol{\lambda}) = f(\mathbf{x}) + \sum_{i=1}^m \lambda_i g_i(\mathbf{x})</script><p>其中 $\boldsymbol{\lambda} = [\lambda_1, …, \lambda_m]^T$ 是乘子向量。</p>
+<h3 id="极值必要条件"><a href="#极值必要条件" class="headerlink" title="极值必要条件"></a>极值必要条件</h3><p>极值点 $(\mathbf{x}^<em>, \boldsymbol{\lambda}^</em>)$ 满足：</p>
+<ol>
+<li><p><strong>梯度条件</strong>：</p>
+<script type="math/tex; mode=display">\nabla_{\mathbf{x}} \mathcal{L} = \nabla f(\mathbf{x}^*) + \sum_{i=1}^m \lambda_i^* \nabla g_i(\mathbf{x}^*) = \mathbf{0}</script></li>
+<li><p><strong>原始可行性条件</strong>：</p>
+<script type="math/tex; mode=display">g_i(\mathbf{x}^*) = 0, \quad \forall i=1,...,m</script></li>
+</ol>
+<h3 id="求解步骤"><a href="#求解步骤" class="headerlink" title="求解步骤"></a>求解步骤</h3><ol>
+<li>构造拉格朗日函数 $\mathcal{L}(\mathbf{x}, \boldsymbol{\lambda})$</li>
+<li>求偏导数方程组：<script type="math/tex; mode=display">
+\begin{cases}
+\frac{\partial \mathcal{L}}{\partial x_j} = 0, & j=1,...,n \\
+\frac{\partial \mathcal{L}}{\partial \lambda_i} = g_i(\mathbf{x}) = 0, & i=1,...,m
+\end{cases}</script></li>
+<li>解 $(n+m)$ 个方程组成的方程组</li>
+<li>验证解的极值性质（极小/极大）</li>
+</ol>
+<h3 id="不等式约束扩展-KKT条件"><a href="#不等式约束扩展-KKT条件" class="headerlink" title="不等式约束扩展 (KKT条件)"></a>不等式约束扩展 (KKT条件)</h3><p>对于不等式约束 $h_j(\mathbf{x}) \leq 0$：</p>
+<ol>
+<li><p><strong>梯度条件</strong>：</p>
+<script type="math/tex; mode=display">\nabla f + \sum \lambda_i \nabla g_i + \sum \mu_j \nabla h_j = \mathbf{0}</script></li>
+<li><p><strong>原始可行性</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+g_i(\mathbf{x}) = 0 \\
+h_j(\mathbf{x}) \leq 0
+\end{cases}</script></li>
+<li><p><strong>乘子非负性</strong>：</p>
+<script type="math/tex; mode=display">\mu_j \geq 0</script></li>
+<li><p><strong>互补松弛条件</strong>：</p>
+<script type="math/tex; mode=display">\mu_j h_j(\mathbf{x}) = 0</script></li>
+</ol>
+<h3 id="关键性质"><a href="#关键性质" class="headerlink" title="关键性质"></a>关键性质</h3><ol>
+<li><strong>梯度对齐</strong>：约束梯度张成目标梯度的正交补空间</li>
+<li><strong>边界激活</strong>：不等式约束在 $\mu_j &gt; 0$ 时等价于等式约束</li>
+<li><strong>敏感性</strong>：$\lambda_i$ 表示约束 $g_i$ 变化对目标值的影响率：<script type="math/tex; mode=display">\frac{\partial f^*}{\partial c_i} = -\lambda_i</script>其中 $g_i(\mathbf{x}) = c_i$</li>
+</ol>
+<h3 id="应用条件"><a href="#应用条件" class="headerlink" title="应用条件"></a>应用条件</h3><ol>
+<li>函数 $f$ 和 $g_i$ 连续可微</li>
+<li>约束梯度 $\nabla g_i$ 在极值点线性无关（约束规范）</li>
+<li>对于凸问题，KKT条件是充分必要条件</li>
+</ol>
+<p>此框架将约束优化转化为无约束问题求解，是连续优化理论的核心工具。</p>
+<h3 id="公式换算"><a href="#公式换算" class="headerlink" title="公式换算"></a>公式换算</h3><p>这里的约束调节都是基于数据点的，因此我们需要将超平面公式写成数据点形式：</p>
+
       
     </div>
 
