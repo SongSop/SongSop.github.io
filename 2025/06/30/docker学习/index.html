@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前言为了告别配置环境配一天啥也搞不了的问题，决定学习使用以下docker正好我这篇需要复现的多传感器融合的代码有他自己的dockerfile可以作为学习的尝试和检验。顺便也尝试利用官方的英文文档进行学习，提高一下自己的学习能力。本文参考教程 首先来看看docker的优点： 应用于更快速的交付和部署   传统：通过大量的帮助文档，安装程序！ Docker：打包镜像发布测试，一键运行！   更便捷的升">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker学习">
+<meta property="og:url" content="http://example.com/2025/06/30/docker%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="WangSong&#39;s blog">
+<meta property="og:description" content="前言为了告别配置环境配一天啥也搞不了的问题，决定学习使用以下docker正好我这篇需要复现的多传感器融合的代码有他自己的dockerfile可以作为学习的尝试和检验。顺便也尝试利用官方的英文文档进行学习，提高一下自己的学习能力。本文参考教程 首先来看看docker的优点： 应用于更快速的交付和部署   传统：通过大量的帮助文档，安装程序！ Docker：打包镜像发布测试，一键运行！   更便捷的升">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/docker/dockerpic.png">
+<meta property="article:published_time" content="2025-06-30T01:09:04.000Z">
+<meta property="article:modified_time" content="2025-06-30T04:30:57.324Z">
+<meta property="article:author" content="Wang Song">
+<meta property="article:tag" content="Python, C++, robot, ros , opencv, target detection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/docker/dockerpic.png">
+
+<link rel="canonical" href="http://example.com/2025/06/30/docker%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>docker学习 | WangSong's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WangSong's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">WangSong's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/SongSop" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/30/docker%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Song">
+      <meta itemprop="description" content="a graduate student working at Huzhou institute of Zhejiang University">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WangSong's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          docker学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-06-30 09:09:04 / 修改时间：12:30:57" itemprop="dateCreated datePublished" datetime="2025-06-30T09:09:04+08:00">2025-06-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为了告别配置环境配一天啥也搞不了的问题，决定学习使用以下docker正好我这篇需要复现的多传感器融合的代码有他自己的dockerfile可以作为学习的尝试和检验。顺便也尝试利用官方的英文文档进行学习，提高一下自己的学习能力。本文<a target="_blank" rel="noopener" href="https://github.com/tech-shrimp/docker_installer">参考教程</a></p>
+<h2 id="首先来看看docker的优点："><a href="#首先来看看docker的优点：" class="headerlink" title="首先来看看docker的优点："></a>首先来看看docker的优点：</h2><ol>
+<li>应用于更快速的交付和部署</li>
+</ol>
+<ul>
+<li>传统：通过大量的帮助文档，安装程序！</li>
+<li>Docker：打包镜像发布测试，一键运行！</li>
+</ul>
+<ol>
+<li>更便捷的升级和扩缩容</li>
+</ol>
+<ul>
+<li>通过使用Docker，部署应用 如同搭积木一样！</li>
+</ul>
+<ol>
+<li>更简单的系统运维</li>
+</ol>
+<ul>
+<li>使用容器化之后，开发和测试环境是高度一致的</li>
+</ul>
+<ol>
+<li>更高效的计算资源利用</li>
+</ol>
+<ul>
+<li>Docker是内核级别的虚拟化，可以在一个物理机上运行很多的容器，让服务器的性能可以压榨到极致！</li>
+</ul>
+<h2 id="docker的基本组成"><a href="#docker的基本组成" class="headerlink" title="docker的基本组成:"></a>docker的基本组成:</h2><p><img src="/image/docker/dockerpic.png" alt="simple"></p>
+<p>镜像（Image）：</p>
+<p>docker镜像就好比一个模板，我们可以通过这个模板来创建容器服务，tomcat镜像===&gt;run==&gt;tomcat01容器（提供服务器），通过这个镜像可以创建多个容器（最终服务运行或者项目运行就是在容器中的）。</p>
+<p>容器（container）：</p>
+<p>docker利用容器技术，独立运行一个或者一组应用 通过镜像来创建</p>
+<p>启动，停止，删除，基本命令！<br>目前就可以把这个容器理解为就是一个简易的linux系统</p>
+<p>仓库（repository）：</p>
+<p>仓库就是存放 镜像（image）的地方！</p>
+<p>仓库又可以分为 公有仓库和私有仓库</p>
+<h1 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h1><p>可以打开<a target="_blank" rel="noopener" href="https://get.docker.com">安装网址</a>按照下列指令进行安装。</p>
+<p>主要进行<code>curl -fsSL https://get.docker.com -o install-docker.sh</code>和<code>sudo sh install-docker.sh</code>需要版本特定要求再细致安装。</p>
+<h1 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h1><p>这个很简单就行git拉源码一样使用<code>sudo docker pull 镜像地址</code>就可以进行下载</p>
+<p>诺出现网络问题可以通过更换代理的办法进行解决：<br>打开配置文件：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/docker/daemon.json</span><br></pre></td></tr></table></figure><br>修改输入下列内容保存退出：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;registry-mirrors&quot;: [</span><br><span class="line">        &quot;https://docker.m.daocloud.io&quot;,</span><br><span class="line">        &quot;https://docker.1panel.live&quot;,</span><br><span class="line">        &quot;https://hub.rat.dev&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>重启docker：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure></p>
+<h1 id="管理镜像"><a href="#管理镜像" class="headerlink" title="管理镜像"></a>管理镜像</h1><p>列出所有的docker镜像<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure><br>删除对应的镜像<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker rmi 镜像名称</span><br></pre></td></tr></table></figure></p>
+<h1 id="使用镜像创建并运行一个容器"><a href="#使用镜像创建并运行一个容器" class="headerlink" title="使用镜像创建并运行一个容器"></a>使用镜像创建并运行一个容器</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run 镜像名称</span><br></pre></td></tr></table></figure>
+<p>或<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d 镜像名称 </span><br></pre></td></tr></table></figure><br>或<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -p 宿主机端口:容器端口 镜像名称 </span><br></pre></td></tr></table></figure><br>或<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -v 宿主机目录:容器目录（绑定挂载）卷的名字：容器目录（命名卷挂载） 镜像名称 </span><br></pre></td></tr></table></figure><br>-d不会占用当前终端,-p是将宿主主机端口转发到容器端口实现访问。需要注意某些容器运行时需要<code>-e</code>添加对应参数才能进行（项目手册基本会有说明）<code>--name myname</code>可以给容器自定义唯一名字。<code>-it</code> 让我的终端进入容器工作 <code>--rm</code>当容器停止就删除容器。<code>--restart always/unless-stopped</code>前者是只要容器停止就重启后者手动关闭容器不重启。</p>
+<p>查看正在运行的容器:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker ps</span><br></pre></td></tr></table></figure>
+<p>如果加上<code>-a</code>就是查看所有容器无论是否在运行</p>
+<p>docker创建挂载卷:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume create 卷的名字</span><br></pre></td></tr></table></figure>
+<p>这样就可以在宿主机部分直接使用挂载卷名字了，同时也可以查看挂载卷在宿主机上的目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker volume imspect 挂载卷名字</span><br></pre></td></tr></table></figure>
+<p>tip:进入该目录需要<code>sudo -i</code>进入root用户才能够进行</p>
+<h4 id="关于卷的管理"><a href="#关于卷的管理" class="headerlink" title="关于卷的管理"></a>关于卷的管理</h4><p>查看所有创建过的卷:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker volume list</span><br></pre></td></tr></table></figure><br>删除一个卷:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker volume rm 卷名</span><br></pre></td></tr></table></figure><br>删除所有没有容器使用的卷<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker volume prune -a</span><br></pre></td></tr></table></figure></p>
+<h2 id="删除容器"><a href="#删除容器" class="headerlink" title="删除容器"></a>删除容器</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker rm -f ps中显示的容器id</span><br></pre></td></tr></table></figure>
+<p>正在运行的容器必须是使用-f</p>
+<h2 id="控制容器状态"><a href="#控制容器状态" class="headerlink" title="控制容器状态"></a>控制容器状态</h2><p>因为使用docker run默认是会创建一个容器，那麽控制一个容器的启动和停止运用以下指令：<br>终止<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker stop 容器名/id</span><br></pre></td></tr></table></figure><br>启动<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker start 名字/id</span><br></pre></td></tr></table></figure></p>
+<p>查看容器信息<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker inspect 名称/id</span><br></pre></td></tr></table></figure><br>查看容器日志:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker logs id</span><br></pre></td></tr></table></figure>
+<p>后面加上<code>-f</code>可以滚动查看日志</p>
+<h1 id="在容器中执行linux命令"><a href="#在容器中执行linux命令" class="headerlink" title="在容器中执行linux命令"></a>在容器中执行linux命令</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec id linux命令</span><br></pre></td></tr></table></figure>
+<p>深入调试：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec id /bin/sh</span><br></pre></td></tr></table></figure></p>
+<h1 id="容器内软件安装"><a href="#容器内软件安装" class="headerlink" title="容器内软件安装"></a>容器内软件安装</h1><p>查看容器linux发行版本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/os-release</span><br></pre></td></tr></table></figure><br>然后按照发行版的安装办法进行安装就行</p>
+<h1 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h1><p>为你的项目创建一个Dockerfile文件:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定基础镜像（推荐使用官方镜像）</span></span><br><span class="line">FROM python:3.11-slim-bullseye</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置元数据（可选）</span></span><br><span class="line">LABEL maintainer=&quot;your.email@example.com&quot;</span><br><span class="line">LABEL version=&quot;1.0&quot;</span><br><span class="line">LABEL description=&quot;Production-ready Python application&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置环境变量（推荐使用ENV）</span></span><br><span class="line">ENV PYTHONDONTWRITEBYTECODE 1</span><br><span class="line">ENV PYTHONUNBUFFERED 1</span><br><span class="line">ENV APP_HOME=/app</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建工作目录并设置为工作路径</span></span><br><span class="line">WORKDIR $APP_HOME</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装系统依赖（apt示例）</span></span><br><span class="line">RUN apt-get update &amp;&amp; \</span><br><span class="line">    apt-get install -y --no-install-recommends \</span><br><span class="line">    build-essential \</span><br><span class="line">    libpq-dev \</span><br><span class="line">    &amp;&amp; apt-get clean &amp;&amp; \</span><br><span class="line">    rm -rf /var/lib/apt/lists/*</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">复制依赖文件并安装Python依赖（利用Docker缓存层）</span></span><br><span class="line">COPY requirements.txt ./</span><br><span class="line">RUN pip install --no-cache-dir --upgrade pip &amp;&amp; \</span><br><span class="line">    pip install --no-cache-dir -r requirements.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">复制应用代码（放在依赖安装之后以利用缓存）</span></span><br><span class="line">COPY . .</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置非root用户（安全最佳实践）</span></span><br><span class="line">RUN groupadd -r appuser &amp;&amp; useradd -r -g appuser appuser</span><br><span class="line">USER appuser</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">暴露端口（容器运行时监听端口）</span></span><br><span class="line">EXPOSE 8000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置健康检查（容器健康状态监控）</span></span><br><span class="line">HEALTHCHECK --interval=30s --timeout=3s \</span><br><span class="line">  CMD curl -f http://localhost:8000/health || exit 1</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置容器启动命令（使用数组形式）</span></span><br><span class="line">CMD [&quot;gunicorn&quot;, &quot;--bind&quot;, &quot;:8000&quot;, &quot;app.wsgi&quot;]</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/26/svm%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="prev" title="svm算法学习">
+      <i class="fa fa-chevron-left"></i> svm算法学习
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A6%96%E5%85%88%E6%9D%A5%E7%9C%8B%E7%9C%8Bdocker%E7%9A%84%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">首先来看看docker的优点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">docker的基本组成:</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="nav-number">2.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">3.</span> <span class="nav-text">拉取镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E9%95%9C%E5%83%8F"><span class="nav-number">4.</span> <span class="nav-text">管理镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%95%9C%E5%83%8F%E5%88%9B%E5%BB%BA%E5%B9%B6%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E5%AE%B9%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">使用镜像创建并运行一个容器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%8D%B7%E7%9A%84%E7%AE%A1%E7%90%86"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">关于卷的管理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8"><span class="nav-number">5.1.</span> <span class="nav-text">删除容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%AE%B9%E5%99%A8%E7%8A%B6%E6%80%81"><span class="nav-number">5.2.</span> <span class="nav-text">控制容器状态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%A8%E5%AE%B9%E5%99%A8%E4%B8%AD%E6%89%A7%E8%A1%8Clinux%E5%91%BD%E4%BB%A4"><span class="nav-number">6.</span> <span class="nav-text">在容器中执行linux命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%86%85%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="nav-number">7.</span> <span class="nav-text">容器内软件安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dockerfile"><span class="nav-number">8.</span> <span class="nav-text">Dockerfile</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wang Song"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Wang Song</p>
+  <div class="site-description" itemprop="description">a graduate student working at Huzhou institute of Zhejiang University</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SongSop" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SongSop" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3042903197@qq.com" title="E-Mail → mailto:3042903197@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Song</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
