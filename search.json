@@ -1,0 +1,30 @@
+[
+  {
+    "title": "2026-07-30",
+    "date": "2026-07-30",
+    "slug": "2026-07-30-today",
+    "type": "note",
+    "text": "今天的事情： - - -"
+  },
+  {
+    "title": "Hello, World",
+    "date": "2026-07-30",
+    "slug": "2026-07-30-hello-world",
+    "type": "article",
+    "text": "这是我的第一篇博客文章。 关于这个博客 纯手工搭建的极简博客，托管在 GitHub Pages。设计灵感来自 Simon Willison。 Markdown 功能测试 代码高亮 Python 代码块自动高亮： def fibonacci(n: int) -&gt; int: &quot;&quot;&quot;返回第 n 个斐波那契数&quot;&quot;&quot; if n &lt;= 1: return n a, b = 0, 1 for _ in range(n - 1): a, b = b, a + b return b # 测试 print(fibonacci(10)) # →"
+  },
+  {
+    "title": "2026-07-29",
+    "date": "2026-07-29",
+    "slug": "2026-07-29-today",
+    "type": "note",
+    "text": "今日小结。 修复了用户登录页面的样式错乱问题 Review 了两份 PR，主要关注错误处理 开始在学 Rust，看了所有权和借用的章节 晚上整理了下博客的部署流程 明天计划：继续 Rust 第四章，把博客的 GitHub Pages 部署走通。"
+  },
+  {
+    "title": "Things I Learned from Building a Static Site Generator",
+    "date": "2026-07-28",
+    "slug": "2026-07-28-good-read",
+    "type": "link",
+    "text": "一篇关于静态网站生成器设计理念的好文章。核心观点：先用纯 HTML 把设计打磨好，再加自动化，不要一开始就上框架。和我在做的事情很像。"
+  }
+]
