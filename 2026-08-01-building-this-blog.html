@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Home — My Weblog</title>
+  <title>这个博客是怎么搭起来的 — My Weblog</title>
   <link rel="stylesheet" href="style.css">
   
 <script>
@@ -35,13 +35,13 @@ window.MathJax = {
       <div class="page-layout">
         <div class="main-column">
           
-        <article class="entry">
+        <article>
           
-          <div class="entry-head">
-            <span class="entry-date"><a href="2026-08-01-building-this-blog.html">2026-08-01</a></span>
-            <a href="2026-08-01-building-this-blog.html" class="entry-title">这个博客是怎么搭起来的</a>
-          </div>
-          <div class="entry-body">
+          <header class="article-header">
+            <h1>这个博客是怎么搭起来的</h1>
+            <time datetime="2026-08-01">2026-08-01</time>
+          </header>
+          <div class="content">
             <p>我一直想有一个自己的博客。不是那种用现成主题、五分钟搭好的博客，而是一个每一行 CSS 我都知道为什么这么写的博客。</p>
 <h2>起点</h2>
 <p>Simon Willison 的博客是我一直以来的参考。内容即界面，没有多余的东西——没有侧边栏小部件、没有社交分享按钮、没有评论区。打开页面，只有文章。</p>
@@ -135,8 +135,10 @@ git<span class="w"> </span>push<span class="w">                   </span><span c
 </ul>
 <p>但大概率不会加评论系统。保持简单本身就是一种功能。</p>
           </div>
-          <a href="2026-08-01-building-this-blog.html" class="entry-permalink">Permalink</a>
         </article>
+        <nav class="back-nav">
+          <a href="/">Back</a>
+        </nav>
         </div>
 
         <aside class="sidebar">
