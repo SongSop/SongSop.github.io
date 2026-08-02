@@ -89,6 +89,32 @@ git push                   # 上线
 
 从写完到上线不超过一分钟。
 
+## 更新：迁移到 Astro（2026-08-02）
+
+纯 Python 的方案用了一阵子之后，还是发现了一些痛点：
+
+- **组件复用**：侧边栏、Header 等在每篇文章的 HTML 里重复，稍微改一下设计就要 rebuild 所有页面
+- **构建速度**：虽然每篇单独构建很快，但文章多起来之后全量构建变得越来越慢
+- **生态**：想要 RSS、sitemap 等功能，自己写太累，用别人的又没有合适的工具链
+
+于是把博客整个迁移到了 [Astro](https://astro.build)。迁移过程比想象中顺利，因为之前的 HTML 模板结构已经很清晰：
+
+1. 把 Python 模板转成 Astro 组件（`Base.astro` 做布局，`index.astro` 做首页）
+2. Markdown 文件加个 frontmatter 头，放进 `src/content/posts/`
+3. 搜索和数学公式保留原来的方案（JSON + KaTeX）
+4. CSS 几乎一行没改
+
+现在的工作流：
+
+```bash
+npm run dev           # 本地预览，热更新
+# 编辑 src/content/posts/xxx.md
+npm run build         # 构建
+git push              # 上线
+```
+
+Astro 默认输出零 JS，和之前纯静态 HTML 的性能一样好。但开发体验好了很多——组件化让修改布局变得简单，热更新让写 CSS 快了几个数量级。
+
 ## 之后
 
 这个博客会持续演进。目前想加的东西：
@@ -99,4 +125,4 @@ git push                   # 上线
 
 但大概率不会加评论系统。保持简单本身就是一种功能。
 
-![sky](images\img_v3_02146_7c8a206f-52ca-4daf-a47f-fc9844f863bg.jpg)
+![sky](/images/img_v3_02146_7c8a206f-52ca-4daf-a47f-fc9844f863bg.jpg)

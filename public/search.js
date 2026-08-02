@@ -109,7 +109,7 @@
       var snippet = extractSnippet(p.text, query);
       var snipHtml = hilit(snippet, query);
       html +=
-        '<a href="' + p.slug + '.html" class="search-result-item">' +
+        '<a href="/posts/' + p.slug + '/" class="search-result-item">' +
         '<div class="search-result-title">[' + tag + "] " + title + "</div>" +
         '<div class="search-result-meta">' + p.date + " — " + snipHtml + "</div>" +
         "</a>";
