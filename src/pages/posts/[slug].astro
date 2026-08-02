@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(p => ({
+    params: { slug: p.slug },
+    props: { post: p },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const displayTitle = post.data.title || post.data.date.toISOString().slice(0, 10);
+const ptype = post.data.type || 'article';
+---
+
+<Base title={displayTitle}>
+  <article>
+    <header class="article-header">
+      {ptype === 'link' && <span class="entry-type-badge">Link</span>}
+      {ptype === 'note' && <span class="entry-type-badge">Note</span>}
+      <h1>
+        {ptype === 'link' && post.data.link ? (
+          <a href={post.data.link} class="external-link-heading">{displayTitle}</a>
+        ) : displayTitle}
+      </h1>
+      <time datetime={post.data.date.toISOString().slice(0, 10)}>
+        {post.data.date.toISOString().slice(0, 10)}
+      </time>
+    </header>
+    <div class="content">
+      <Content />
+    </div>
+  </article>
+  <nav class="back-nav">
+    <a href="/">Back</a>
+  </nav>
+</Base>

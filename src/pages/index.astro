@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const rawPosts = await getCollection('posts');
+const sorted = rawPosts.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Render each post's content
+const posts = [];
+for (const p of sorted) {
+  const { Content } = await p.render();
+  posts.push({ post: p, Content });
+}
+
+function fmtDate(d: Date) {
+  return d.toISOString().slice(0, 10);
+}
+---
+
+<Base title="Home">
+  {posts.length === 0 ? (
+    <p style="color: var(--muted); padding: 40px 0;">No posts yet.</p>
+  ) : (
+    posts.map(({ post: p, Content }) => {
+      const date = fmtDate(p.data.date);
+      const slug = p.slug;
+      const title = p.data.title || date;
+      const ptype = p.data.type || 'article';
+
+      return (
+        <article class="entry">
+          <div class="entry-head">
+            <span class="entry-date">
+              <a href={`/posts/${slug}/`}>{date}</a>
+            </span>
+            {ptype === 'link' && <span class="entry-type-tag">Link</span>}
+            {ptype === 'note' && <span class="entry-type-tag">Note</span>}
+            <a href={`/posts/${slug}/`} class="entry-title">{title}</a>
+            {ptype === 'link' && p.data.link && (
+              <a href={p.data.link} class="entry-domain" rel="nofollow">
+                {new URL(p.data.link).hostname}
+              </a>
+            )}
+          </div>
+          <div class="entry-body">
+            <Content />
+          </div>
+          <a href={`/posts/${slug}/`} class="entry-permalink">Permalink</a>
+        </article>
+      );
+    })
+  )}
+</Base>

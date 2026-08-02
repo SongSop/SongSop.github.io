@@ -1,0 +1,17 @@
+{
+  "name": "songs-weblog",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "new": "node new.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "katex": "^0.16.0",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0"
+  }
+}
