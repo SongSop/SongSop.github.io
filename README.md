@@ -27,6 +27,34 @@ npm run dev
    - **数学公式（KaTeX）**：`$E=mc^2$` 行内，`$$...$$` 块级
    - **图片**：放 `public/images/` 目录，`![alt](/images/file.png)`
    - **表格**：标准 Markdown 表格语法
+   - **相册网格**：用 `<div class="gallery">` 包裹若干 `<figure>`，自动响应式排列
+
+## 相册网格
+
+在文章里写 HTML，每个 `<figure>` 是一张卡片：
+
+```html
+<div class="gallery">
+  <figure>
+    <img src="/images/portfolio/01.jpg" alt="项目一">
+    <figcaption>项目一 — 一句话说明</figcaption>
+  </figure>
+</div>
+```
+
+图片按原始比例完整显示（不裁剪），高度上限 420px，网格随屏宽自动换行。
+
+> 新增图片建议先压缩，否则手机加载很慢。项目根目录有 `compress.py`，
+> 把图放进 `public/images/portfolio/` 后运行 `python compress.py`，
+> 会压到 1200px 宽 / 质量 80%（原图需自行备份）。
+
+## 样式（重要）
+
+样式的**唯一源文件是 `public/styles/global.css`**，由 `Base.astro` 通过 `<link>` 引入。
+
+> 注意：不要新建 `src/styles/` 并用 `import` 引入——本环境下 Astro 的 CSS import
+> 不会把样式打进产物（已验证，清缓存后依然如此），页面会变成无样式状态。
+> 改样式请直接编辑 `public/styles/global.css`。
 
 ## 构建
 
@@ -55,11 +83,12 @@ SongSop.github.io/
 │   │   ├── index.astro     ← 首页
 │   │   ├── posts/[slug].astro ← 文章页
 │   │   └── search.json.ts  ← 搜索接口
-│   └── styles/
-│       └── global.css      ← 样式
 ├── public/
+│   ├── styles/
+│   │   └── global.css      ← ✏️ 样式（唯一源）
 │   ├── images/             ← ✏️ 放图片
-│   └── search.js           ← 搜索前端
+│   │   └── portfolio/      ← 简历作品集照片
+│   ├── search.js           ← 搜索前端
 ├── astro.config.mjs        ← Astro 配置
 └── package.json
 ```

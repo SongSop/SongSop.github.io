@@ -396,3 +396,33 @@ body {
 .site-footer .container { padding-top: 16px; padding-bottom: 40px; }
 .site-footer a { color: var(--muted); text-decoration: none; font-weight: 400; }
 .site-footer a:hover { color: var(--orange); text-decoration: underline; }
+
+/* ========================================
+   项目相册网格
+   ======================================== */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.gallery figure { margin: 0; }
+
+.gallery img {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: contain;
+  display: block;
+  border: 1px solid var(--border);
+}
+
+.gallery figcaption {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 300;
+  margin-top: 6px;
+  line-height: 1.5;
+}
