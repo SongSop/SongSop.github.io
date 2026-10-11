@@ -12,8 +12,8 @@ date: 2026-10-10
     <figcaption>垂直起降无人机</figcaption>
   </figure>
   <figure>
-    <img src="/images/portfolio/ROS驱动机械臂.jpg" alt="ROS 驱动机械臂">
-    <figcaption>ROS 驱动机械臂</figcaption>
+    <img src="/images/portfolio/ROS驱动机械臂.jpg" alt="ROS 驱动机械腿">
+    <figcaption>ROS 驱动机械腿</figcaption>
   </figure>
   <figure>
     <img src="/images/portfolio/巡诊机器人开发.jpg" alt="巡诊机器人开发">
