@@ -5,23 +5,19 @@ SRC = r"d:\blog\SongSop.github.io\public\images\portfolio"
 MAX_W = 1200
 QUALITY = 80
 
-total_before = 0
-total_after = 0
-
+# 已被压缩过（宽度 <= MAX_W）的图片会跳过，避免重复编码导致画质损失
 for f in sorted(glob.glob(os.path.join(SRC, "*.jpg"))):
     name = os.path.basename(f)
-    before = os.path.getsize(f)
     with Image.open(f) as im:
+        w, h = im.size
+        if w <= MAX_W:
+            print(f"{name}: skip (already {w}px wide)")
+            continue
         if im.mode in ("RGBA", "P", "LA"):
             im = im.convert("RGB")
-        w, h = im.size
-        if w > MAX_W:
-            nh = int(h * MAX_W / w)
-            im = im.resize((MAX_W, nh), Image.LANCZOS)
+        before = os.path.getsize(f)
+        nh = int(h * MAX_W / w)
+        im = im.resize((MAX_W, nh), Image.LANCZOS)
         im.save(f, "JPEG", quality=QUALITY, optimize=True, progressive=True)
-        after = os.path.getsize(f)
-    total_before += before
-    total_after += after
-    print(f"{name}: {before/1024:.0f}KB -> {after/1024:.0f}KB  ({w}x{h} -> {im.size[0]}x{im.size[1]})")
-
-print(f"\nTOTAL: {total_before/1024/1024:.1f}MB -> {total_after/1024/1024:.1f}MB")
+    after = os.path.getsize(f)
+    print(f"{name}: {before/1024:.0f}KB -> {after/1024:.0f}KB  ({w}x{h} -> {MAX_W}x{nh})")
